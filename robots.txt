@@ -1,4 +1,45 @@
+# Robots.txt for Smart Planner AI (Dayframe Pro)
+# Host: https://smartplanner-pro.vercel.app
+
 User-agent: *
+Allow: /
+Disallow: /api/private/
+Disallow: /user_databases/
+Disallow: /*.json$
+Allow: /manifest.json
+
+# Generative AI & LLM Search Engine Crawlers (Explicitly Allowed for GEO)
+User-agent: Googlebot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: GPTBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-Web
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: DuckDuckBot
 Allow: /
 
 Sitemap: https://smartplanner-pro.vercel.app/sitemap.xml

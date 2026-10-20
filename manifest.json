@@ -1,12 +1,20 @@
 {
-  "name": "Smart Planner & Wealth Hub",
+  "name": "Smart Planner AI — 24-Hour Circular Daily Schedule",
   "short_name": "SmartPlanner",
-  "description": "AI-powered productivity, tasks, wealth management and screen time telemetry",
+  "description": "Next-generation autonomous daily productivity, 24-hour circular schedule clock, multimodal voice brain dump, OCR expense tracker, and habit guardrails.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "background_color": "#10141a",
-  "theme_color": "#10141a",
-  "orientation": "portrait-primary",
+  "background_color": "#0c1511",
+  "theme_color": "#0c1511",
+  "orientation": "any",
+  "lang": "en",
+  "categories": [
+    "productivity",
+    "utilities",
+    "finance",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "https://lh3.googleusercontent.com/aida/AEtjO1Uti7wKpZIOt5f7uBRbFXJykuChvBtXVxRxOpMYJz8yiPxdGHet6ulpEM4to_2yXGGPt3DvR9LtIhuxgdhPJFRucQyezX7F74tOa8oGJzhJUULiaD4GM_SOOQhKf_Gbs3Hrqp5PZKAd1ELMbkmxN0FpH_DEE4T8nZiy8QdsCjy6cLL5O-tIGarJdS1usPnYiPS-JAUJisMDexYygOCvL1TuUJAvU3UbkX_YM6FSXYNKPLhdg2xXywiMuw",
@@ -19,6 +27,15 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "24-Hour Circular Schedule Dial & Multimodal Brain Dump"
     }
   ]
 }

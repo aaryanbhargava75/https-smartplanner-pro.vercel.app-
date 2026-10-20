@@ -1,9 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://smartplanner-pro.vercel.app/</loc>
-    <lastmod>2026-10-20</lastmod>
+    <lastmod>2026-10-21</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://smartplanner-pro.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://smartplanner-pro.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en-IN" href="https://smartplanner-pro.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en-US" href="https://smartplanner-pro.vercel.app/"/>
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://smartplanner-pro.vercel.app/"/>
+    <image:image>
+      <image:loc>https://smartplanner-pro.vercel.app/og-image.png</image:loc>
+      <image:title>Smart Planner AI — 24-Hour Circular Daily Schedule Dial</image:title>
+      <image:caption>Interactive 24-hour circular schedule clock, multimodal voice brain dump, and budget tracker dashboard</image:caption>
+    </image:image>
   </url>
 </urlset>
