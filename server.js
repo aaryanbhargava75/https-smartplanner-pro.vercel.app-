@@ -17,16 +17,37 @@ app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '15mb' }));
 app.use(express.urlencoded({ extended: true, limit: '15mb' }));
 
-// Security Guard: Block sensitive files (.env, .git, planner-data.json) from direct static requests
+// Security Guard & SEO Caching Middleware
 app.use((req, res, next) => {
   res.set('X-Content-Type-Options', 'nosniff');
-  res.set('X-Frame-Options', 'DENY');
-  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-  
+  res.set('X-Frame-Options', 'SAMEORIGIN');
+
   const cleanPath = req.path.toLowerCase();
   if (cleanPath.includes('.env') || cleanPath.includes('.git') || cleanPath.includes('planner-data.json')) {
     return res.status(403).json({ error: 'Access forbidden by Security Guard' });
   }
+
+  // Dynamic API routes must not be cached
+  if (cleanPath.startsWith('/api/')) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  } else if (
+    cleanPath.endsWith('.xml') ||
+    cleanPath.endsWith('.txt') ||
+    cleanPath.endsWith('.png') ||
+    cleanPath.endsWith('.jpg') ||
+    cleanPath.endsWith('.jpeg') ||
+    cleanPath.endsWith('.svg') ||
+    cleanPath.endsWith('.json') ||
+    cleanPath.endsWith('.js') ||
+    cleanPath.endsWith('.css')
+  ) {
+    // Static assets & SEO files cached with revalidation
+    res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
+  } else {
+    // HTML pages
+    res.set('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+  }
+
   next();
 });
 
