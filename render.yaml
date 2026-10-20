@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: smart-planner-ai
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node server.js
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: PORT
+        value: 10000

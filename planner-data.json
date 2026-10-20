@@ -1,0 +1,224 @@
+{
+  "currencySymbol": "₹",
+  "tasks": [
+    {
+      "id": "t1",
+      "title": "Review weekly project roadmap & milestones",
+      "category": "Work",
+      "priority": "urgent",
+      "date": "2026-10-18",
+      "duration": 45,
+      "status": "todo",
+      "source": "Starter"
+    },
+    {
+      "id": "t2",
+      "title": "Team sync & design sprint review",
+      "category": "Work",
+      "priority": "high",
+      "date": "2026-10-18",
+      "duration": 30,
+      "status": "todo",
+      "source": "Starter"
+    },
+    {
+      "id": "t3",
+      "title": "Morning 30-min workout / gym session",
+      "category": "Health",
+      "priority": "medium",
+      "date": "2026-10-18",
+      "duration": 30,
+      "status": "done",
+      "source": "Starter"
+    },
+    {
+      "id": "t4",
+      "title": "Read 20 pages & personal journaling",
+      "category": "Personal & Errands",
+      "priority": "low",
+      "date": "2026-10-18",
+      "duration": 30,
+      "status": "todo",
+      "source": "Starter"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "m1",
+      "title": "Land Target Career Role & Clear Interviews",
+      "category": "Career",
+      "targetDate": "2026-11-17",
+      "progress": 40,
+      "keySteps": [
+        {
+          "text": "Polished portfolio & resume",
+          "done": true
+        },
+        {
+          "text": "Create 3 mock interview videos",
+          "done": false
+        },
+        {
+          "text": "Daily 10 direct applications",
+          "done": false
+        }
+      ]
+    },
+    {
+      "id": "m2",
+      "title": "Complete RTI Bus & Legal Applications",
+      "category": "Personal",
+      "targetDate": "2026-10-25",
+      "progress": 50,
+      "keySteps": [
+        {
+          "text": "Draft RTI document",
+          "done": true
+        },
+        {
+          "text": "Submit at post office",
+          "done": false
+        }
+      ]
+    }
+  ],
+  "notToDoList": [
+    {
+      "id": "nd1",
+      "rule": "Don't open phone / social media until first 2 urgent tasks are done",
+      "reason": "Protects morning cognitive energy & stops procrastination",
+      "active": true
+    },
+    {
+      "id": "nd2",
+      "rule": "No YouTube or Instagram doomscrolling before 7:00 PM",
+      "reason": "Prevents attention fragmentation & focus leaks",
+      "active": true
+    },
+    {
+      "id": "nd3",
+      "rule": "Don't multitask while reviewing legal documents",
+      "reason": "Ensures zero errors & rapid completion",
+      "active": true
+    }
+  ],
+  "expenses": [
+    {
+      "id": "e1",
+      "item": "Healthy Grocery Run",
+      "amount": 450,
+      "category": "Food & Dining",
+      "date": "2026-10-18",
+      "source": "Demo"
+    },
+    {
+      "id": "e2",
+      "item": "Transit / Metro Pass",
+      "amount": 120,
+      "category": "Transport",
+      "date": "2026-10-18",
+      "source": "Demo"
+    },
+    {
+      "id": "e3",
+      "item": "Cloud Tools Subscription",
+      "amount": 299,
+      "category": "Subscriptions",
+      "date": "2026-10-18",
+      "source": "Demo"
+    }
+  ],
+  "incomes": [
+    {
+      "id": "i1",
+      "source": "Primary Income",
+      "amount": 50000,
+      "category": "Salary",
+      "date": "2026-10-18"
+    }
+  ],
+  "assets": [
+    {
+      "id": "a1",
+      "name": "Index Fund SIP",
+      "invested": 25000,
+      "currentValue": 28500,
+      "category": "Mutual Funds",
+      "notes": "Monthly automated SIP",
+      "date": "2026-10-18"
+    }
+  ],
+  "journal": [
+    {
+      "id": "j1",
+      "activity": "Deep Work: Strategy & Planning",
+      "startTime": "09:30",
+      "endTime": "12:30",
+      "duration": 180,
+      "category": "Work & Deep Focus",
+      "notes": "Mapped out Q4 deliverables"
+    },
+    {
+      "id": "j2",
+      "activity": "Healthy Lunch & Outdoor Walk",
+      "startTime": "12:30",
+      "endTime": "13:30",
+      "duration": 60,
+      "category": "Leisure & Break",
+      "notes": ""
+    },
+    {
+      "id": "j3",
+      "activity": "Product Architecture Review",
+      "startTime": "14:00",
+      "endTime": "15:30",
+      "duration": 90,
+      "category": "Meetings & Calls",
+      "notes": ""
+    }
+  ],
+  "screenTime": {
+    "totalScreenTime": "3 hrs, 15 mins",
+    "totalMinutes": 195,
+    "unlocks": 22,
+    "notifications": 48,
+    "wastedTime": "1 hr, 10 mins",
+    "apps": [
+      {
+        "name": "Productivity Suite",
+        "duration": "1 hr 30 mins",
+        "minutes": 90,
+        "category": "Work",
+        "icon": "task_alt",
+        "color": "blue",
+        "impact": "Low",
+        "isDistraction": false,
+        "notes": "Project work"
+      },
+      {
+        "name": "Reading & News",
+        "duration": "45 mins",
+        "minutes": 45,
+        "category": "Learning",
+        "icon": "menu_book",
+        "color": "emerald",
+        "impact": "Low",
+        "isDistraction": false,
+        "notes": "Industry articles"
+      },
+      {
+        "name": "Social Media",
+        "duration": "1 hr",
+        "minutes": 60,
+        "category": "Social Media",
+        "icon": "public",
+        "color": "pink",
+        "impact": "High",
+        "isDistraction": true,
+        "notes": "Casual browsing"
+      }
+    ],
+    "rootCause": "Casual notifications during breaks led to occasional feed scrolling.",
+    "actionable": "Batch notification checks to twice a day to reclaim uninterrupted focus time."
+  }
+}

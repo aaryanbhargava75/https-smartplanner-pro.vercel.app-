@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": {
+        "type": "service",
+        "service": "smart-planner-ai"
+      }
+    }
+  ],
+  "services": {
+    "smart-planner-ai": {
+      "root": ".",
+      "entrypoint": "server.js"
+    }
+  }
+}

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://smartplanner-pro.vercel.app/sitemap.xml
