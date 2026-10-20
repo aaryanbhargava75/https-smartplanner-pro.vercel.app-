@@ -1,7 +1,7 @@
 # 📊 Product Teardown: Dayframe (Smart Planner AI)
 **Author:** Lead AI Product Manager (Productivity & Human-Computer Interaction)  
 **Product:** [Dayframe (Smart Planner AI)](https://smartplanner-pro.vercel.app)  
-**Document Format:** Available as Markdown & Published PDF: [`Dayframe_Product_Teardown.pdf`](./Dayframe_Product_Teardown.pdf)  
+**Document Format:** Available as Markdown & Published 5-Page PDF: [`Dayframe_Product_Teardown.pdf`](./Dayframe_Product_Teardown.pdf)  
 **Category:** Autonomous Daily Planning, Multimodal Productivity & Circadian Time Blocking  
 **Target Market:** Time-Poor Working Professionals, Freelancers, Gen-Z Students, ADHD Planners  
 
@@ -87,7 +87,69 @@ turn it into an organized, actionable plan."
 
 ---
 
-## 4. End-to-End User Journey Mapping
+## 4. Technical & System Architecture
+
+```mermaid
+graph TD
+    subgraph Client ["Client Presentation & Offline Engine (PWA)"]
+        UI["Vanilla HTML5 / Modern CSS UI"]
+        Dial["360° SVG Circadian Dial (60 FPS)"]
+        Speech["Web Speech API (Real-time Audio)"]
+        OCR["Tesseract.js / Base64 Vision Engine"]
+        Cache["Browser LocalStorage (smart-planner-user-id)"]
+        SW["Service Worker (sw.js - Offline Cache)"]
+    end
+
+    subgraph EdgeGateway ["Edge Gateway & Routing Tier"]
+        Server["Node.js Express / Vercel Serverless"]
+        AuthMid["Google GIS JWT Verification"]
+        RateLimit["Edge Rate Limiter & Schema Validator"]
+    end
+
+    subgraph NeuralAI ["Neural AI Inference Engine"]
+        Groq["Groq Cloud LPU Engine (<800ms TTFT)"]
+        Llama["Llama-3.3-70b-versatile"]
+        JSONSchema["Deterministic JSON Output Steering"]
+    end
+
+    subgraph Persistence ["Multi-Tenant Cloud Persistence Tier"]
+        Supabase["Supabase PostgreSQL Database"]
+        RLS["Row-Level Security (RLS) Isolation"]
+        Drive["Google Drive Multipart API Backup"]
+    end
+
+    Client -->|HTTPS POST JSON Payload| EdgeGateway
+    EdgeGateway -->|Sub-second Inference Stream| NeuralAI
+    NeuralAI -->|Validated Schema JSON| EdgeGateway
+    EdgeGateway -->|Hydrated State| Client
+    Client -->|Local First Immediate Write| Cache
+    Client -->|Encrypted Cloud Sync via JWT| Persistence
+```
+
+### 4.1 System Topology Layers
+1. **Client Tier (PWA):** Local-first Single Page Application. Direct DOM rendering via CSS variables and SVG canvas. The service worker caches static bundles enabling full functionality without internet connectivity.
+2. **Serverless Edge Gateway:** Deployed on Vercel Edge (`server.js`). Encapsulates third-party secrets (Groq API keys, Supabase service roles) so no sensitive credentials touch client browsers.
+3. **Neural Inference Engine:** Groq Cloud running `llama-3.3-70b-versatile`. Output is constrained using a strict JSON schema preventing hallucinations of dates, invalid currencies, or overlapping time blocks.
+4. **Data Persistence Tier:** Multi-tenant architecture using Supabase PostgreSQL protected by Row-Level Security (`auth.uid() = user_id`), ensuring zero data cross-contamination between accounts.
+5. **Data Portability Subsystem:** Direct browser-side UTF-8 BOM (`\uFEFF`) CSV generator formatted specifically for Microsoft Excel and Google Sheets.
+
+### 4.2 Database Schema & Entity Relational Design
+
+| Entity | Primary Attributes | Relational Constraints & Security Scope |
+| :--- | :--- | :--- |
+| **`tasks`** | `id (UUID)`, `user_id`, `title`, `category`, `priority`, `duration`, `status`, `date` | RLS Scoped to `user_id`. Indexed on `(user_id, date, status)`. |
+| **`journal`** (Schedule) | `id`, `user_id`, `startTime`, `endTime`, `title`, `category`, `duration`, `notes` | Maps directly to circular dial angle coordinates. |
+| **`expenses` / `incomes`** | `id`, `user_id`, `date`, `item`, `category`, `amount`, `type` | Non-negative decimals. Client formats via dynamic currency symbol. |
+| **`milestones`** | `id`, `user_id`, `title`, `category`, `targetDate`, `progress`, `keySteps` | JSONB nested array for granular sub-task checklist. |
+
+### 4.3 Technical Performance & Security SLAs
+* **Inference Latency:** `< 800ms` Time-to-First-Token via Groq LPUs.
+* **Offline Readiness:** `100% Core Functionality` accessible via local-first cache.
+* **Privacy & Compliance:** Zero third-party ad telemetry or tracking pixels. Client notes sanitized against XSS.
+
+---
+
+## 5. End-to-End User Journey Mapping
 
 ```mermaid
 graph LR
@@ -105,7 +167,7 @@ graph LR
 
 ---
 
-## 5. The Central Teardown Question & Empirical Validation
+## 6. The Central Teardown Question & Empirical Validation
 
 > **"Does Dayframe actually save time end-to-end, or does it merely move the work from manual entry to reviewing and correcting AI-generated plans?"**
 
@@ -119,7 +181,7 @@ graph LR
 
 ---
 
-## 6. High-Impact Product Improvement Opportunities (Prioritized)
+## 7. High-Impact Product Improvement Opportunities (Prioritized)
 
 ### P1: One-Tap Capture-to-Execute Review Drawer
 * **Hypothesis:** When dumping 5+ items in one message, users need confidence that tags are accurate without navigating multiple tabs.
@@ -138,7 +200,7 @@ graph LR
 
 ---
 
-## 7. Business Model & Monetization Strategy
+## 8. Business Model & Monetization Strategy
 
 | Model | Potential Benefit | Critical Risk | PM Recommendation |
 | :--- | :--- | :--- | :--- |
@@ -152,7 +214,7 @@ graph LR
 
 ---
 
-## 8. Metrics Framework & PM Validation Checklist
+## 9. Metrics Framework & PM Validation Checklist
 
 ### North Star Metric:
 **Weekly Users Successfully Organizing & Completing ≥ 5 Priority Commitments (WAU Target > 45%)**
@@ -168,5 +230,5 @@ graph LR
 ---
 
 ### PDF Document Location:
-The publication-ready PDF version of this teardown is saved at:  
+The publication-ready 5-page PDF version of this teardown is saved at:  
 👉 [`c:\Users\aarya\Downloads\master planner\Dayframe_Product_Teardown.pdf`](file:///c:/Users/aarya/Downloads/master%20planner/Dayframe_Product_Teardown.pdf)
