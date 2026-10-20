@@ -442,9 +442,9 @@
                 <span class="material-symbols-outlined text-[15px]">switch_account</span>
                 <span>Switch Account</span>
               </button>
-              <button onclick="exportDataBackup()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[#f0f4ef] text-[var(--df-text)] transition-colors flex items-center gap-2 cursor-pointer">
-                <span class="material-symbols-outlined text-[15px]">download</span>
-                <span>Export My Data</span>
+              <button onclick="exportToExcel()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--df-card-inner)] text-[var(--df-text)] transition-colors flex items-center gap-2 cursor-pointer">
+                <span class="material-symbols-outlined text-[15px] text-emerald-500">table_chart</span>
+                <span>Export to Excel (.csv)</span>
               </button>
               <button onclick="openSettingsModal()" class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[#f0f4ef] text-[var(--df-text)] transition-colors flex items-center gap-2 cursor-pointer">
                 <span class="material-symbols-outlined text-[15px]">settings</span>
@@ -2566,76 +2566,102 @@
   </div>
 
   <!-- ========================================================================= -->
-  <!-- MODAL: SETTINGS & BACKUP -->
+  <!-- MODAL: SETTINGS & DATA MANAGEMENT (PREMIUM GLASSMORPHISM) -->
   <!-- ========================================================================= -->
-  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-surface-container border border-surface-container-high/80 rounded-2xl p-6 max-w-md w-full shadow-2xl flex flex-col gap-4">
-      <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-on-surface">Settings & Data Storage</h3>
-        <button onclick="closeSettingsModal()" class="text-on-surface-variant hover:text-on-surface">
+  <div id="settingsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+      
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 border-b border-[var(--df-border)]">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-2xl bg-[#d2f84a]/15 text-[#2e6f40] dark:text-[#d2f84a] flex items-center justify-center font-bold">
+            <span class="material-symbols-outlined text-[22px]">settings</span>
+          </div>
+          <div>
+            <h3 class="text-base font-extrabold text-[var(--df-text)]">Settings & Data Management</h3>
+            <p class="text-[11px] text-[var(--df-text-muted)]">Preferences, cloud sync & spreadsheet exports</p>
+          </div>
+        </div>
+        <button onclick="closeSettingsModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1.5 rounded-xl hover:bg-[var(--df-card-inner)] transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
       </div>
 
-      <div class="flex flex-col gap-3 text-xs">
-        <!-- Account Status in Settings -->
-        <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60 flex items-center justify-between">
-          <div class="flex flex-col min-w-0">
-            <span class="text-[10px] uppercase font-bold text-on-surface-variant tracking-wider">Account</span>
-            <span id="settingsUserStatus" class="text-xs font-semibold text-on-surface truncate">Guest / Demo Mode</span>
-          </div>
-          <button id="settingsLoginBtn" onclick="closeSettingsModal(); openLoginModal();" class="px-2.5 py-1 rounded-md bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 font-semibold text-xs border border-amber-500/30 transition-colors">
-            Login with Gmail
-          </button>
-        </div>
-
-        <p class="text-on-surface-variant">Each account has 100% private, isolated data storage.</p>
-
-        <!-- Autonomous Cloud AI Engine -->
-        <div class="p-3 rounded-xl bg-surface-container-low border border-surface-container-high/60 flex flex-col gap-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[11px] font-bold text-on-surface flex items-center gap-1.5">
-              <span class="material-symbols-outlined text-[15px] text-amber-400">smart_toy</span>
-              <span>Smart AI Engine (Cloud Processing)</span>
-            </span>
-            <span class="text-[10px] text-emerald-400 font-semibold px-2 py-0.5 rounded bg-emerald-500/10">Active</span>
-          </div>
-          <p class="text-[10px] text-on-surface-variant leading-relaxed">High-performance neural model enabled for real-time speech-to-schedule conversion, OCR receipt scanning & autonomous time-blocking.</p>
-          <div class="flex items-center gap-2">
-            <input type="password" id="customGroqKeyInput" placeholder="Custom AI Key (optional)..." class="flex-1 bg-surface-container-lowest border border-surface-container-high text-xs px-2.5 py-1.5 rounded-lg outline-none font-mono text-on-surface focus:border-amber-400"/>
-            <button type="button" onclick="saveCustomGroqKey()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs transition-colors cursor-pointer">Save</button>
-          </div>
-        </div>
+      <div class="flex flex-col gap-3.5 text-xs">
         
-        <div class="flex flex-col gap-2 pt-2 border-t border-surface-container-high/50">
-          <!-- Clean & Organize Misplaced Tasks Button -->
-          <button onclick="cleanDuplicateTasks()" class="w-full py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-amber-400 font-medium transition-colors flex items-center justify-center gap-2 border border-amber-500/30">
-            <span class="material-symbols-outlined text-[16px]">cleaning_services</span>
-            <span>Clean Duplicates & Fix Misplaced Tasks</span>
-          </button>
-
-          <button onclick="runLiveSecurityAudit()" class="w-full py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-emerald-400 font-medium transition-colors flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-[16px]">verified_user</span>
-            <span>View Full Security Audit</span>
-          </button>
-
-          <button onclick="exportDataBackup()" class="w-full py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-medium transition-colors flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-[16px]">download</span>
-            <span>Export Data JSON Backup</span>
-          </button>
-          
-          <label class="w-full py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface font-medium transition-colors flex items-center justify-center gap-2 cursor-pointer">
-            <span class="material-symbols-outlined text-[16px]">upload</span>
-            <span>Import Data JSON Backup</span>
-            <input type="file" id="importBackupInput" accept=".json" class="hidden" onchange="importDataBackup(event)"/>
-          </label>
-
-          <!-- Reset / Purge Cache Button -->
-          <button onclick="resetAllLocalData()" class="w-full py-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-medium transition-colors flex items-center justify-center gap-2 border border-rose-500/30 mt-1">
-            <span class="material-symbols-outlined text-[16px]">delete_forever</span>
-            <span>Reset & Clear Local Storage (Wipe Cache)</span>
+        <!-- Account Status Card -->
+        <div class="p-3.5 rounded-2xl bg-[var(--df-card-inner)] border border-[var(--df-border)] flex items-center justify-between gap-3 shadow-xs">
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-9 h-9 rounded-xl bg-[var(--df-card)] border border-[var(--df-border)] flex items-center justify-center text-[var(--df-text)] flex-shrink-0">
+              <span class="material-symbols-outlined text-[18px] text-[#2e6f40] dark:text-[#d2f84a]">account_circle</span>
+            </div>
+            <div class="flex flex-col min-w-0">
+              <span class="text-[10px] uppercase font-bold text-[var(--df-text-muted)] tracking-wider">Account Workspace</span>
+              <span id="settingsUserStatus" class="text-xs font-bold text-[var(--df-text)] truncate">Guest / Demo Mode</span>
+            </div>
+          </div>
+          <button id="settingsLoginBtn" onclick="closeSettingsModal(); openLoginModal();" class="px-3 py-1.5 rounded-xl bg-[var(--df-card)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-semibold text-xs border border-[var(--df-border)] transition-all active:scale-95 cursor-pointer flex-shrink-0">
+            Switch Account
           </button>
         </div>
+
+        <!-- 📊 EXCEL SPREADSHEET EXPORT (PRIMARY HIGHLIGHT) -->
+        <div class="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-emerald-600/5 to-transparent border border-emerald-500/30 flex flex-col gap-2.5 shadow-xs">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400 text-xs">
+              <span class="material-symbols-outlined text-[18px]">table_chart</span>
+              <span>Excel Spreadsheet Export</span>
+            </div>
+            <span class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 px-2.5 py-0.5 rounded-full bg-emerald-500/20">.CSV / Excel</span>
+          </div>
+          <p class="text-[11px] text-[var(--df-text-muted)] leading-relaxed">
+            Download your full schedule, task list, expenses, and milestones in an Excel-ready spreadsheet format. Opens instantly in Microsoft Excel, Google Sheets, or Apple Numbers.
+          </p>
+          <button onclick="exportToExcel()" class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">download</span>
+            <span>Download Excel Spreadsheet (.csv)</span>
+          </button>
+        </div>
+
+        <!-- Maintenance & System Actions -->
+        <div class="flex flex-col gap-2 pt-1">
+          <span class="text-[10px] uppercase font-bold text-[var(--df-text-muted)] tracking-wider px-1">Maintenance & Utilities</span>
+          
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <button onclick="cleanDuplicateTasks()" class="py-2.5 px-3 rounded-xl bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-medium text-xs border border-[var(--df-border)] transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px] text-amber-500">cleaning_services</span>
+              <span>Clean Duplicates</span>
+            </button>
+
+            <button onclick="runLiveSecurityAudit()" class="py-2.5 px-3 rounded-xl bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-medium text-xs border border-[var(--df-border)] transition-colors flex items-center justify-center gap-2 cursor-pointer">
+              <span class="material-symbols-outlined text-[16px] text-[#2e6f40] dark:text-[#d2f84a]">verified_user</span>
+              <span>Security Audit</span>
+            </button>
+          </div>
+
+          <!-- Raw Backup Options -->
+          <div class="flex items-center justify-between gap-2 pt-1 px-1 text-[11px]">
+            <span class="text-[var(--df-text-muted)]">Developer JSON:</span>
+            <div class="flex items-center gap-2">
+              <button onclick="exportDataBackup()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] underline cursor-pointer">Export JSON</button>
+              <span class="text-[var(--df-text-muted)]">•</span>
+              <label class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] underline cursor-pointer">
+                <span>Import JSON</span>
+                <input type="file" id="importBackupInput" accept=".json" class="hidden" onchange="importDataBackup(event)"/>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="pt-2 border-t border-[var(--df-border)] flex items-center justify-between">
+          <span class="text-[11px] text-[var(--df-text-muted)]">Reset everything?</span>
+          <button onclick="resetAllLocalData()" class="px-3 py-1.5 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer">
+            <span class="material-symbols-outlined text-[15px]">delete_sweep</span>
+            <span>Reset Local Cache</span>
+          </button>
+        </div>
+
       </div>
     </div>
   </div>
@@ -8470,6 +8496,181 @@ Return ONLY valid JSON matching:
       setTimeout(() => {
         toast.classList.add('hidden');
       }, 3000);
+    }
+
+    // Excel / CSV Complete Data Exporter (UTF-8 with BOM for Microsoft Excel)
+    function exportToExcel() {
+      try {
+        function esc(val) {
+          if (val === null || val === undefined) return '""';
+          const str = String(val).replace(/"/g, '""');
+          return `"${str}"`;
+        }
+
+        const lines = [];
+        const sym = appData.currencySymbol || '₹';
+        const dateStr = new Date().toISOString().slice(0, 10);
+
+        // Header / Metadata
+        lines.push([esc("SMART PLANNER PRO - COMPLETE DATA REPORT"), esc(""), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Exported At:"), esc(new Date().toLocaleString()), esc("User:"), esc(currentUser ? currentUser.email : "Guest Mode"), esc("Currency:"), esc(sym), esc("")].join(","));
+        lines.push("");
+
+        // 1. TASKS & CHECKLIST
+        lines.push([esc("=== SECTION 1: TASKS & CHECKLIST ==="), esc(""), esc(""), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Task ID"), esc("Title"), esc("Category"), esc("Priority"), esc("Status"), esc("Due Date"), esc("Duration (Mins)"), esc("Source")].join(","));
+        const tasks = appData.tasks || [];
+        if (tasks.length === 0) {
+          lines.push([esc("No tasks recorded"), esc(""), esc(""), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        } else {
+          tasks.forEach(t => {
+            lines.push([
+              esc(t.id || ''),
+              esc(t.title || ''),
+              esc(t.category || 'General'),
+              esc(t.priority || 'medium'),
+              esc(t.status || 'todo'),
+              esc(t.date || ''),
+              esc(t.duration || 0),
+              esc(t.source || 'SmartPlanner')
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 2. DAILY SCHEDULE & TIME BLOCKS
+        lines.push([esc("=== SECTION 2: DAILY SCHEDULE & TIME BLOCKS ==="), esc(""), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("ID"), esc("Start Time"), esc("End Time"), esc("Activity / Title"), esc("Category"), esc("Duration (Mins)"), esc("Notes")].join(","));
+        const journal = appData.journal || [];
+        if (journal.length === 0) {
+          lines.push([esc("No schedule blocks recorded"), esc(""), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        } else {
+          journal.forEach(j => {
+            lines.push([
+              esc(j.id || ''),
+              esc(j.startTime || ''),
+              esc(j.endTime || ''),
+              esc(j.title || j.text || ''),
+              esc(j.category || 'General'),
+              esc(j.duration || ''),
+              esc(j.notes || '')
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 3. EXPENSES & FINANCIAL LOG
+        lines.push([esc("=== SECTION 3: EXPENSES & FINANCIAL LOG ==="), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Expense ID"), esc("Date"), esc("Item / Description"), esc("Category"), esc("Type"), esc("Amount (" + sym + ")")].join(","));
+        const expenses = appData.expenses || [];
+        if (expenses.length === 0) {
+          lines.push([esc("No expenses recorded"), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        } else {
+          expenses.forEach(e => {
+            lines.push([
+              esc(e.id || ''),
+              esc(e.date || ''),
+              esc(e.title || e.item || ''),
+              esc(e.category || 'General'),
+              esc(e.type || 'expense'),
+              esc(Number(e.amount || 0).toFixed(2))
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 4. INCOMES & EARNINGS
+        lines.push([esc("=== SECTION 4: INCOMES & EARNINGS ==="), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Income ID"), esc("Date"), esc("Source / Description"), esc("Category"), esc("Amount (" + sym + ")")].join(","));
+        const incomes = appData.incomes || [];
+        if (incomes.length === 0) {
+          lines.push([esc("No incomes recorded"), esc(""), esc(""), esc(""), esc("")].join(","));
+        } else {
+          incomes.forEach(inc => {
+            lines.push([
+              esc(inc.id || ''),
+              esc(inc.date || ''),
+              esc(inc.source || inc.title || ''),
+              esc(inc.category || 'Income'),
+              esc(Number(inc.amount || 0).toFixed(2))
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 5. ASSETS & INVESTMENTS
+        lines.push([esc("=== SECTION 5: ASSETS & INVESTMENTS ==="), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Asset ID"), esc("Asset Name"), esc("Category"), esc("Value (" + sym + ")")].join(","));
+        const assets = appData.assets || [];
+        if (assets.length === 0) {
+          lines.push([esc("No assets recorded"), esc(""), esc(""), esc("")].join(","));
+        } else {
+          assets.forEach(a => {
+            lines.push([
+              esc(a.id || ''),
+              esc(a.name || a.title || ''),
+              esc(a.category || 'Asset'),
+              esc(Number(a.value || 0).toFixed(2))
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 6. GOALS & HABIT MILESTONES
+        lines.push([esc("=== SECTION 6: GOALS & HABIT MILESTONES ==="), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Milestone ID"), esc("Title"), esc("Category"), esc("Target Date"), esc("Progress (%)"), esc("Key Steps")].join(","));
+        const milestones = appData.milestones || [];
+        if (milestones.length === 0) {
+          lines.push([esc("No milestones recorded"), esc(""), esc(""), esc(""), esc(""), esc("")].join(","));
+        } else {
+          milestones.forEach(m => {
+            const steps = (m.keySteps || []).map(s => `${s.done ? '[x]' : '[ ]'} ${s.text}`).join('; ');
+            lines.push([
+              esc(m.id || ''),
+              esc(m.title || ''),
+              esc(m.category || 'Goals'),
+              esc(m.targetDate || ''),
+              esc((m.progress || 0) + '%'),
+              esc(steps)
+            ].join(","));
+          });
+        }
+        lines.push("");
+
+        // 7. NOT-TO-DO LIST (HABIT BREAKER)
+        lines.push([esc("=== SECTION 7: NOT-TO-DO LIST (HABIT BREAKERS) ==="), esc(""), esc(""), esc("")].join(","));
+        lines.push([esc("Rule ID"), esc("Rule to Avoid"), esc("Reason / Impact"), esc("Status")].join(","));
+        const notToDo = appData.notToDoList || [];
+        if (notToDo.length === 0) {
+          lines.push([esc("No rules recorded"), esc(""), esc(""), esc("")].join(","));
+        } else {
+          notToDo.forEach(nd => {
+            lines.push([
+              esc(nd.id || ''),
+              esc(nd.rule || ''),
+              esc(nd.reason || ''),
+              esc(nd.active ? 'Active' : 'Archived')
+            ].join(","));
+          });
+        }
+
+        // Prepend UTF-8 BOM (\uFEFF) so Excel opens UTF-8 directly without encoding glitches
+        const csvContent = '\uFEFF' + lines.join('\r\n');
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Smart-Planner-Report-${dateStr}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        showToast('📊 Excel spreadsheet (.csv) downloaded successfully!');
+      } catch (err) {
+        console.error('Error exporting Excel spreadsheet:', err);
+        showToast('Failed to export Excel spreadsheet');
+      }
     }
 
     function exportDataBackup() {
