@@ -4,10 +4,13 @@
   "type": "module",
   "main": "server.js",
   "private": true,
-  "scripts": { "start": "node server.js" },
+  "scripts": {
+    "start": "node server.js"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "puppeteer-core": "^25.15.0"
   }
 }
