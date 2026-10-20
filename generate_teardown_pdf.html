@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Dayframe — Senior PM Product Teardown</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
@@ -10,11 +11,44 @@
       size: A4 portrait;
       margin: 11mm 13mm 13mm 13mm;
       @bottom-right {
-        content: "Page " counter(page) " of 7";
+        content: "Page " counter(page) " of 8";
         font-family: 'Plus Jakarta Sans', sans-serif;
         font-size: 7pt;
         color: #64748b;
       }
+    }
+
+    /* Mermaid Diagram Styling */
+    .mermaid-card {
+      background: #f8fafc;
+      border: 1.2px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 6px 8px;
+      margin-bottom: 6px;
+    }
+
+    .mermaid-title {
+      font-size: 7pt;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 2px;
+    }
+
+    .mermaid {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .mermaid svg {
+      max-width: 100%;
+      height: auto;
     }
 
     * {
@@ -831,105 +865,182 @@
       <span>smartplanner-pro.vercel.app | Oct 2026</span>
     </div>
 
-    <h2>5. Technical & System Architecture</h2>
-    <p style="font-size: 7.6pt; margin-bottom: 6px;">
-      Dayframe is engineered around a <strong>Local-First, Edge-Assisted hybrid architecture</strong>. The UI executes entirely in the client browser for zero-latency interactions and 100% offline functionality, while compute-heavy AI tasks stream through low-latency edge functions.
+    <h2>5. Technical & System Architecture (Mermaid Topologies)</h2>
+    <p style="font-size: 7.4pt; margin-bottom: 5px;">
+      Dayframe implements a <strong>Local-First, Edge-Assisted hybrid architecture</strong>. Client-side state operates with zero latency, while compute-heavy multimodal extraction routes through Groq LPUs (&lt;800ms) and persists to Supabase Cloud PostgreSQL.
     </p>
 
-    <!-- Architecture Visual Topology Block -->
-    <div style="background: #0f172a; border: 1.5px solid #1e293b; border-radius: 7px; padding: 8px 10px; margin-bottom: 7px; color: #f8fafc;">
-      <div style="font-size: 7.2pt; font-weight: 800; color: #34d399; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 5px; display: flex; justify-content: space-between;">
-        <span>SYSTEM TOPOLOGY & DATA FLOW PIPELINE</span>
-        <span style="color: #94a3b8; font-family: 'JetBrains Mono', monospace; font-size: 6.5pt;">LOCAL-FIRST + SERVERLESS EDGE</span>
+    <!-- Mermaid Box 1: Architecture Topology -->
+    <div class="mermaid-card">
+      <div class="mermaid-title">
+        <span>Figure 5.1: High-Level System & Cloud Architecture</span>
+        <span style="color: #059669;">Groq LPU + Supabase Cloud + Vercel Edge</span>
       </div>
-      <div style="display: grid; grid-template-columns: 1.2fr 0.3fr 1fr 0.3fr 1.2fr; align-items: center; gap: 4px; font-size: 6.8pt; text-align: center;">
-        <!-- Client Node -->
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
-          <div style="font-weight: 800; color: #38bdf8;">CLIENT PWA</div>
-          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Vanilla HTML5/ES6</div>
-          <div style="color: #94a3b8; font-size: 5.8pt;">SVG 24h Dial Canvas</div>
-          <div style="color: #a7f3d0; font-size: 5.8pt; font-weight: 700;">LocalStorage Cache</div>
-        </div>
-        <div style="color: #34d399; font-weight: 800; font-size: 8pt;">&harr;</div>
-        <!-- Gateway Node -->
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
-          <div style="font-weight: 800; color: #fbbf24;">EDGE GATEWAY</div>
-          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Vercel Serverless</div>
-          <div style="color: #94a3b8; font-size: 5.8pt;">Node.js Express API</div>
-          <div style="color: #fde68a; font-size: 5.8pt; font-weight: 700;">Rate Limit & Auth</div>
-        </div>
-        <div style="color: #34d399; font-weight: 800; font-size: 8pt;">&rarr;</div>
-        <!-- AI & DB Node -->
-        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
-          <div style="font-weight: 800; color: #c084fc;">NEURAL AI & DB</div>
-          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Groq Llama-3.3-70b</div>
-          <div style="color: #94a3b8; font-size: 5.8pt;">Supabase RLS PG</div>
-          <div style="color: #e9d5ff; font-size: 5.8pt; font-weight: 700;">UTF-8 Excel Exporter</div>
-        </div>
+      <div class="mermaid">
+flowchart TD
+    subgraph Client ["Client Presentation Tier (PWA)"]
+        UI["Glassmorphic UI / Dashboard"]
+        Dial["360° Circular Circadian Dial (SVG)"]
+        DumpUI["AI Brain Dump Capture Dock"]
+        VoiceRec["Web Audio Recorder"]
+        OCRDrop["Clipboard / Receipt OCR"]
+        LocalCache[("LocalStorage Cache")]
+    end
+
+    subgraph Edge ["Edge Gateway (Vercel)"]
+        ServerAPI["Serverless Express API (server.js)"]
+        AuthMid["GIS Auth & Security Headers"]
+    end
+
+    subgraph NeuralAI ["Neural AI Engine (Groq LPU)"]
+        Whisper["Groq Whisper Large v3"]
+        Tesseract["Tesseract.js OCR"]
+        Llama["Groq Llama-3.3-70b-versatile"]
+        JSONSchema["Strict JSON Steering"]
+    end
+
+    subgraph Storage ["Cloud Persistence (Supabase)"]
+        UserTable[("user_planner Table")]
+        RLS["Row-Level Security"]
+    end
+
+    VoiceRec -->|Voice Audio| Whisper
+    Whisper -->|Transcript| Llama
+    OCRDrop -->|Receipt Image| Tesseract
+    Tesseract -->|Text| Llama
+    DumpUI -->|Hinglish Text| Llama
+    Llama --> JSONSchema
+    JSONSchema -->|Structured JSON| ServerAPI
+    ServerAPI -->|Hydrated State| UI
+    UI <-->|Immediate Read/Write| LocalCache
+    UI -->|Render Schedule| Dial
+    UI -->|HTTPS Cloud Sync| ServerAPI
+    ServerAPI -->|Upsert JSONB| UserTable
+    UserTable --- RLS
       </div>
     </div>
 
-    <!-- Architecture Layers Detail -->
-    <div class="arch-layer" style="border-left: 3.5px solid #059669; padding: 6px 9px; margin-bottom: 5px;">
-      <div class="arch-layer-header">
-        <span>LAYER 1: CLIENT PRESENTATION & OFFLINE ENGINE (PWA)</span>
-        <span class="tag tag-emerald">CLIENT TIER</span>
+    <!-- Mermaid Box 2: Multimodal AI Pipeline Flow -->
+    <div class="mermaid-card">
+      <div class="mermaid-title">
+        <span>Figure 5.2: Multimodal AI Processing & Entity Routing Pipeline</span>
+        <span style="color: #0284c7;">Sub-Second NLP Extraction</span>
       </div>
-      <p style="font-size: 7pt; color: #475569; margin-bottom: 2px;">
-        Single-Page Progressive Web App built with Vanilla HTML5/ES6, Dynamic SVG Circadian Dial Canvas renderer (60 FPS), and Web Speech API. Stores full state in browser <code class="code-pill">localStorage</code> with key isolation (<code class="code-pill">smart-planner-user-{id}</code>). Service Worker (<code class="code-pill">sw.js</code>) caches static assets for 100% offline execution.
-      </p>
-      <div>
-        <span class="arch-badge">SVG Dial Renderer (60 FPS)</span>
-        <span class="arch-badge">Web Speech API</span>
-        <span class="arch-badge">Tesseract.js OCR</span>
-        <span class="arch-badge">Service Worker Cache</span>
-        <span class="arch-badge">UTF-8 BOM CSV Generator</span>
-      </div>
-    </div>
-
-    <div class="arch-arrow">&#9660; HTTPS / JSON Edge API (&lt; 80ms) &#9660;</div>
-
-    <div class="arch-layer" style="border-left: 3.5px solid #0284c7; padding: 6px 9px; margin-bottom: 5px;">
-      <div class="arch-layer-header">
-        <span>LAYER 2: EDGE GATEWAY & ROUTING CONTROLLER</span>
-        <span class="tag tag-blue">SERVERLESS TIER</span>
-      </div>
-      <p style="font-size: 7pt; color: #475569; margin-bottom: 2px;">
-        Node.js Express / Vercel Serverless Edge Functions (<code class="code-pill">server.js</code>). Handles auth token verification, rate limiting, request schema validation, and secure API key management preventing secret leakage to clients.
-      </p>
-      <div>
-        <span class="arch-badge">POST /api/ai/brain-dump</span>
-        <span class="arch-badge">GET /api/auth/config</span>
-        <span class="arch-badge">POST /api/sync/supabase</span>
-        <span class="arch-badge">CORS / Security Headers</span>
+      <div class="mermaid">
+flowchart LR
+    In(["Voice / Receipt / Text"]) --> Routing{"Input Type?"}
+    Routing -->|Audio| W["Whisper v3"]
+    Routing -->|Image| O["Tesseract OCR"]
+    Routing -->|Text| L["Llama-3.3-70b"]
+    W --> L
+    O --> L
+    L --> E["Strict JSON Parser"]
+    E --> D1["📅 Dial Blocks"]
+    E --> D2["📋 Priority Tasks"]
+    E --> D3["💰 Expenses & Bills"]
+    E --> D4["⏳ Focus Timers"]
       </div>
     </div>
 
-    <div class="arch-arrow">&#9660; Sub-Second Inference Stream (&lt; 800ms) &#9660;</div>
-
-    <div class="grid-2" style="margin-bottom: 5px;">
-      <div class="arch-layer" style="border-left: 3.5px solid #f59e0b; margin-bottom: 0; padding: 6px 9px;">
-        <div class="arch-layer-header">
-          <span>LAYER 3A: NEURAL AI INFERENCE</span>
-          <span class="tag tag-amber">GROQ LPU</span>
+    <!-- 4 Layers Grid -->
+    <div class="grid-2" style="margin-top: 4px; margin-bottom: 0;">
+      <div class="arch-layer" style="border-left: 3px solid #059669; padding: 4px 7px;">
+        <div class="arch-layer-header" style="font-size: 7.2pt;">
+          <span>LAYER 1: CLIENT PWA</span>
+          <span class="tag tag-emerald">60 FPS SVG</span>
         </div>
-        <p style="font-size: 7pt; color: #475569;">
-          <strong>Groq Cloud API</strong> running <strong>Llama-3.3-70b-versatile</strong>. Uses strict JSON Schema steering to extract entity arrays without hallucinating dates or currencies. Sub-second TTFT (&lt;800ms) enables conversational responsiveness.
+        <p style="font-size: 6.6pt; color: #475569; margin-bottom: 0;">
+          Offline-first Single Page App with SVG 24h dial engine, Web Speech API, and local-first <code class="code-pill">localStorage</code> cache.
         </p>
       </div>
 
-      <div class="arch-layer" style="border-left: 3.5px solid #8b5cf6; margin-bottom: 0; padding: 6px 9px;">
-        <div class="arch-layer-header">
-          <span>LAYER 3B: CLOUD MULTI-TENANT STORAGE</span>
-          <span class="tag tag-purple">DATA PERSISTENCE</span>
+      <div class="arch-layer" style="border-left: 3px solid #0284c7; padding: 4px 7px;">
+        <div class="arch-layer-header" style="font-size: 7.2pt;">
+          <span>LAYER 2: EDGE GATEWAY</span>
+          <span class="tag tag-blue">VERCEL API</span>
         </div>
-        <p style="font-size: 7pt; color: #475569;">
-          <strong>Supabase PostgreSQL</strong> with strict <strong>Row-Level Security (RLS)</strong>. Each user's tasks, journal entries, and finances are partitioned by authenticated Google UID. Fallback to Google Drive multipart diary backup.
+        <p style="font-size: 6.6pt; color: #475569; margin-bottom: 0;">
+          Node.js Express / Vercel Serverless Edge (<code class="code-pill">server.js</code>). Handles auth token verification and API key isolation.
         </p>
       </div>
     </div>
+  </div>
 
-    <h2>Database Schema & Data Model</h2>
+  <!-- ==================== PAGE 6 ==================== -->
+  <div class="page">
+    <div class="top-meta-bar">
+      <span>DAYFRAME | SECTION 6: DATABASE SCHEMA & ENTITY RELATIONSHIPS</span>
+      <span>smartplanner-pro.vercel.app | Oct 2026</span>
+    </div>
+
+    <h2>6. Database Schema & Entity Relational Design (ERD)</h2>
+    <p style="font-size: 7.4pt; margin-bottom: 5px;">
+      Multi-tenant persistence tier powered by <strong>Supabase PostgreSQL</strong> with <strong>Row-Level Security (RLS)</strong>. Each user's data is strictly partitioned by authenticated Google UID with local-first JSON fallback.
+    </p>
+
+    <!-- Mermaid Box: Database ERD -->
+    <div class="mermaid-card">
+      <div class="mermaid-title">
+        <span>Figure 6.1: Entity-Relationship Diagram (Supabase Postgres Data Model)</span>
+        <span style="color: #7c3aed;">100% Data Isolation per User</span>
+      </div>
+      <div class="mermaid">
+erDiagram
+    USER_PLANNER ||--o{ TASK : contains
+    USER_PLANNER ||--o{ SCHEDULE_BLOCK : schedules
+    USER_PLANNER ||--o{ FINANCIAL_RECORD : logs
+    USER_PLANNER ||--o{ MILESTONE : tracks
+    USER_PLANNER ||--o{ NOT_TO_DO : guards
+
+    USER_PLANNER {
+        string email PK "User Primary Key"
+        string user_name "User Display Name"
+        timestamp last_synced "Last Sync Time"
+        jsonb settings "Theme, Currency, Config"
+    }
+
+    TASK {
+        uuid id PK
+        string title "Task Title"
+        string priority "high | med | low"
+        string category "Work | Health | Personal"
+        int duration_mins "Estimated Minutes"
+        boolean completed "Status"
+    }
+
+    SCHEDULE_BLOCK {
+        uuid id PK
+        string title "Block Title"
+        string start_time "HH:mm"
+        string end_time "HH:mm"
+        float dial_angle_start "0 to 360 deg"
+        float dial_angle_end "0 to 360 deg"
+    }
+
+    FINANCIAL_RECORD {
+        uuid id PK
+        string type "income | expense"
+        string item "Item Description"
+        float amount "Transaction Amount"
+        string category "Food | Transport | Bills"
+    }
+
+    MILESTONE {
+        uuid id PK
+        string goal_title "Goal Description"
+        int progress_pct "0 to 100%"
+        date target_date "Target Completion"
+    }
+
+    NOT_TO_DO {
+        uuid id PK
+        string bad_habit "Anti-habit trigger"
+        boolean active "Active Guardrail"
+    }
+      </div>
+    </div>
+
+    <h2>Entity Schema & Security Constraints</h2>
     <table>
       <thead>
         <tr>
@@ -982,14 +1093,14 @@
     </div>
   </div>
 
-  <!-- ==================== PAGE 6 ==================== -->
+  <!-- ==================== PAGE 7 ==================== -->
   <div class="page">
     <div class="top-meta-bar">
-      <span>DAYFRAME | FRICTION ANALYSIS & RICE OPPORTUNITIES</span>
+      <span>DAYFRAME | SECTION 7: FRICTION ANALYSIS & RICE OPPORTUNITIES</span>
       <span>smartplanner-pro.vercel.app | Oct 2026</span>
     </div>
 
-    <h2>6. Friction analysis (The Good & The Bad)</h2>
+    <h2>7. Friction analysis (The Good & The Bad)</h2>
     <table>
       <thead>
         <tr>
@@ -1017,7 +1128,7 @@
       </tbody>
     </table>
 
-    <h2>7. Opportunities, prioritised with RICE</h2>
+    <h2>8. Opportunities, prioritised with RICE</h2>
     <p style="font-size: 7.2pt; color: #64748b; margin-bottom: 4px;">
       Scores are illustrative PM estimates (Reach %, Impact 0.5-3, Confidence %, Effort in person-weeks); RICE = R &times; I &times; C / E.
     </p>
@@ -1090,14 +1201,14 @@
     </table>
   </div>
 
-  <!-- ==================== PAGE 7 ==================== -->
+  <!-- ==================== PAGE 8 ==================== -->
   <div class="page">
     <div class="top-meta-bar">
-      <span>DAYFRAME | BUSINESS MODEL & VALIDATION</span>
+      <span>DAYFRAME | SECTION 8: BUSINESS MODEL & VALIDATION</span>
       <span>smartplanner-pro.vercel.app | Oct 2026</span>
     </div>
 
-    <h2>8. Business model and metrics</h2>
+    <h2>9. Business model and metrics</h2>
     <table>
       <thead>
         <tr>
@@ -1243,5 +1354,21 @@
     </table>
   </div>
 
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: 'default',
+      themeVariables: {
+        fontFamily: 'Plus Jakarta Sans',
+        fontSize: '9px',
+        primaryColor: '#e0f2fe',
+        primaryBorderColor: '#0284c7',
+        primaryTextColor: '#0f172a',
+        lineColor: '#059669',
+        secondaryColor: '#f0fdf4',
+        tertiaryColor: '#f8fafc'
+      }
+    });
+  </script>
 </body>
 </html>

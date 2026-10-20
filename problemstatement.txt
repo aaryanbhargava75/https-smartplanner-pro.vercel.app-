@@ -1,0 +1,46 @@
+================================================================================
+                    SMART PLANNER AI (DAYFRAME PRO)
+                           PROBLEM STATEMENT
+================================================================================
+
+1. THE CORE PROBLEM:
+Modern knowledge workers, freelancers, and neurodivergent individuals waste
+excessive cognitive energy and time trying to organize their daily lives across
+fragmented tools (Google Calendar, Todoist, Notion, Splitwise, WhatsApp, Notes).
+This creates a severe "Setup Tax" paradox: by the time a user finishes manually
+configuring databases, picking start/end time pickers, and categorizing tasks,
+their mental energy to actually execute deep work is depleted.
+
+2. PROBLEM BREAKDOWN:
+
+A. The "Setup Tax" of Traditional Productivity Tools:
+   - Notion requires manual database architecture, tagging, and maintenance.
+   - Google Calendar enforces rigid, multi-click modal forms (start time, end
+     time, notifications, color tagging) for every single commitment.
+   - Todoist & TickTick produce infinite linear lists detached from temporal
+     reality (there are only 24 hours in a day).
+
+B. Input Friction & Information Fragmentation:
+   - Thoughts, commitments, and expenses occur continuously throughout the day
+     in messy, unstructured formats (a WhatsApp voice note, a UPI receipt screenshot,
+     a fleeting Hindi/English thought while commuting).
+   - Manually translating these into separate calendar entries, to-do items, and
+     expense trackers creates high friction, leading to abandoned planning habits.
+
+C. Time-Blindness & ADHD Executive Dysfunction:
+   - Linear to-do lists fail to communicate temporal density. Users overcommit
+     because lists do not visualize day vs. night or available daylight hours.
+   - Neurodivergent thinkers struggle to estimate how long tasks take when viewed
+     as abstract checklists rather than spatial time blocks.
+
+D. Financial & Habit Disconnect:
+   - Daily spending (food delivery, bills, travel) directly impacts daily stress
+     and schedule, yet personal finance tools are completely isolated from
+     daily time planners.
+
+3. FORMAL PROBLEM STATEMENT:
+"Time-poor professionals and visual thinkers lack a frictionless, zero-setup system
+that can autonomously ingest messy multimodal thoughts (voice notes, receipt images,
+unstructured Hinglish text) and instantly convert them into an actionable, circadian
+24-hour visual schedule, prioritized task backlog, and financial log without manual
+data entry."

@@ -90,50 +90,158 @@ turn it into an organized, actionable plan."
 ## 4. Technical & System Architecture
 
 ```mermaid
-graph TD
+flowchart TD
     subgraph Client ["Client Presentation & Offline Engine (PWA)"]
-        UI["Vanilla HTML5 / Modern CSS UI"]
-        Dial["360° SVG Circadian Dial (60 FPS)"]
-        Speech["Web Speech API (Real-time Audio)"]
-        OCR["Tesseract.js / Base64 Vision Engine"]
+        UI["Modern Glassmorphic UI (HTML5 / Vanilla JS)"]
+        Dial["360° Circadian SVG Dial (60 FPS)"]
+        Speech["Web Audio / MediaRecorder (Voice)"]
+        OCR["Tesseract.js OCR / Clipboard Paste"]
         Cache["Browser LocalStorage (smart-planner-user-id)"]
         SW["Service Worker (sw.js - Offline Cache)"]
+        ExportModule["Excel UTF-8 BOM CSV Exporter"]
     end
 
-    subgraph EdgeGateway ["Edge Gateway & Routing Tier"]
-        Server["Node.js Express / Vercel Serverless"]
+    subgraph EdgeGateway ["Edge Gateway & Routing Tier (Vercel)"]
+        Server["Node.js Express / Vercel Serverless (server.js)"]
         AuthMid["Google GIS JWT Verification"]
         RateLimit["Edge Rate Limiter & Schema Validator"]
     end
 
-    subgraph NeuralAI ["Neural AI Inference Engine"]
-        Groq["Groq Cloud LPU Engine (<800ms TTFT)"]
-        Llama["Llama-3.3-70b-versatile"]
+    subgraph NeuralAI ["Neural AI Inference Engine (Groq LPU)"]
+        Whisper["Groq Whisper Large v3 (Speech-to-Text)"]
+        Tesseract["Tesseract.js OCR Engine (Receipts)"]
+        Llama["Groq Llama-3.3-70b-versatile (<800ms)"]
         JSONSchema["Deterministic JSON Output Steering"]
     end
 
     subgraph Persistence ["Multi-Tenant Cloud Persistence Tier"]
-        Supabase["Supabase PostgreSQL Database"]
+        Supabase[("Supabase PostgreSQL Database")]
+        UserPlanner["user_planner Table (Isolated JSONB)"]
         RLS["Row-Level Security (RLS) Isolation"]
-        Drive["Google Drive Multipart API Backup"]
     end
 
-    Client -->|HTTPS POST JSON Payload| EdgeGateway
-    EdgeGateway -->|Sub-second Inference Stream| NeuralAI
-    NeuralAI -->|Validated Schema JSON| EdgeGateway
-    EdgeGateway -->|Hydrated State| Client
-    Client -->|Local First Immediate Write| Cache
-    Client -->|Encrypted Cloud Sync via JWT| Persistence
+    %% Client Interactions
+    Speech -->|Audio Blob| Whisper
+    Whisper -->|Raw Transcript| Llama
+    OCR -->|Receipt Image| Tesseract
+    Tesseract -->|Extracted Text| Llama
+    UI -->|Unstructured Text / Hinglish| Llama
+
+    %% Inference & Response
+    Llama --> JSONSchema
+    JSONSchema -->|Validated Schema JSON| Server
+    Server -->|Hydrated State| UI
+
+    %% Local & Cloud Storage
+    UI <-->|Immediate Local-First Write| Cache
+    UI -->|Render Schedule Blocks| Dial
+    UI -->|Export Report| ExportModule
+    UI -->|Encrypted HTTPS Sync| Server
+    Server -->|Upsert Payload| UserPlanner
+    UserPlanner --- RLS
+    UserPlanner --- Supabase
 ```
 
-### 4.1 System Topology Layers
+### 4.1 Multimodal AI Processing Pipeline Flow
+
+```mermaid
+flowchart TD
+    Start(["User Input (Voice / Screenshot / Text)"]) --> CheckType{"Input Modality?"}
+
+    CheckType -->|Voice Note| VoiceStep["Web Audio Capture / Mic"]
+    VoiceStep --> WhisperStep["Groq Whisper Large v3 Transcription"]
+    WhisperStep --> Combine["Unified Text Prompt"]
+
+    CheckType -->|Receipt Screenshot| OCRStep["Tesseract OCR Engine"]
+    OCRStep --> Combine
+
+    CheckType -->|Text / Hinglish| Combine
+
+    Combine --> LLM["Groq Llama-3.3-70b-versatile Processing"]
+    LLM --> JSONParse["Strict JSON Entity Extraction"]
+
+    JSONParse --> RouteEntities{"Entity Routing"}
+
+    RouteEntities -->|Schedule Slots| DialBlock["24h Circular Dial (Journal Block)"]
+    RouteEntities -->|Todo Items| TaskList["Priority Tasks Backlog (High/Med/Low)"]
+    RouteEntities -->|Bill / Expense| Finance["Finances & Budget Tracker"]
+    RouteEntities -->|Focus Goals| Timers["Pomodoro Focus Timers"]
+
+    DialBlock --> StateUpdate["Update LocalStorage & Sync to Supabase"]
+    TaskList --> StateUpdate
+    Finance --> StateUpdate
+    Timers --> StateUpdate
+
+    StateUpdate --> End(["Render Interactive UI & Sound Haptics"])
+```
+
+### 4.2 System Topology Layers
 1. **Client Tier (PWA):** Local-first Single Page Application. Direct DOM rendering via CSS variables and SVG canvas. The service worker caches static bundles enabling full functionality without internet connectivity.
 2. **Serverless Edge Gateway:** Deployed on Vercel Edge (`server.js`). Encapsulates third-party secrets (Groq API keys, Supabase service roles) so no sensitive credentials touch client browsers.
 3. **Neural Inference Engine:** Groq Cloud running `llama-3.3-70b-versatile`. Output is constrained using a strict JSON schema preventing hallucinations of dates, invalid currencies, or overlapping time blocks.
 4. **Data Persistence Tier:** Multi-tenant architecture using Supabase PostgreSQL protected by Row-Level Security (`auth.uid() = user_id`), ensuring zero data cross-contamination between accounts.
 5. **Data Portability Subsystem:** Direct browser-side UTF-8 BOM (`\uFEFF`) CSV generator formatted specifically for Microsoft Excel and Google Sheets.
 
-### 4.2 Database Schema & Entity Relational Design
+### 4.3 Database Schema & Entity Relational Design (ERD)
+
+```mermaid
+erDiagram
+    USER_PLANNER ||--o{ TASK : contains
+    USER_PLANNER ||--o{ SCHEDULE_BLOCK : schedules
+    USER_PLANNER ||--o{ FINANCIAL_RECORD : logs
+    USER_PLANNER ||--o{ MILESTONE : tracks
+    USER_PLANNER ||--o{ NOT_TO_DO : guards
+
+    USER_PLANNER {
+        string email PK "User Primary Key"
+        string user_name "User Display Name"
+        timestamp last_synced "Last Update Timestamp"
+        jsonb settings "Theme, Currency, Notification Config"
+    }
+
+    TASK {
+        uuid id PK
+        string title "Task Title"
+        string priority "high | medium | low"
+        string category "Work | Health | Personal | Learning"
+        int estimated_minutes "Duration in minutes"
+        boolean completed "Status"
+        date due_date "Due Date"
+    }
+
+    SCHEDULE_BLOCK {
+        uuid id PK
+        string title "Block Title"
+        string start_time "HH:mm"
+        string end_time "HH:mm"
+        string category "Deep Work | Meeting | Rest | Personal"
+        float dial_angle_start "0 to 360 degrees"
+        float dial_angle_end "0 to 360 degrees"
+    }
+
+    FINANCIAL_RECORD {
+        uuid id PK
+        string type "income | expense"
+        string item "Title / Description"
+        float amount "Transaction Amount"
+        string category "Food | Transport | SaaS | Utilities"
+        timestamp timestamp "Record Date & Time"
+    }
+
+    MILESTONE {
+        uuid id PK
+        string goal_title "Goal Description"
+        int progress_percentage "0 - 100"
+        json key_steps "Checklist of sub-steps"
+        date target_date "Target Completion"
+    }
+
+    NOT_TO_DO {
+        uuid id PK
+        string bad_habit "Anti-habit trigger to avoid"
+        boolean active "Active guardrail"
+    }
+```
 
 | Entity | Primary Attributes | Relational Constraints & Security Scope |
 | :--- | :--- | :--- |
@@ -142,7 +250,7 @@ graph TD
 | **`expenses` / `incomes`** | `id`, `user_id`, `date`, `item`, `category`, `amount`, `type` | Non-negative decimals. Client formats via dynamic currency symbol. |
 | **`milestones`** | `id`, `user_id`, `title`, `category`, `targetDate`, `progress`, `keySteps` | JSONB nested array for granular sub-task checklist. |
 
-### 4.3 Technical Performance & Security SLAs
+### 4.4 Technical Performance & Security SLAs
 * **Inference Latency:** `< 800ms` Time-to-First-Token via Groq LPUs.
 * **Offline Readiness:** `100% Core Functionality` accessible via local-first cache.
 * **Privacy & Compliance:** Zero third-party ad telemetry or tracking pixels. Client notes sanitized against XSS.
@@ -152,11 +260,32 @@ graph TD
 ## 5. End-to-End User Journey Mapping
 
 ```mermaid
+journey
+    title Smart Planner (Dayframe) User Journey
+    section 1. Capture
+      Open app with zero setup: 5: User
+      Record 15-sec voice memo / paste UPI bill: 5: User, Whisper, OCR
+    section 2. Auto-Organization
+      Groq AI categorizes text into tasks & blocks: 5: Groq Llama 3.3
+      Collision-free time slot allocation: 4: Smart Planner Engine
+    section 3. Visual Planning
+      View 24-hour circular dial: 5: User, SVG Dial
+      Drag and adjust schedule blocks: 4: User
+    section 4. Execution & Focus
+      Start 25-minute Pomodoro timer: 5: User, Timer
+      Avoid Not-To-Do distractions: 4: User
+    section 5. Export & Sync
+      Automatic cloud sync to Supabase: 5: Supabase
+      1-Click Excel CSV export: 5: User, Exporter
+```
+
+```mermaid
 graph LR
     A["Stage 1: Capture<br/>(Voice / Text / OCR)"] --> B["Stage 2: AI Parsing<br/>(Sub-second Entity Extractor)"]
     B --> C["Stage 3: Spatial Dial<br/>(Circadian Time Blocking)"]
     C --> D["Stage 4: Execution<br/>(Pomodoro + Not-To-Do)"]
-    D --> E["Stage 5: Review & Export<br/>(Excel Spreadsheet Download)"]
+    E["Stage 5: Review & Export<br/>(Excel Spreadsheet Download)"]
+    D --> E
 ```
 
 1. **Stage 1: Trigger & Capture:** User records a 15-second voice note while walking. Cognitive state transitions from overwhelmed to relieved.
