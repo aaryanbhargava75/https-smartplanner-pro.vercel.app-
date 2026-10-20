@@ -850,23 +850,56 @@ const htmlContent = `<!DOCTYPE html>
   <!-- ==================== PAGE 5 ==================== -->
   <div class="page">
     <div class="top-meta-bar">
-      <span>DAYFRAME | TECHNICAL & SYSTEM ARCHITECTURE</span>
+      <span>DAYFRAME | SECTION 5: TECHNICAL & SYSTEM ARCHITECTURE</span>
       <span>smartplanner-pro.vercel.app | Oct 2026</span>
     </div>
 
-    <h2>Technical & System Architecture</h2>
-    <p style="font-size: 7.8pt;">
-      Dayframe employs a <strong>Local-First, Edge-Assisted hybrid architecture</strong>. The UI executes entirely in the client browser for zero-latency interactions and 100% offline functionality, while compute-heavy AI tasks stream through low-latency edge functions.
+    <h2>5. Technical & System Architecture</h2>
+    <p style="font-size: 7.6pt; margin-bottom: 6px;">
+      Dayframe is engineered around a <strong>Local-First, Edge-Assisted hybrid architecture</strong>. The UI executes entirely in the client browser for zero-latency interactions and 100% offline functionality, while compute-heavy AI tasks stream through low-latency edge functions.
     </p>
 
-    <!-- Architecture Layers -->
-    <div class="arch-layer" style="border-left: 3.5px solid #059669;">
+    <!-- Architecture Visual Topology Block -->
+    <div style="background: #0f172a; border: 1.5px solid #1e293b; border-radius: 7px; padding: 8px 10px; margin-bottom: 7px; color: #f8fafc;">
+      <div style="font-size: 7.2pt; font-weight: 800; color: #34d399; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 5px; display: flex; justify-content: space-between;">
+        <span>SYSTEM TOPOLOGY & DATA FLOW PIPELINE</span>
+        <span style="color: #94a3b8; font-family: 'JetBrains Mono', monospace; font-size: 6.5pt;">LOCAL-FIRST + SERVERLESS EDGE</span>
+      </div>
+      <div style="display: grid; grid-template-columns: 1.2fr 0.3fr 1fr 0.3fr 1.2fr; align-items: center; gap: 4px; font-size: 6.8pt; text-align: center;">
+        <!-- Client Node -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
+          <div style="font-weight: 800; color: #38bdf8;">CLIENT PWA</div>
+          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Vanilla HTML5/ES6</div>
+          <div style="color: #94a3b8; font-size: 5.8pt;">SVG 24h Dial Canvas</div>
+          <div style="color: #a7f3d0; font-size: 5.8pt; font-weight: 700;">LocalStorage Cache</div>
+        </div>
+        <div style="color: #34d399; font-weight: 800; font-size: 8pt;">&harr;</div>
+        <!-- Gateway Node -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
+          <div style="font-weight: 800; color: #fbbf24;">EDGE GATEWAY</div>
+          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Vercel Serverless</div>
+          <div style="color: #94a3b8; font-size: 5.8pt;">Node.js Express API</div>
+          <div style="color: #fde68a; font-size: 5.8pt; font-weight: 700;">Rate Limit & Auth</div>
+        </div>
+        <div style="color: #34d399; font-weight: 800; font-size: 8pt;">&rarr;</div>
+        <!-- AI & DB Node -->
+        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 5px; padding: 6px 4px;">
+          <div style="font-weight: 800; color: #c084fc;">NEURAL AI & DB</div>
+          <div style="color: #94a3b8; font-size: 5.8pt; margin-top: 2px;">Groq Llama-3.3-70b</div>
+          <div style="color: #94a3b8; font-size: 5.8pt;">Supabase RLS PG</div>
+          <div style="color: #e9d5ff; font-size: 5.8pt; font-weight: 700;">UTF-8 Excel Exporter</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Architecture Layers Detail -->
+    <div class="arch-layer" style="border-left: 3.5px solid #059669; padding: 6px 9px; margin-bottom: 5px;">
       <div class="arch-layer-header">
         <span>LAYER 1: CLIENT PRESENTATION & OFFLINE ENGINE (PWA)</span>
         <span class="tag tag-emerald">CLIENT TIER</span>
       </div>
-      <p style="font-size: 7.2pt; color: #475569;">
-        Single-Page Progressive Web App built with Vanilla HTML5/ES6, Dynamic SVG Circadian Dial Canvas renderer (60 FPS), and Web Speech API. Stores state in browser <code class="code-pill">localStorage</code> with key isolation (<code class="code-pill">smart-planner-user-{id}</code>). Service Worker (<code class="code-pill">sw.js</code>) caches static assets for offline execution.
+      <p style="font-size: 7pt; color: #475569; margin-bottom: 2px;">
+        Single-Page Progressive Web App built with Vanilla HTML5/ES6, Dynamic SVG Circadian Dial Canvas renderer (60 FPS), and Web Speech API. Stores full state in browser <code class="code-pill">localStorage</code> with key isolation (<code class="code-pill">smart-planner-user-{id}</code>). Service Worker (<code class="code-pill">sw.js</code>) caches static assets for 100% offline execution.
       </p>
       <div>
         <span class="arch-badge">SVG Dial Renderer (60 FPS)</span>
@@ -879,12 +912,12 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="arch-arrow">&#9660; HTTPS / JSON Edge API (&lt; 80ms) &#9660;</div>
 
-    <div class="arch-layer" style="border-left: 3.5px solid #0284c7;">
+    <div class="arch-layer" style="border-left: 3.5px solid #0284c7; padding: 6px 9px; margin-bottom: 5px;">
       <div class="arch-layer-header">
         <span>LAYER 2: EDGE GATEWAY & ROUTING CONTROLLER</span>
         <span class="tag tag-blue">SERVERLESS TIER</span>
       </div>
-      <p style="font-size: 7.2pt; color: #475569;">
+      <p style="font-size: 7pt; color: #475569; margin-bottom: 2px;">
         Node.js Express / Vercel Serverless Edge Functions (<code class="code-pill">server.js</code>). Handles auth token verification, rate limiting, request schema validation, and secure API key management preventing secret leakage to clients.
       </p>
       <div>
@@ -897,23 +930,23 @@ const htmlContent = `<!DOCTYPE html>
 
     <div class="arch-arrow">&#9660; Sub-Second Inference Stream (&lt; 800ms) &#9660;</div>
 
-    <div class="grid-2" style="margin-bottom: 6px;">
-      <div class="arch-layer" style="border-left: 3.5px solid #f59e0b; margin-bottom: 0;">
+    <div class="grid-2" style="margin-bottom: 5px;">
+      <div class="arch-layer" style="border-left: 3.5px solid #f59e0b; margin-bottom: 0; padding: 6px 9px;">
         <div class="arch-layer-header">
           <span>LAYER 3A: NEURAL AI INFERENCE</span>
           <span class="tag tag-amber">GROQ LPU</span>
         </div>
-        <p style="font-size: 7.2pt; color: #475569;">
+        <p style="font-size: 7pt; color: #475569;">
           <strong>Groq Cloud API</strong> running <strong>Llama-3.3-70b-versatile</strong>. Uses strict JSON Schema steering to extract entity arrays without hallucinating dates or currencies. Sub-second TTFT (&lt;800ms) enables conversational responsiveness.
         </p>
       </div>
 
-      <div class="arch-layer" style="border-left: 3.5px solid #8b5cf6; margin-bottom: 0;">
+      <div class="arch-layer" style="border-left: 3.5px solid #8b5cf6; margin-bottom: 0; padding: 6px 9px;">
         <div class="arch-layer-header">
           <span>LAYER 3B: CLOUD MULTI-TENANT STORAGE</span>
           <span class="tag tag-purple">DATA PERSISTENCE</span>
         </div>
-        <p style="font-size: 7.2pt; color: #475569;">
+        <p style="font-size: 7pt; color: #475569;">
           <strong>Supabase PostgreSQL</strong> with strict <strong>Row-Level Security (RLS)</strong>. Each user's tasks, journal entries, and finances are partitioned by authenticated Google UID. Fallback to Google Drive multipart diary backup.
         </p>
       </div>
@@ -946,6 +979,30 @@ const htmlContent = `<!DOCTYPE html>
         </tr>
       </tbody>
     </table>
+
+    <!-- Architecture SLA Matrix -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 6px; margin-top: 4px;">
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 4px 6px; text-align: center;">
+        <div style="font-size: 6pt; color: #64748b; font-weight: 700;">INFERENCE LATENCY</div>
+        <div style="font-size: 9.5pt; font-weight: 800; color: #059669;">&lt; 800 ms</div>
+        <div style="font-size: 5.5pt; color: #64748b;">Groq LPUs</div>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 4px 6px; text-align: center;">
+        <div style="font-size: 6pt; color: #64748b; font-weight: 700;">OFFLINE READINESS</div>
+        <div style="font-size: 9.5pt; font-weight: 800; color: #0284c7;">100% Core</div>
+        <div style="font-size: 5.5pt; color: #64748b;">LocalStorage PWA</div>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 4px 6px; text-align: center;">
+        <div style="font-size: 6pt; color: #64748b; font-weight: 700;">DATA PRIVACY</div>
+        <div style="font-size: 9.5pt; font-weight: 800; color: #7c3aed;">Zero Trackers</div>
+        <div style="font-size: 5.5pt; color: #64748b;">No third-party ads</div>
+      </div>
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 5px; padding: 4px 6px; text-align: center;">
+        <div style="font-size: 6pt; color: #64748b; font-weight: 700;">EXPORT ENCODING</div>
+        <div style="font-size: 9.5pt; font-weight: 800; color: #d97706;">\uFEFF UTF-8</div>
+        <div style="font-size: 5.5pt; color: #64748b;">Excel Native</div>
+      </div>
+    </div>
   </div>
 
   <!-- ==================== PAGE 6 ==================== -->
