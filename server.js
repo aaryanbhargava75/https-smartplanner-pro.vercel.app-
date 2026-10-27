@@ -3,6 +3,7 @@ import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
 import os from 'os';
+import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
@@ -120,6 +121,117 @@ app.post('/api/auth/save-google-client-id', (req, res) => {
     res.json({ success: true, message: 'Google Client ID saved' });
   } catch (e) {
     res.status(500).json({ error: e.message });
+  }
+});
+
+// User Authentication Database & Password Hashing
+const AUTH_FILE = path.join(USER_DATA_DIR, 'auth_accounts.json');
+
+function getAuthAccounts() {
+  try {
+    if (fs.existsSync(AUTH_FILE)) {
+      return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf-8'));
+    }
+  } catch (e) {}
+  return {};
+}
+
+function saveAuthAccounts(accounts) {
+  try {
+    if (!fs.existsSync(USER_DATA_DIR)) {
+      fs.mkdirSync(USER_DATA_DIR, { recursive: true });
+    }
+    fs.writeFileSync(AUTH_FILE, JSON.stringify(accounts, null, 2), 'utf-8');
+  } catch (e) {}
+}
+
+function hashPassword(pw) {
+  return crypto.createHash('sha256').update(String(pw) + '_dayframe_secure_2026_salt').digest('hex');
+}
+
+// REGISTER NEW ACCOUNT
+app.post('/api/auth/register', (req, res) => {
+  try {
+    const { email, password, name } = req.body || {};
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Valid email address is required' });
+    }
+    if (!password || password.length < 4) {
+      return res.status(400).json({ error: 'Password must be at least 4 characters long' });
+    }
+    const cleanEmail = email.trim().toLowerCase();
+    const accounts = getAuthAccounts();
+    if (accounts[cleanEmail]) {
+      return res.status(409).json({ error: 'An account already exists with this email. Please sign in.' });
+    }
+    const displayName = (name && name.trim()) ? name.trim() : cleanEmail.split('@')[0];
+    accounts[cleanEmail] = {
+      email: cleanEmail,
+      name: displayName,
+      passwordHash: hashPassword(password),
+      createdAt: new Date().toISOString()
+    };
+    saveAuthAccounts(accounts);
+    return res.json({
+      success: true,
+      user: {
+        email: cleanEmail,
+        name: displayName,
+        picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`
+      }
+    });
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
+  }
+});
+
+// SIGN IN TO EXISTING ACCOUNT
+app.post('/api/auth/login', (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({ error: 'Valid email address is required' });
+    }
+    if (!password) {
+      return res.status(400).json({ error: 'Password is required to access your account' });
+    }
+    const cleanEmail = email.trim().toLowerCase();
+    const accounts = getAuthAccounts();
+    const user = accounts[cleanEmail];
+    
+    if (user) {
+      if (user.passwordHash !== hashPassword(password)) {
+        return res.status(401).json({ error: 'Incorrect password! Please check your credentials.' });
+      }
+      return res.json({
+        success: true,
+        user: {
+          email: user.email,
+          name: user.name,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.email)}`
+        }
+      });
+    } else {
+      // Account not registered on server yet - register it with this password
+      const displayName = cleanEmail.split('@')[0];
+      accounts[cleanEmail] = {
+        email: cleanEmail,
+        name: displayName.charAt(0).toUpperCase() + displayName.slice(1),
+        passwordHash: hashPassword(password),
+        createdAt: new Date().toISOString()
+      };
+      saveAuthAccounts(accounts);
+      return res.json({
+        success: true,
+        user: {
+          email: cleanEmail,
+          name: accounts[cleanEmail].name,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`
+        }
+      });
+    }
+  } catch (e) {
+    return res.status(500).json({ error: e.message });
   }
 });
 

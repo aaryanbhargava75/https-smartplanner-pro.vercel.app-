@@ -419,6 +419,14 @@
           <span id="expensesCountBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-[#1b2d23] text-[#8ca395] font-semibold border border-[#274433]">₹0</span>
         </button>
 
+        <button data-tab="nutrition" class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all text-[#8ca395] hover:bg-[#14231b] hover:text-white font-medium">
+          <div class="flex items-center gap-3">
+            <span class="material-symbols-outlined text-[19px]">restaurant</span>
+            <span>Nutrition &amp; Health</span>
+          </div>
+          <span id="nutritionCountBadge" class="text-[11px] px-2 py-0.5 rounded-full bg-[#1b2d23] text-[#d2f84a] font-semibold border border-[#274433]">0g P</span>
+        </button>
+
         <button data-tab="journal" class="nav-item flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs transition-all text-[#8ca395] hover:bg-[#14231b] hover:text-white font-medium">
           <div class="flex items-center gap-3">
             <span class="material-symbols-outlined text-[19px]">edit_note</span>
@@ -2495,6 +2503,340 @@
 
       </section>
 
+      <!-- ========================================================================= -->
+      <!-- TAB: NUTRITION, MACROS & WELLNESS TRACKER -->
+      <!-- ========================================================================= -->
+      <section id="tab-nutrition" class="tab-pane hidden flex flex-col gap-6">
+        
+        <!-- Header Banner with Quick Stats & Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-[var(--df-border)]">
+          <div>
+            <div class="flex items-center gap-2.5">
+              <div class="w-8 h-8 rounded-xl bg-[#d2f84a]/20 border border-[#d2f84a]/30 flex items-center justify-center text-[#2e6f40] dark:text-[#d2f84a]">
+                <span class="material-symbols-outlined text-[20px]">restaurant</span>
+              </div>
+              <h2 class="text-lg font-extrabold text-[var(--df-text)]">Nutrition &amp; Daily Wellness</h2>
+            </div>
+            <p class="text-xs text-[var(--df-text-muted)] mt-1">
+              Log approximate dishes to auto-calculate Protein, Macros &amp; Micros. Track sleep &amp; hydration with zero friction.
+            </p>
+          </div>
+
+          <div class="flex items-center gap-2 self-start sm:self-auto">
+            <button type="button" onclick="openNutritionGoalsModal()" class="px-3 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-xs font-semibold text-[var(--df-text)] border border-[var(--df-border)] transition-all flex items-center gap-1.5 cursor-pointer">
+              <span class="material-symbols-outlined text-[15px]">tune</span>
+              <span>Edit Daily Targets</span>
+            </button>
+            <button type="button" onclick="resetTodayNutrition()" class="px-3 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-rose-500/10 text-rose-500 border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer" title="Reset today's food &amp; water count">
+              <span class="material-symbols-outlined text-[15px]">refresh</span>
+              <span>Reset Today</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 4 Hero Overview Cards: Protein, Calories, Water, Sleep -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- Card 1: Protein Tracker (Highlighted) -->
+          <div class="bg-[var(--df-card)] rounded-2xl p-4 sm:p-5 border border-[#d2f84a]/30 relative overflow-hidden flex flex-col justify-between shadow-sm">
+            <div class="absolute -right-4 -bottom-4 w-24 h-24 rounded-full bg-[#d2f84a]/10 pointer-events-none blur-xl"></div>
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-[var(--df-text-muted)] mb-2">
+                <span class="flex items-center gap-1.5 text-[#2e6f40] dark:text-[#d2f84a]">
+                  <span class="material-symbols-outlined text-[16px]">fitness_center</span>
+                  <span>Daily Protein</span>
+                </span>
+                <span id="nutrProteinPct" class="px-2 py-0.5 rounded-full bg-[#d2f84a]/20 text-[#2e6f40] dark:text-[#d2f84a] text-[11px] font-extrabold">0%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span id="nutrProteinCurrent" class="text-3xl font-extrabold text-[var(--df-text)] tracking-tight">0</span>
+                <span class="text-xs text-[var(--df-text-muted)] font-medium">/ <span id="nutrProteinTarget">120</span>g</span>
+              </div>
+              <p id="nutrProteinRemaining" class="text-[11px] text-[var(--df-text-muted)] mt-1 font-medium">120g left to hit goal</p>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-[var(--df-card-inner)] h-2.5 rounded-full overflow-hidden mt-4 border border-[var(--df-border)]">
+              <div id="nutrProteinBar" class="bg-[#d2f84a] h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Card 2: Calories & Energy -->
+          <div class="bg-[var(--df-card)] rounded-2xl p-4 sm:p-5 border border-[var(--df-border)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-[var(--df-text-muted)] mb-2">
+                <span class="flex items-center gap-1.5 text-amber-500">
+                  <span class="material-symbols-outlined text-[16px]">local_fire_department</span>
+                  <span>Calories / Energy</span>
+                </span>
+                <span id="nutrCaloriesPct" class="px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 text-[11px] font-extrabold">0%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span id="nutrCaloriesCurrent" class="text-3xl font-extrabold text-[var(--df-text)] tracking-tight">0</span>
+                <span class="text-xs text-[var(--df-text-muted)] font-medium">/ <span id="nutrCaloriesTarget">2,200</span> kcal</span>
+              </div>
+              <p id="nutrCaloriesRemaining" class="text-[11px] text-[var(--df-text-muted)] mt-1 font-medium">2,200 kcal remaining</p>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-[var(--df-card-inner)] h-2.5 rounded-full overflow-hidden mt-4 border border-[var(--df-border)]">
+              <div id="nutrCaloriesBar" class="bg-amber-500 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Card 3: Water Intake Tracker -->
+          <div class="bg-[var(--df-card)] rounded-2xl p-4 sm:p-5 border border-[var(--df-border)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-[var(--df-text-muted)] mb-2">
+                <span class="flex items-center gap-1.5 text-sky-500">
+                  <span class="material-symbols-outlined text-[16px]">water_drop</span>
+                  <span>Water Intake</span>
+                </span>
+                <span id="nutrWaterPct" class="px-2 py-0.5 rounded-full bg-sky-500/10 text-sky-500 text-[11px] font-extrabold">0%</span>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span id="nutrWaterCurrent" class="text-3xl font-extrabold text-[var(--df-text)] tracking-tight">0.0</span>
+                <span class="text-xs text-[var(--df-text-muted)] font-medium">/ <span id="nutrWaterTarget">3.0</span> L</span>
+                <span id="nutrWaterGlasses" class="text-[11px] text-[var(--df-text-muted)] ml-auto font-medium">(0 glasses)</span>
+              </div>
+              <!-- Quick Add Buttons -->
+              <div class="flex items-center gap-1.5 mt-2.5">
+                <button type="button" onclick="addWaterIntake(250)" class="flex-1 py-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-bold text-[10px] transition-colors border border-sky-500/20 cursor-pointer text-center">
+                  +250ml 🥛
+                </button>
+                <button type="button" onclick="addWaterIntake(500)" class="flex-1 py-1 rounded-lg bg-sky-500/10 hover:bg-sky-500/20 text-sky-600 dark:text-sky-400 font-bold text-[10px] transition-colors border border-sky-500/20 cursor-pointer text-center">
+                  +500ml 🍶
+                </button>
+                <button type="button" onclick="addWaterIntake(-250)" class="px-2 py-1 rounded-lg bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-[var(--df-text-muted)] text-[10px] transition-colors border border-[var(--df-border)] cursor-pointer" title="Minus 1 glass">
+                  -250
+                </button>
+              </div>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-[var(--df-card-inner)] h-2.5 rounded-full overflow-hidden mt-3 border border-[var(--df-border)]">
+              <div id="nutrWaterBar" class="bg-sky-500 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <!-- Card 4: Sleep Tracker -->
+          <div class="bg-[var(--df-card)] rounded-2xl p-4 sm:p-5 border border-[var(--df-border)] flex flex-col justify-between shadow-sm">
+            <div>
+              <div class="flex items-center justify-between text-xs font-bold text-[var(--df-text-muted)] mb-2">
+                <span class="flex items-center gap-1.5 text-indigo-400">
+                  <span class="material-symbols-outlined text-[16px]">bedtime</span>
+                  <span>Sleep &amp; Rest</span>
+                </span>
+                <button type="button" onclick="openLogSleepModal()" class="text-[11px] text-indigo-400 hover:underline font-bold flex items-center gap-0.5 cursor-pointer">
+                  <span>Log</span>
+                  <span class="material-symbols-outlined text-[12px]">edit</span>
+                </button>
+              </div>
+              <div class="flex items-baseline gap-1.5">
+                <span id="nutrSleepHours" class="text-3xl font-extrabold text-[var(--df-text)] tracking-tight">7.5</span>
+                <span class="text-xs text-[var(--df-text-muted)] font-medium">hrs / 8.0 target</span>
+              </div>
+              <div class="flex items-center gap-2 mt-2">
+                <span id="nutrSleepQualityBadge" class="px-2 py-0.5 rounded-full bg-indigo-500/10 text-indigo-400 text-[10px] font-bold border border-indigo-500/20">
+                  😴 Deep Rest
+                </span>
+                <span id="nutrSleepTimes" class="text-[10px] text-[var(--df-text-muted)] font-medium">11:30 PM → 7:00 AM</span>
+              </div>
+            </div>
+            <!-- Progress bar -->
+            <div class="w-full bg-[var(--df-card-inner)] h-2.5 rounded-full overflow-hidden mt-4 border border-[var(--df-border)]">
+              <div id="nutrSleepBar" class="bg-indigo-500 h-full rounded-full transition-all duration-500 shadow-sm" style="width: 93%"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Macros Breakdown & Micros Strip -->
+        <div class="bg-[var(--df-card)] rounded-2xl p-5 border border-[var(--df-border)] flex flex-col gap-4 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="text-xs font-bold uppercase tracking-wider text-[var(--df-text-muted)]">Macronutrients Balance</h3>
+              <p class="text-xs text-[var(--df-text)] font-semibold mt-0.5">Protein, Carbohydrates &amp; Healthy Fats Distribution</p>
+            </div>
+            <div class="flex items-center gap-4 text-xs font-bold">
+              <span class="flex items-center gap-1.5 text-[#2e6f40] dark:text-[#d2f84a]">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#d2f84a]"></span>
+                <span>Protein: <strong id="macroProteinTotal">0g</strong></span>
+              </span>
+              <span class="flex items-center gap-1.5 text-sky-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+                <span>Carbs: <strong id="macroCarbsTotal">0g</strong></span>
+              </span>
+              <span class="flex items-center gap-1.5 text-amber-400">
+                <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+                <span>Fats: <strong id="macroFatsTotal">0g</strong></span>
+              </span>
+            </div>
+          </div>
+
+          <!-- Visual Segmented Bar -->
+          <div class="w-full h-3 rounded-full bg-[var(--df-card-inner)] flex overflow-hidden border border-[var(--df-border)]">
+            <div id="macroBarProtein" class="bg-[#d2f84a] h-full transition-all duration-500" style="width: 0%" title="Protein"></div>
+            <div id="macroBarCarbs" class="bg-sky-400 h-full transition-all duration-500" style="width: 0%" title="Carbs"></div>
+            <div id="macroBarFats" class="bg-amber-400 h-full transition-all duration-500" style="width: 0%" title="Fats"></div>
+          </div>
+
+          <!-- Key Micronutrients summary badges -->
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-2 border-t border-[var(--df-border)]">
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
+              <span class="material-symbols-outlined text-[16px] text-emerald-500">eco</span>
+              <div class="text-[11px]">
+                <span class="text-[var(--df-text-muted)] block text-[10px]">Dietary Fiber</span>
+                <span class="font-bold text-[var(--df-text)]" id="microFiber">0g</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
+              <span class="material-symbols-outlined text-[16px] text-blue-400">water</span>
+              <div class="text-[11px]">
+                <span class="text-[var(--df-text-muted)] block text-[10px]">Calcium</span>
+                <span class="font-bold text-[var(--df-text)]" id="microCalcium">0 mg</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
+              <span class="material-symbols-outlined text-[16px] text-rose-400">favorite</span>
+              <div class="text-[11px]">
+                <span class="text-[var(--df-text-muted)] block text-[10px]">Iron</span>
+                <span class="font-bold text-[var(--df-text)]" id="microIron">0 mg</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 p-2 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
+              <span class="material-symbols-outlined text-[16px] text-amber-400">wb_sunny</span>
+              <div class="text-[11px]">
+                <span class="text-[var(--df-text-muted)] block text-[10px]">Vitamin C</span>
+                <span class="font-bold text-[var(--df-text)]" id="microVitC">0 mg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Dish / Meal Estimator & Logger -->
+        <div class="bg-[var(--df-card)] rounded-2xl p-5 border border-[var(--df-border)] flex flex-col gap-4 shadow-sm">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[#2e6f40] dark:text-[#d2f84a] text-[20px]">psychology</span>
+              <h3 class="text-sm font-bold text-[var(--df-text)]">Smart Dish Estimator &amp; Quick Logger</h3>
+            </div>
+            <span class="text-[11px] text-[var(--df-text-muted)]">Type what you ate in natural words (e.g. "2 paneer paratha with curd", "3 eggs &amp; toast", "chicken rice bowl")</span>
+          </div>
+
+          <form onsubmit="handleDishSubmit(event)" class="flex flex-col gap-3">
+            <div class="flex flex-col md:flex-row gap-3">
+              <!-- Dish text input -->
+              <div class="flex-1 flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
+                <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">dinner_dining</span>
+                <input type="text" id="dishInput" oninput="previewDishEstimate()" placeholder="e.g. 2 paneer paratha with curd, 3 boiled eggs + toast, chicken curry &amp; rice..." class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium" autocomplete="off"/>
+              </div>
+
+              <!-- Meal Category Selector -->
+              <select id="dishMealType" class="bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2 text-xs font-semibold text-[var(--df-text)] outline-none cursor-pointer">
+                <option value="Breakfast">🍳 Breakfast</option>
+                <option value="Lunch" selected>🍱 Lunch</option>
+                <option value="Dinner">🍲 Dinner</option>
+                <option value="Snacks">🥤 Snack / Shake</option>
+              </select>
+
+              <!-- Portion Multiplier -->
+              <select id="dishPortion" onchange="previewDishEstimate()" class="bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2 text-xs font-semibold text-[var(--df-text)] outline-none cursor-pointer">
+                <option value="0.5">0.5x (Small portion)</option>
+                <option value="1" selected>1.0x (Regular / 1 serving)</option>
+                <option value="1.5">1.5x (Large serving)</option>
+                <option value="2">2.0x (Double serving)</option>
+              </select>
+
+              <!-- Submit button -->
+              <button type="submit" class="py-2.5 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm active:scale-95 cursor-pointer">
+                <span class="material-symbols-outlined text-[16px]">add_circle</span>
+                <span>Estimate &amp; Log</span>
+              </button>
+            </div>
+
+            <!-- Live Nutrition Preview Strip (Shown dynamically) -->
+            <div id="dishEstimatePreview" class="hidden items-center justify-between p-3 rounded-xl bg-[#d2f84a]/10 border border-[#d2f84a]/30 text-xs">
+              <div class="flex items-center gap-3 flex-wrap">
+                <span class="font-bold text-[var(--df-text)] flex items-center gap-1">
+                  <span class="material-symbols-outlined text-[15px] text-[#2e6f40] dark:text-[#d2f84a]">auto_awesome</span>
+                  <span>Estimated Nutrition:</span>
+                </span>
+                <span class="px-2 py-0.5 rounded-lg bg-[var(--df-card)] text-[var(--df-text)] font-extrabold border border-[var(--df-border)] text-[11px]" id="prevCals">~0 kcal</span>
+                <span class="px-2 py-0.5 rounded-lg bg-[#d2f84a]/20 text-[#2e6f40] dark:text-[#d2f84a] font-extrabold border border-[#d2f84a]/30 text-[11px]" id="prevProtein">0g Protein</span>
+                <span class="px-2 py-0.5 rounded-lg bg-sky-500/10 text-sky-500 font-extrabold border border-sky-500/20 text-[11px]" id="prevCarbs">0g Carbs</span>
+                <span class="px-2 py-0.5 rounded-lg bg-amber-500/10 text-amber-500 font-extrabold border border-amber-500/20 text-[11px]" id="prevFats">0g Fats</span>
+              </div>
+              <span class="text-[10px] text-[var(--df-text-muted)] font-medium">Click "Estimate &amp; Log" to add to daily total</span>
+            </div>
+          </form>
+
+          <!-- 1-Tap Quick Presets for Popular Foods -->
+          <div>
+            <span class="text-[10px] font-bold uppercase tracking-wider text-[var(--df-text-muted)] block mb-2">⚡ 1-Tap Quick Add (Staples &amp; Gym Foods):</span>
+            <div class="flex items-center gap-2 flex-wrap">
+              <button type="button" onclick="quickAddFoodPreset('2 Boiled Eggs', 'Breakfast')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🥚 2 Boiled Eggs</span>
+                <span class="text-[10px] opacity-70">(140 cal • 12g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('2 Roti with Dal Tadka', 'Lunch')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🫓 2 Roti + Dal</span>
+                <span class="text-[10px] opacity-70">(320 cal • 14g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Paneer Bhurji with 2 Roti', 'Dinner')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🧀 Paneer Bhurji + Roti</span>
+                <span class="text-[10px] opacity-70">(420 cal • 24g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Grilled Chicken 150g with Rice', 'Lunch')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🍗 Chicken &amp; Rice</span>
+                <span class="text-[10px] opacity-70">(450 cal • 38g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Whey Protein Scoop with Water', 'Snacks')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🥛 1 Scoop Whey</span>
+                <span class="text-[10px] opacity-70">(125 cal • 25g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Oats with Milk and Banana', 'Breakfast')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🥣 Oats, Milk &amp; Banana</span>
+                <span class="text-[10px] opacity-70">(320 cal • 12g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Rajma Chawal with Salad', 'Lunch')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🍚 Rajma Chawal</span>
+                <span class="text-[10px] opacity-70">(420 cal • 15g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Sprouts Salad with Lemon', 'Snacks')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🥗 Sprouts Salad</span>
+                <span class="text-[10px] opacity-70">(150 cal • 11g P)</span>
+              </button>
+
+              <button type="button" onclick="quickAddFoodPreset('Peanut Butter Toast (2 slices)', 'Snacks')" class="px-2.5 py-1.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#d2f84a]/15 text-[var(--df-text)] hover:text-[#2e6f40] dark:hover:text-[#d2f84a] border border-[var(--df-border)] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer">
+                <span>🥜 Peanut Butter Toast</span>
+                <span class="text-[10px] opacity-70">(280 cal • 11g P)</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Today's Logged Meals Timeline -->
+        <div class="bg-[var(--df-card)] rounded-2xl p-5 border border-[var(--df-border)] flex flex-col gap-4 shadow-sm">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-[20px] text-[var(--df-text-muted)]">menu_book</span>
+              <h3 class="text-sm font-bold text-[var(--df-text)]">Today's Meals &amp; Nutrition Log</h3>
+            </div>
+            <span id="nutrMealsCount" class="text-xs px-2.5 py-0.5 rounded-full bg-[var(--df-card-inner)] border border-[var(--df-border)] text-[var(--df-text-muted)] font-bold">0 meals</span>
+          </div>
+
+          <div id="nutrMealsList" class="flex flex-col gap-2.5">
+            <!-- Rendered dynamically -->
+          </div>
+        </div>
+
+      </section>
+
     </main>
   </div>
 
@@ -2521,6 +2863,10 @@
     <button onclick="switchTab('expenses')" data-mobile-tab="expenses" class="mobile-nav-item flex flex-col items-center justify-center p-1 text-on-surface-variant hover:text-on-surface transition-colors">
       <span class="material-symbols-outlined text-[20px]">receipt_long</span>
       <span class="text-[10px] font-medium">Money</span>
+    </button>
+    <button onclick="switchTab('nutrition')" data-mobile-tab="nutrition" class="mobile-nav-item flex flex-col items-center justify-center p-1 text-on-surface-variant hover:text-on-surface transition-colors">
+      <span class="material-symbols-outlined text-[20px]">restaurant</span>
+      <span class="text-[10px] font-medium">Diet</span>
     </button>
     <button onclick="switchTab('wealth')" data-mobile-tab="wealth" class="mobile-nav-item flex flex-col items-center justify-center p-1 text-on-surface-variant hover:text-on-surface transition-colors">
       <span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
@@ -2954,75 +3300,240 @@
   <!-- MODAL: USER AUTH GATE (SIGN IN & SIGN UP) -->
   <!-- ========================================================================= -->
   <div id="loginModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-2xl max-w-md w-full shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl max-w-md w-full shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       
       <!-- Header -->
-      <div class="p-6 pb-4 border-b border-[var(--df-border)] flex items-center justify-between">
+      <div class="p-5 pb-3 border-b border-[var(--df-border)] flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-[#d2f84a]/15 border border-[#d2f84a]/30 flex items-center justify-center text-[#d2f84a] shadow-sm">
-            <span class="material-symbols-outlined text-[22px]">calendar_today</span>
+          <div class="w-10 h-10 rounded-xl bg-[#d2f84a]/20 border border-[#d2f84a]/30 flex items-center justify-center text-[#2e6f40] dark:text-[#d2f84a] shadow-sm">
+            <span class="material-symbols-outlined text-[22px]">lock</span>
           </div>
           <div>
-            <h3 class="text-base font-extrabold text-[var(--df-text)]">Welcome to Dayframe</h3>
-            <p class="text-[12px] text-[var(--df-text-muted)]">Your private daily planner & routines</p>
+            <h3 class="text-base font-extrabold text-[var(--df-text)]">Dayframe Cloud Account</h3>
+            <p class="text-[11px] text-[var(--df-text-muted)]">Private &amp; password-protected workspace</p>
           </div>
         </div>
-        <button onclick="closeLoginModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg hover:bg-[var(--df-card-inner)] transition-colors">
+        <button onclick="closeLoginModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg hover:bg-[var(--df-card-inner)] transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[20px]">close</span>
         </button>
       </div>
 
       <!-- Body -->
-      <div class="p-6 flex flex-col gap-4 text-xs">
-        <div class="bg-[var(--df-card-inner)] rounded-2xl p-4 border border-[var(--df-border)] flex flex-col gap-1.5">
-          <div class="flex items-center gap-2 text-[#2e6f40] dark:text-[#d2f84a] font-bold text-xs">
-            <span class="material-symbols-outlined text-[16px]">lock</span>
-            <span>Private Multi-User Cloud Workspace</span>
-          </div>
-          <p class="text-[11px] text-[var(--df-text-muted)] leading-relaxed">
-            Enter your name & email. Your 24-hr circular schedule clock, tasks, expenses & timers are securely isolated and synced to your private cloud account.
-          </p>
+      <div class="p-5 sm:p-6 flex flex-col gap-4 text-xs">
+        
+        <!-- Google Sign-In Button (Official Google Look) -->
+        <button type="button" id="googleOAuthBtn" onclick="signInWithGoogleSupabase()" class="w-full py-3 px-4 rounded-xl bg-white hover:bg-neutral-100 text-neutral-800 font-bold text-xs flex items-center justify-center gap-3 transition-all border border-neutral-300 shadow-sm active:scale-[0.99] cursor-pointer">
+          <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+          </svg>
+          <span id="googleLoginBtnLabel">Continue with Google (Gmail)</span>
+        </button>
+
+        <div id="gsiButtonContainer" class="flex justify-center"></div>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-0.5">
+          <div class="h-px bg-[var(--df-border)] flex-1"></div>
+          <span class="text-[10px] uppercase font-semibold text-[var(--df-text-muted)] tracking-wider">or with email &amp; password</span>
+          <div class="h-px bg-[var(--df-border)] flex-1"></div>
         </div>
 
-        <!-- Fast Email Entry Form -->
-        <form onsubmit="handleDirectGmailLogin(event)" class="flex flex-col gap-3">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
-              <span>Your Name</span>
-              <span class="text-[10px] text-[var(--df-text-muted)] font-normal">Display name</span>
-            </label>
-            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
-              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">person</span>
-              <input type="text" id="directNameInput" required placeholder="e.g. Alex" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-            </div>
-          </div>
+        <!-- Auth Mode Switcher Tabs: Sign In vs Sign Up -->
+        <div class="grid grid-cols-2 p-1 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
+          <button type="button" id="tabBtnSignIn" onclick="setAuthMode('signin')" class="py-2 rounded-lg font-extrabold text-xs transition-all bg-[var(--df-card)] text-[var(--df-text)] shadow-sm cursor-pointer">
+            Sign In
+          </button>
+          <button type="button" id="tabBtnSignUp" onclick="setAuthMode('signup')" class="py-2 rounded-lg font-semibold text-xs transition-all text-[var(--df-text-muted)] hover:text-[var(--df-text)] cursor-pointer">
+            Create Account
+          </button>
+        </div>
 
+        <!-- Alert Error Banner -->
+        <div id="authErrorAlert" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs flex items-center gap-2">
+          <span class="material-symbols-outlined text-[18px]">error</span>
+          <span id="authErrorText" class="font-semibold leading-snug">Error message goes here</span>
+        </div>
+
+        <!-- Form 1: SIGN IN -->
+        <form id="formSignIn" onsubmit="handleAccountLogin(event)" class="flex flex-col gap-3">
           <div class="flex flex-col gap-1.5">
             <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
-              <span>Your Email Address</span>
-              <span class="text-[10px] text-[#2e6f40] dark:text-[#d2f84a] font-medium">100% Private Cloud Storage</span>
+              <span>Gmail / Email Address</span>
+              <span class="text-[10px] text-[#2e6f40] dark:text-[#d2f84a] font-medium">Your private DB key</span>
             </label>
             <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
               <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">mail</span>
-              <input type="email" id="directGmailInput" required placeholder="e.g. user@example.com" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+              <input type="email" id="signInEmail" required placeholder="e.g. yourname@gmail.com" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
             </div>
           </div>
 
-          <button type="submit" id="loginSubmitBtn" class="w-full py-3 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            <span>Access My Private Planner</span>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
+              <span>Password</span>
+              <span class="text-[10px] text-rose-500 font-semibold">*Required to unlock</span>
+            </label>
+            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
+              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">lock</span>
+              <input type="password" id="signInPassword" required placeholder="Enter your password" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+              <button type="button" onclick="togglePasswordVisibility('signInPassword', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
+                <span class="material-symbols-outlined text-[18px]">visibility</span>
+              </button>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmitSignIn" class="w-full py-3 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">lock_open</span>
+            <span>Sign In to My Planner</span>
           </button>
+
+          <p class="text-[11px] text-center text-[var(--df-text-muted)] mt-1">
+            New here? <button type="button" onclick="setAuthMode('signup')" class="text-[#2e6f40] dark:text-[#d2f84a] font-bold hover:underline cursor-pointer">Create a new account</button>
+          </p>
+        </form>
+
+        <!-- Form 2: CREATE ACCOUNT (SIGN UP) -->
+        <form id="formSignUp" onsubmit="handleAccountSignUp(event)" class="hidden flex flex-col gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
+              <span>Full Name</span>
+            </label>
+            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
+              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">person</span>
+              <input type="text" id="signUpName" required placeholder="e.g. Alex Sharma" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+            </div>
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
+              <span>Gmail / Email Address</span>
+              <span class="text-[10px] text-[#2e6f40] dark:text-[#d2f84a] font-medium">100% Private Cloud DB</span>
+            </label>
+            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
+              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">mail</span>
+              <input type="email" id="signUpEmail" required placeholder="e.g. yourname@gmail.com" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
+                <span>Create Password</span>
+              </label>
+              <div class="flex items-center gap-1.5 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3 py-2.5 transition-colors">
+                <input type="password" id="signUpPassword" required minlength="4" placeholder="Min 4 chars" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+                <button type="button" onclick="togglePasswordVisibility('signUpPassword', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">visibility</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="flex flex-col gap-1.5">
+              <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
+                <span>Confirm Password</span>
+              </label>
+              <div class="flex items-center gap-1.5 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3 py-2.5 transition-colors">
+                <input type="password" id="signUpPasswordConfirm" required minlength="4" placeholder="Repeat password" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+                <button type="button" onclick="togglePasswordVisibility('signUpPasswordConfirm', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
+                  <span class="material-symbols-outlined text-[16px]">visibility</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" id="btnSubmitSignUp" class="w-full py-3 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">verified_user</span>
+            <span>Create Password-Protected Account</span>
+          </button>
+
+          <p class="text-[11px] text-center text-[var(--df-text-muted)] mt-1">
+            Already have an account? <button type="button" onclick="setAuthMode('signin')" class="text-[#2e6f40] dark:text-[#d2f84a] font-bold hover:underline cursor-pointer">Sign in here</button>
+          </p>
         </form>
 
         <p class="text-[10px] text-center text-[var(--df-text-muted)] mt-0.5">
-          🔒 100% Private & Encrypted. Each phone/email gets completely separate tasks.
+          🔒 100% Private &amp; Encrypted. Your schedule, tasks &amp; data cannot be opened without your password.
         </p>
 
-        <div class="pt-2 border-t border-[var(--df-border)] flex items-center justify-between text-[11px]">
-          <span class="text-[var(--df-text-muted)]">Just exploring?</span>
-          <button type="button" onclick="closeLoginModal()" class="text-[#2e6f40] dark:text-[#d2f84a] hover:underline font-bold flex items-center gap-0.5 cursor-pointer">
+        <!-- Footer actions -->
+        <div class="pt-2.5 border-t border-[var(--df-border)] flex items-center justify-between text-[11px]">
+          <button type="button" onclick="openGoogleOAuthHelpModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] text-[10px] underline flex items-center gap-1 cursor-pointer">
+            <span class="material-symbols-outlined text-[12px]">settings</span>
+            <span>Google Setup Info</span>
+          </button>
+          <button type="button" onclick="closeLoginModal()" class="text-[#2e6f40] dark:text-[#d2f84a] hover:underline font-bold flex items-center gap-0.5 cursor-pointer" title="Continue as temporary guest">
             <span>Continue as Guest</span>
             <span class="material-symbols-outlined text-[13px]">chevron_right</span>
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: GOOGLE OAUTH CONFIGURATION / SETUP GUIDE -->
+  <!-- ========================================================================= -->
+  <div id="googleOAuthHelpModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-2xl max-w-md w-full shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+      <div class="p-5 pb-3 border-b border-[var(--df-border)] flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
+            <svg class="w-4 h-4" viewBox="0 0 24 24">
+              <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
+              <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
+              <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z"/>
+              <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z"/>
+            </svg>
+          </div>
+          <div>
+            <h3 class="text-sm font-bold text-[var(--df-text)]">Google Sign-In Setup</h3>
+            <p class="text-[11px] text-[var(--df-text-muted)]">Enable 1-click Google Login for your project</p>
+          </div>
+        </div>
+        <button onclick="closeGoogleOAuthHelpModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg hover:bg-[var(--df-card-inner)]">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div class="p-5 flex flex-col gap-3.5 text-xs text-[var(--df-text)]">
+        <div class="bg-[var(--df-card-inner)] rounded-xl p-3.5 border border-[var(--df-border)] text-[11px] leading-relaxed">
+          <p class="font-semibold text-amber-500 mb-1 flex items-center gap-1.5">
+            <span class="material-symbols-outlined text-[16px]">info</span>
+            <span>Google Provider setup in Supabase</span>
+          </p>
+          <p class="text-[var(--df-text-muted)]">
+            Supabase Cloud me Google Sign-In activate karne ke liye project dashboard me Google OAuth provider enable karna hota hai:
+          </p>
+        </div>
+
+        <div class="space-y-2">
+          <p class="font-bold text-[11px] text-[var(--df-text)]">Setup Steps:</p>
+          <ol class="list-decimal list-inside space-y-1.5 text-[11px] text-[var(--df-text-muted)]">
+            <li>Open <a href="https://supabase.com/dashboard/project/vvhltdsqthyfpyvczirm/auth/providers" target="_blank" class="text-[#2e6f40] dark:text-[#d2f84a] underline font-medium">Supabase Auth Providers</a></li>
+            <li>Click <strong>Google</strong> and toggle it <strong>Enabled</strong></li>
+            <li>Enter your <strong>Google Client ID</strong> &amp; <strong>Client Secret</strong></li>
+            <li>Add Callback URL: <code class="bg-[var(--df-card-inner)] px-1 py-0.5 rounded text-[10px] text-[#2e6f40] dark:text-[#d2f84a]">https://vvhltdsqthyfpyvczirm.supabase.co/auth/v1/callback</code></li>
+            <li>Save!</li>
+          </ol>
+        </div>
+
+        <div class="pt-2 border-t border-[var(--df-border)] flex flex-col gap-2">
+          <p class="text-[11px] text-[var(--df-text-muted)]">Or paste your Google Web Client ID for direct Google Identity button:</p>
+          <div class="flex items-center gap-2">
+            <input type="text" id="customGoogleClientIdInputModal" placeholder="e.g. 123456789-xxx.apps.googleusercontent.com" class="flex-1 bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-lg px-3 py-2 text-xs text-[var(--df-text)] outline-none focus:border-[#d2f84a] font-mono"/>
+            <button onclick="saveGoogleClientIdFromModal()" class="px-3 py-2 bg-[#d2f84a] text-[#0c1511] font-bold text-xs rounded-lg hover:bg-[#c4ec3e] transition-colors">Save</button>
+          </div>
+        </div>
+
+        <div class="pt-2 flex items-center justify-between">
+          <button onclick="closeGoogleOAuthHelpModal(); openLoginModal();" class="text-xs text-[var(--df-text-muted)] hover:text-[var(--df-text)] underline cursor-pointer">
+            Continue with Email &amp; Password
+          </button>
+          <button onclick="closeGoogleOAuthHelpModal()" class="px-3.5 py-1.5 rounded-lg bg-[var(--df-card-inner)] border border-[var(--df-border)] text-xs font-semibold text-[var(--df-text)] cursor-pointer">
+            Got it
           </button>
         </div>
       </div>
@@ -3261,6 +3772,109 @@
       </div>
 
     </div>
+  <!-- ========================================================================= -->
+  <!-- MODAL: NUTRITION DAILY TARGETS -->
+  <!-- ========================================================================= -->
+  <div id="nutritionGoalsModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl max-w-sm w-full shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-5 pb-3 border-b border-[var(--df-border)] flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-[20px] text-[#2e6f40] dark:text-[#d2f84a]">tune</span>
+          <h3 class="text-sm font-extrabold text-[var(--df-text)]">Daily Nutrition Targets</h3>
+        </div>
+        <button type="button" onclick="closeNutritionGoalsModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveNutritionGoals(event)" class="p-5 flex flex-col gap-3.5 text-xs">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Protein Goal (grams/day)</label>
+          <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2">
+            <span class="material-symbols-outlined text-[16px] text-[#2e6f40] dark:text-[#d2f84a]">fitness_center</span>
+            <input type="number" id="goalProteinInput" required min="30" max="400" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 font-bold"/>
+            <span class="text-[var(--df-text-muted)] font-medium">grams</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Calories Target (kcal/day)</label>
+          <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2">
+            <span class="material-symbols-outlined text-[16px] text-amber-500">local_fire_department</span>
+            <input type="number" id="goalCaloriesInput" required min="800" max="6000" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 font-bold"/>
+            <span class="text-[var(--df-text-muted)] font-medium">kcal</span>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Water Target (Liters/day)</label>
+          <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2">
+            <span class="material-symbols-outlined text-[16px] text-sky-500">water_drop</span>
+            <input type="number" id="goalWaterInput" step="0.25" min="1.0" max="8.0" required class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 font-bold"/>
+            <span class="text-[var(--df-text-muted)] font-medium">Liters</span>
+          </div>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm mt-1 cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">check</span>
+          <span>Save Targets</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- MODAL: LOG SLEEP & REST -->
+  <!-- ========================================================================= -->
+  <div id="nutritionSleepModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl max-w-sm w-full shadow-2xl flex flex-col overflow-hidden">
+      <div class="p-5 pb-3 border-b border-[var(--df-border)] flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+          <span class="material-symbols-outlined text-[20px] text-indigo-400">bedtime</span>
+          <h3 class="text-sm font-extrabold text-[var(--df-text)]">Log Sleep &amp; Rest</h3>
+        </div>
+        <button type="button" onclick="closeLogSleepModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveSleep(event)" class="p-5 flex flex-col gap-3.5 text-xs">
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Hours Slept</label>
+          <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2">
+            <span class="material-symbols-outlined text-[16px] text-indigo-400">hourglass_bottom</span>
+            <input type="number" id="sleepHoursInput" step="0.25" min="1" max="18" required class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 font-bold"/>
+            <span class="text-[var(--df-text-muted)] font-medium">hours</span>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Bedtime</label>
+            <input type="time" id="sleepBedtimeInput" class="bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-2.5 py-2 text-xs text-[var(--df-text)] outline-none font-medium"/>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Wake Time</label>
+            <input type="time" id="sleepWakeTimeInput" class="bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-2.5 py-2 text-xs text-[var(--df-text)] outline-none font-medium"/>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">Sleep Quality</label>
+          <select id="sleepQualitySelect" class="bg-[var(--df-card-inner)] border border-[var(--df-border)] rounded-xl px-3 py-2 text-xs font-semibold text-[var(--df-text)] outline-none cursor-pointer">
+            <option value="deep">😴 Deep &amp; Restful</option>
+            <option value="good" selected>😊 Good &amp; Refreshing</option>
+            <option value="restless">🥱 Restless / Broken</option>
+            <option value="poor">😫 Poor / Insufficient</option>
+          </select>
+        </div>
+
+        <button type="submit" class="w-full py-2.5 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-1.5 transition-all shadow-sm mt-1 cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">check</span>
+          <span>Save Sleep Log</span>
+        </button>
+      </form>
+    </div>
   </div>
 
   <!-- Toast Notification -->
@@ -3283,7 +3897,18 @@
       wasteLogs: [],
       journal: [],
       dailyReflections: {},
-      coachInsights: {}
+      coachInsights: {},
+      nutrition: {
+        proteinGoal: 120,
+        caloriesGoal: 2200,
+        waterGoalMl: 3000,
+        waterLoggedMl: 0,
+        sleepHours: 7.5,
+        sleepQuality: 'good',
+        sleepBedtime: '23:30',
+        sleepWakeTime: '07:00',
+        meals: []
+      }
     };
 
     let activeTab = 'overview';
@@ -3369,6 +3994,17 @@
         wasteTimeline: [],
         rootCause: 'No screen time distractions logged yet today.',
         actionable: 'Start your day with clean focus blocks.'
+      },
+      nutrition: {
+        proteinGoal: 120,
+        caloriesGoal: 2200,
+        waterGoalMl: 3000,
+        waterLoggedMl: 0,
+        sleepHours: 7.5,
+        sleepQuality: 'good',
+        sleepBedtime: '23:30',
+        sleepWakeTime: '07:00',
+        meals: []
       }
     };
 
@@ -3838,6 +4474,7 @@
         expenses: 'Expenses & Budget Tracker',
         wealth: 'Income & Wealth Hub',
         screentime: 'Screen Time & Waste Management',
+        nutrition: 'Nutrition, Macros & Wellness',
         analytics: 'System Analytics & Growth'
       };
       const headerTitle = document.getElementById('headerTitle');
@@ -3871,6 +4508,7 @@
       renderMilestones();
       renderWhatNotToDo();
       renderExpenses();
+      renderNutrition();
       renderWealth();
       renderJournal();
       renderSchedule();
@@ -3896,6 +4534,14 @@
       if (journalBadge) {
         const count = (appData.diaryEntries || []).length;
         journalBadge.textContent = `${count} ${count === 1 ? 'log' : 'logs'}`;
+      }
+
+      const nutrBadge = document.getElementById('nutritionCountBadge');
+      if (nutrBadge) {
+        const todayStr = new Date().toISOString().slice(0, 10);
+        const meals = (appData.nutrition && appData.nutrition.meals) ? appData.nutrition.meals : [];
+        const todayProtein = meals.filter(m => (m.date || '').slice(0, 10) === todayStr).reduce((acc, m) => acc + Number(m.protein || 0), 0);
+        nutrBadge.textContent = `${Math.round(todayProtein)}g P`;
       }
 
       const wasteBadge = document.getElementById('wasteCountBadge');
@@ -8991,6 +9637,8 @@ Return ONLY valid JSON matching:
       closeUserDropdown();
       const modal = document.getElementById('loginModal');
       if (modal) modal.classList.remove('hidden');
+      setAuthMode('signin');
+      clearAuthError();
       const savedClientId = localStorage.getItem('smart-planner-google-client-id') || '';
       const input = document.getElementById('customGoogleClientIdInput');
       if (input && savedClientId) input.value = savedClientId;
@@ -9038,50 +9686,177 @@ Return ONLY valid JSON matching:
       }
     });
 
-    async function handleDirectGmailLogin(e) {
-      if (e) e.preventDefault();
-      const input = document.getElementById('directGmailInput');
-      const nameInput = document.getElementById('directNameInput');
-      const submitBtn = document.getElementById('loginSubmitBtn');
-      const email = input ? input.value.trim().toLowerCase() : '';
-      if (!email || !email.includes('@')) {
-        alert('Please enter a valid email address (e.g. user@gmail.com)');
+    function togglePasswordVisibility(inputId, btn) {
+      const input = document.getElementById(inputId);
+      if (!input) return;
+      const isPassword = input.type === 'password';
+      input.type = isPassword ? 'text' : 'password';
+      const icon = btn.querySelector('.material-symbols-outlined');
+      if (icon) {
+        icon.textContent = isPassword ? 'visibility_off' : 'visibility';
+      }
+    }
+
+    function openGoogleOAuthHelpModal() {
+      const modal = document.getElementById('googleOAuthHelpModal');
+      if (modal) modal.classList.remove('hidden');
+      const saved = localStorage.getItem('smart-planner-google-client-id') || '';
+      const input = document.getElementById('customGoogleClientIdInputModal');
+      if (input && saved) input.value = saved;
+    }
+
+    function closeGoogleOAuthHelpModal() {
+      const modal = document.getElementById('googleOAuthHelpModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function saveGoogleClientIdFromModal() {
+      const input = document.getElementById('customGoogleClientIdInputModal');
+      const val = input ? input.value.trim() : '';
+      if (!val) {
+        showToast('Please enter a valid Google Client ID');
         return;
       }
-      const rawName = nameInput && nameInput.value.trim() ? nameInput.value.trim() : email.split('@')[0];
-      const displayName = rawName.charAt(0).toUpperCase() + rawName.slice(1);
+      localStorage.setItem('smart-planner-google-client-id', val);
+      try {
+        await fetch('/api/auth/save-google-client-id', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ clientId: val })
+        });
+      } catch (e) {}
+      showToast('Google Client ID saved! Initializing Google Sign-In...');
+      closeGoogleOAuthHelpModal();
+      initGoogleGIS();
+    }
+
+    // =========================================================================
+    // DAYFRAME CLOUD ACCOUNT AUTHENTICATION (PASSWORD-ENFORCED & GOOGLE OAUTH)
+    // =========================================================================
+    let currentAuthMode = 'signin';
+
+    function setAuthMode(mode) {
+      currentAuthMode = mode;
+      clearAuthError();
+      const tabSignIn = document.getElementById('tabBtnSignIn');
+      const tabSignUp = document.getElementById('tabBtnSignUp');
+      const formSignIn = document.getElementById('formSignIn');
+      const formSignUp = document.getElementById('formSignUp');
+
+      if (mode === 'signin') {
+        if (tabSignIn) tabSignIn.className = 'py-2 rounded-lg font-extrabold text-xs transition-all bg-[var(--df-card)] text-[var(--df-text)] shadow-sm cursor-pointer';
+        if (tabSignUp) tabSignUp.className = 'py-2 rounded-lg font-semibold text-xs transition-all text-[var(--df-text-muted)] hover:text-[var(--df-text)] cursor-pointer';
+        if (formSignIn) formSignIn.classList.remove('hidden');
+        if (formSignUp) formSignUp.classList.add('hidden');
+        setTimeout(() => document.getElementById('signInEmail')?.focus(), 100);
+      } else {
+        if (tabSignUp) tabSignUp.className = 'py-2 rounded-lg font-extrabold text-xs transition-all bg-[var(--df-card)] text-[var(--df-text)] shadow-sm cursor-pointer';
+        if (tabSignIn) tabSignIn.className = 'py-2 rounded-lg font-semibold text-xs transition-all text-[var(--df-text-muted)] hover:text-[var(--df-text)] cursor-pointer';
+        if (formSignIn) formSignIn.classList.add('hidden');
+        if (formSignUp) formSignUp.classList.remove('hidden');
+        setTimeout(() => document.getElementById('signUpName')?.focus(), 100);
+      }
+    }
+
+    function showAuthError(msg) {
+      const alertEl = document.getElementById('authErrorAlert');
+      const textEl = document.getElementById('authErrorText');
+      if (alertEl && textEl) {
+        textEl.textContent = msg;
+        alertEl.classList.remove('hidden');
+      }
+    }
+
+    function clearAuthError() {
+      const alertEl = document.getElementById('authErrorAlert');
+      if (alertEl) alertEl.classList.add('hidden');
+    }
+
+    // SIGN IN EXISTING USER (PASSWORD PROTECTED)
+    async function handleAccountLogin(e) {
+      if (e) e.preventDefault();
+      clearAuthError();
+      const emailInput = document.getElementById('signInEmail');
+      const passwordInput = document.getElementById('signInPassword');
+      const submitBtn = document.getElementById('btnSubmitSignIn');
+
+      const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+      const password = passwordInput ? passwordInput.value : '';
+
+      if (!email || !email.includes('@')) {
+        showAuthError('Please enter a valid Gmail / Email address.');
+        emailInput?.focus();
+        return;
+      }
+      if (!password) {
+        showAuthError('Password is required to access your account.');
+        passwordInput?.focus();
+        return;
+      }
+
+      // Check local cached password first for instant verification
+      const localHash = localStorage.getItem('smart-planner-user-pw-' + email);
+      if (localHash && btoa(password) !== localHash) {
+        showAuthError('❌ Incorrect password! Please check your credentials and try again.');
+        passwordInput?.focus();
+        return;
+      }
 
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Setting up private workspace...</span>';
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Verifying credentials...</span>';
       }
 
       try {
         let authUserId = null;
+        let displayName = email.split('@')[0];
+        displayName = displayName.charAt(0).toUpperCase() + displayName.slice(1);
+
+        // Verify with server API
+        try {
+          const res = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+          });
+          if (res.status === 401) {
+            const data = await res.json();
+            showAuthError(data.error || '❌ Incorrect password for this account.');
+            passwordInput?.focus();
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">lock_open</span><span>Sign In to My Planner</span>';
+            }
+            return;
+          }
+          if (res.ok) {
+            const data = await res.json();
+            if (data.user && data.user.name) displayName = data.user.name;
+          }
+        } catch (serverErr) {
+          console.warn('Local server auth notice:', serverErr);
+        }
+
+        // Supabase sign-in if connected
         if (supabaseClient) {
           try {
-            // Check if record exists in user_planner
-            const { data: rows } = await supabaseClient
-              .from('user_planner')
-              .select('id, user_id, email')
-              .eq('email', email);
-            if (rows && rows.length > 0 && rows[0].user_id) {
-              authUserId = rows[0].user_id;
-            } else {
-              // Create user in Supabase Auth to get a valid user_id
-              const deterministicPw = 'Dayframe_' + email.replace(/[^a-z0-9]/gi, '') + '!2026';
-              const { data: authData } = await supabaseClient.auth.signUp({
-                email: email,
-                password: deterministicPw
-              });
-              if (authData && authData.user) {
-                authUserId = authData.user.id;
+            const { data: supaAuth } = await supabaseClient.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+            if (supaAuth && supaAuth.user) {
+              authUserId = supaAuth.user.id;
+              if (supaAuth.user.user_metadata?.full_name) {
+                displayName = supaAuth.user.user_metadata.full_name;
               }
             }
           } catch (sbErr) {
-            console.warn('Supabase auth link notice:', sbErr);
+            console.warn('Supabase signin attempt:', sbErr);
           }
         }
+
+        // Cache valid password
+        localStorage.setItem('smart-planner-user-pw-' + email, btoa(password));
 
         currentUser = {
           id: authUserId,
@@ -9089,19 +9864,772 @@ Return ONLY valid JSON matching:
           name: displayName,
           picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`
         };
+
         localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
         closeLoginModal();
         updateAuthUI();
         await loadInitialData();
         renderAll();
-        showToast(`Welcome ${currentUser.name}! Your private planner is active.`);
+        showToast(`Welcome back, ${currentUser.name}! Private planner unlocked.`);
       } catch (err) {
-        console.error('Login error:', err);
-        showToast('Login encountered an issue. Initializing local workspace.');
+        console.error('Sign-in error:', err);
+        showAuthError('Unable to sign in. Please try again.');
       } finally {
         if (submitBtn) {
           submitBtn.disabled = false;
-          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">arrow_forward</span><span>Access My Private Planner</span>';
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">lock_open</span><span>Sign In to My Planner</span>';
+        }
+      }
+    }
+
+    // CREATE NEW PROTECTED ACCOUNT
+    async function handleAccountSignUp(e) {
+      if (e) e.preventDefault();
+      clearAuthError();
+      const nameInput = document.getElementById('signUpName');
+      const emailInput = document.getElementById('signUpEmail');
+      const passwordInput = document.getElementById('signUpPassword');
+      const confirmInput = document.getElementById('signUpPasswordConfirm');
+      const submitBtn = document.getElementById('btnSubmitSignUp');
+
+      const name = nameInput ? nameInput.value.trim() : '';
+      const email = emailInput ? emailInput.value.trim().toLowerCase() : '';
+      const password = passwordInput ? passwordInput.value : '';
+      const confirmPw = confirmInput ? confirmInput.value : '';
+
+      if (!name) {
+        showAuthError('Please enter your full name.');
+        nameInput?.focus();
+        return;
+      }
+      if (!email || !email.includes('@')) {
+        showAuthError('Please enter a valid Gmail / Email address.');
+        emailInput?.focus();
+        return;
+      }
+      if (!password || password.length < 4) {
+        showAuthError('Password must be at least 4 characters long.');
+        passwordInput?.focus();
+        return;
+      }
+      if (password !== confirmPw) {
+        showAuthError('Passwords do not match! Please check and re-type.');
+        confirmInput?.focus();
+        return;
+      }
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Creating private workspace...</span>';
+      }
+
+      try {
+        let authUserId = null;
+
+        // Try server registration
+        try {
+          const res = await fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, name })
+          });
+          if (res.status === 409) {
+            showAuthError('An account with this email already exists. Please switch to Sign In.');
+            setAuthMode('signin');
+            if (document.getElementById('signInEmail')) document.getElementById('signInEmail').value = email;
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified_user</span><span>Create Password-Protected Account</span>';
+            }
+            return;
+          }
+        } catch (serverErr) {
+          console.warn('Server registration notice:', serverErr);
+        }
+
+        // Supabase registration if connected
+        if (supabaseClient) {
+          try {
+            const { data: supaData } = await supabaseClient.auth.signUp({
+              email: email,
+              password: password,
+              options: { data: { full_name: name } }
+            });
+            if (supaData && supaData.user) {
+              authUserId = supaData.user.id;
+            }
+          } catch (sbErr) {
+            console.warn('Supabase signup notice:', sbErr);
+          }
+        }
+
+        // Cache password locally
+        localStorage.setItem('smart-planner-user-pw-' + email, btoa(password));
+
+        currentUser = {
+          id: authUserId,
+          email: email,
+          name: name,
+          picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(email)}`
+        };
+
+        localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
+        closeLoginModal();
+        updateAuthUI();
+
+        // Fresh clean slate for new user
+        appData = JSON.parse(JSON.stringify(defaultSeedData));
+        await saveData();
+        renderAll();
+        showToast(`Account created! Welcome to your private Dayframe, ${name}!`);
+      } catch (err) {
+        console.error('Signup error:', err);
+        showAuthError('Registration encountered an error. Please try again.');
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px]">verified_user</span><span>Create Password-Protected Account</span>';
+        }
+      }
+    }
+
+    // =========================================================================
+    // NUTRITION, MACROS, MICROS, WATER & SLEEP ENGINE
+    // =========================================================================
+    const FOOD_DATABASE = [
+      // Eggs & Poultry
+      { keys: ['boiled egg', 'egg boiled', 'anda boil'], cals: 70, p: 6, c: 0.5, f: 5, fiber: 0, ca: 25, fe: 0.9, vitC: 0 },
+      { keys: ['egg white', 'anda safed'], cals: 17, p: 3.6, c: 0.2, f: 0.1, fiber: 0, ca: 2, fe: 0, vitC: 0 },
+      { keys: ['omelette', 'omlet', 'anda omelette'], cals: 180, p: 13, c: 2, f: 14, fiber: 0.5, ca: 60, fe: 1.8, vitC: 1 },
+      { keys: ['egg bhurji', 'anda bhurji'], cals: 190, p: 13, c: 3, f: 15, fiber: 0.8, ca: 65, fe: 1.8, vitC: 3 },
+      { keys: ['egg', 'anda'], cals: 70, p: 6, c: 0.5, f: 5, fiber: 0, ca: 25, fe: 0.9, vitC: 0 },
+      { keys: ['chicken breast', 'grilled chicken', 'murgh breast'], cals: 165, p: 31, c: 0, f: 3.6, fiber: 0, ca: 15, fe: 1.0, vitC: 0 },
+      { keys: ['chicken curry', 'chicken gravy', 'murgh curry'], cals: 260, p: 26, c: 8, f: 14, fiber: 1.5, ca: 30, fe: 1.8, vitC: 4 },
+      { keys: ['chicken tikka', 'tandoori chicken'], cals: 200, p: 28, c: 4, f: 8, fiber: 1.0, ca: 40, fe: 1.5, vitC: 2 },
+      { keys: ['chicken biryani', 'murgh biryani'], cals: 450, p: 28, c: 50, f: 15, fiber: 2.5, ca: 45, fe: 2.2, vitC: 3 },
+      { keys: ['chicken sandwich'], cals: 340, p: 25, c: 32, f: 12, fiber: 2.5, ca: 70, fe: 2.0, vitC: 2 },
+      { keys: ['fish curry', 'grilled fish', 'machli'], cals: 190, p: 24, c: 4, f: 8, fiber: 0.5, ca: 50, fe: 1.2, vitC: 2 },
+      { keys: ['mutton', 'lamb curry', 'gosht'], cals: 320, p: 26, c: 4, f: 22, fiber: 0.5, ca: 25, fe: 2.8, vitC: 1 },
+
+      // Dairy & Paneer
+      { keys: ['paneer paratha', 'paneer parantha'], cals: 250, p: 10, c: 28, f: 11, fiber: 2.5, ca: 180, fe: 1.5, vitC: 1 },
+      { keys: ['paneer bhurji'], cals: 280, p: 18, c: 6, f: 20, fiber: 1.5, ca: 240, fe: 1.2, vitC: 4 },
+      { keys: ['paneer tikka'], cals: 240, p: 16, c: 7, f: 16, fiber: 1.2, ca: 220, fe: 1.0, vitC: 2 },
+      { keys: ['paneer butter masala', 'shahi paneer'], cals: 340, p: 13, c: 14, f: 26, fiber: 2.0, ca: 220, fe: 1.4, vitC: 3 },
+      { keys: ['paneer raw', 'paneer 100g', 'paneer'], cals: 265, p: 18, c: 4, f: 20, fiber: 0, ca: 210, fe: 0.8, vitC: 0 },
+      { keys: ['curd', 'dahi', 'yogurt'], cals: 90, p: 5, c: 6, f: 5, fiber: 0, ca: 150, fe: 0.1, vitC: 1 },
+      { keys: ['greek yogurt'], cals: 120, p: 15, c: 6, f: 3, fiber: 0, ca: 170, fe: 0.1, vitC: 0 },
+      { keys: ['milk', 'doodh', 'glass milk'], cals: 140, p: 7.5, c: 11, f: 7.5, fiber: 0, ca: 240, fe: 0.1, vitC: 2 },
+      { keys: ['lassi'], cals: 180, p: 6, c: 24, f: 6, fiber: 0, ca: 180, fe: 0.2, vitC: 1 },
+      { keys: ['buttermilk', 'chaas'], cals: 45, p: 2.5, c: 4, f: 2, fiber: 0, ca: 90, fe: 0.1, vitC: 0 },
+      { keys: ['cheese slice', 'cheese'], cals: 90, p: 5, c: 1, f: 7.5, fiber: 0, ca: 140, fe: 0.1, vitC: 0 },
+
+      // Breads, Roti & Paratha
+      { keys: ['roti', 'chapati', 'phulka'], cals: 80, p: 3, c: 16, f: 0.5, fiber: 2.2, ca: 20, fe: 1.1, vitC: 0 },
+      { keys: ['aloo paratha', 'aloo parantha'], cals: 220, p: 4.5, c: 34, f: 8, fiber: 2.8, ca: 30, fe: 1.4, vitC: 6 },
+      { keys: ['gobi paratha'], cals: 200, p: 4.5, c: 28, f: 8, fiber: 3.0, ca: 40, fe: 1.2, vitC: 8 },
+      { keys: ['plain paratha', 'paratha'], cals: 160, p: 3.5, c: 24, f: 6, fiber: 2.0, ca: 20, fe: 1.0, vitC: 0 },
+      { keys: ['toast', 'bread slice', 'brown bread', 'bread'], cals: 75, p: 3, c: 14, f: 0.8, fiber: 1.5, ca: 25, fe: 0.8, vitC: 0 },
+      { keys: ['peanut butter toast'], cals: 260, p: 10, c: 24, f: 14, fiber: 3.2, ca: 40, fe: 1.5, vitC: 0 },
+      { keys: ['besan chilla', 'cheela'], cals: 150, p: 7, c: 18, f: 5, fiber: 3.5, ca: 35, fe: 1.8, vitC: 2 },
+      { keys: ['naan', 'butter naan'], cals: 260, p: 7, c: 42, f: 7.5, fiber: 1.8, ca: 45, fe: 1.5, vitC: 0 },
+
+      // Dals & Pulses
+      { keys: ['dal tadka', 'yellow dal', 'arhar dal', 'toor dal', 'moong dal', 'dal'], cals: 150, p: 8, c: 20, f: 4.5, fiber: 4.5, ca: 35, fe: 2.0, vitC: 2 },
+      { keys: ['dal makhani'], cals: 260, p: 9, c: 24, f: 14, fiber: 5.0, ca: 65, fe: 2.5, vitC: 1 },
+      { keys: ['rajma', 'rajma curry'], cals: 210, p: 11, c: 30, f: 5, fiber: 6.5, ca: 60, fe: 3.2, vitC: 3 },
+      { keys: ['chole', 'chana masala'], cals: 220, p: 10, c: 32, f: 6, fiber: 6.0, ca: 65, fe: 3.0, vitC: 4 },
+      { keys: ['sprouts salad', 'sprouts', 'moong sprouts'], cals: 130, p: 10, c: 20, f: 1.2, fiber: 5.5, ca: 45, fe: 2.5, vitC: 14 },
+      { keys: ['soya chunks', 'soya curry'], cals: 190, p: 26, c: 14, f: 2.5, fiber: 6.0, ca: 120, fe: 4.5, vitC: 1 },
+
+      // Rice & Grains
+      { keys: ['rice bowl', 'white rice', 'cooked rice', 'chawal', 'rice'], cals: 175, p: 3.5, c: 38, f: 0.5, fiber: 0.6, ca: 10, fe: 0.6, vitC: 0 },
+      { keys: ['brown rice'], cals: 165, p: 3.8, c: 35, f: 1.5, fiber: 2.0, ca: 12, fe: 0.9, vitC: 0 },
+      { keys: ['khichdi'], cals: 220, p: 8, c: 38, f: 4.5, fiber: 3.5, ca: 30, fe: 1.8, vitC: 2 },
+      { keys: ['veg biryani', 'veg pulao', 'pulao'], cals: 280, p: 6, c: 45, f: 8.5, fiber: 3.0, ca: 35, fe: 1.5, vitC: 5 },
+      { keys: ['rajma chawal'], cals: 420, p: 15, c: 68, f: 6.5, fiber: 7.0, ca: 70, fe: 3.8, vitC: 3 },
+      { keys: ['curd rice'], cals: 250, p: 7, c: 40, f: 6.5, fiber: 1.0, ca: 140, fe: 0.6, vitC: 1 },
+
+      // Gym Staples & Supplements
+      { keys: ['whey protein', 'whey scoop', 'protein shake', 'whey'], cals: 125, p: 25, c: 2, f: 1.5, fiber: 0.5, ca: 140, fe: 0.5, vitC: 0 },
+      { keys: ['creatine'], cals: 0, p: 0, c: 0, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0 },
+      { keys: ['protein bar'], cals: 210, p: 20, c: 22, f: 7, fiber: 5.0, ca: 90, fe: 1.5, vitC: 0 },
+      { keys: ['peanut butter', 'pb'], cals: 95, p: 4, c: 3, f: 8, fiber: 1.0, ca: 10, fe: 0.4, vitC: 0 },
+      { keys: ['oatmeal', 'oats with milk', 'oats'], cals: 260, p: 10, c: 42, f: 5.5, fiber: 4.5, ca: 130, fe: 2.2, vitC: 1 },
+      { keys: ['muesli', 'granola'], cals: 220, p: 6, c: 38, f: 5, fiber: 4.0, ca: 40, fe: 2.0, vitC: 2 },
+
+      // South Indian & Breakfast
+      { keys: ['idli'], cals: 60, p: 2, c: 12, f: 0.4, fiber: 0.8, ca: 15, fe: 0.5, vitC: 0 },
+      { keys: ['plain dosa', 'dosa'], cals: 140, p: 3.5, c: 23, f: 4, fiber: 1.2, ca: 20, fe: 0.9, vitC: 0 },
+      { keys: ['masala dosa'], cals: 260, p: 5.5, c: 38, f: 10, fiber: 2.5, ca: 30, fe: 1.5, vitC: 4 },
+      { keys: ['sambar'], cals: 95, p: 4, c: 14, f: 2.5, fiber: 3.0, ca: 30, fe: 1.5, vitC: 4 },
+      { keys: ['poha'], cals: 220, p: 4, c: 38, f: 6, fiber: 2.2, ca: 25, fe: 2.5, vitC: 8 },
+      { keys: ['upma'], cals: 200, p: 4, c: 32, f: 6.5, fiber: 2.0, ca: 20, fe: 1.2, vitC: 2 },
+
+      // Fruits & Snacks
+      { keys: ['banana', 'kela'], cals: 105, p: 1.3, c: 27, f: 0.3, fiber: 3.0, ca: 6, fe: 0.3, vitC: 10 },
+      { keys: ['apple', 'seb'], cals: 80, p: 0.5, c: 21, f: 0.3, fiber: 4.0, ca: 10, fe: 0.2, vitC: 8 },
+      { keys: ['almonds', 'badam'], cals: 160, p: 6, c: 5, f: 14, fiber: 3.5, ca: 75, fe: 1.0, vitC: 0 },
+      { keys: ['salad', 'green salad', 'cucumber salad'], cals: 45, p: 1.5, c: 8, f: 0.5, fiber: 2.5, ca: 30, fe: 0.8, vitC: 12 },
+      { keys: ['chai', 'tea', 'milk tea'], cals: 70, p: 2, c: 10, f: 2.5, fiber: 0, ca: 55, fe: 0.1, vitC: 0 },
+      { keys: ['coffee', 'black coffee'], cals: 5, p: 0.3, c: 0.5, f: 0.1, fiber: 0, ca: 5, fe: 0.1, vitC: 0 },
+      { keys: ['green tea'], cals: 2, p: 0, c: 0.5, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 1 }
+    ];
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    // Smart nutrition estimation parser
+    function estimateDishNutrition(text, portionMultiplier = 1.0) {
+      if (!text || typeof text !== 'string') {
+        return { cals: 0, p: 0, c: 0, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0, detectedItems: [] };
+      }
+
+      const mult = Number(portionMultiplier) || 1.0;
+      const lower = text.toLowerCase().trim();
+
+      // Split multi-item phrases e.g. "2 roti with dal and curd"
+      const parts = lower.split(/\s*(?:with|\+|and|,|&)\s*/);
+      let totalCals = 0;
+      let totalP = 0;
+      let totalC = 0;
+      let totalF = 0;
+      let totalFiber = 0;
+      let totalCa = 0;
+      let totalFe = 0;
+      let totalVitC = 0;
+      const detected = [];
+
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        if (!trimmed) return;
+
+        // Check for leading quantity e.g. "2 eggs", "3 roti", "150g chicken"
+        let count = 1;
+        const numMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*(?:pieces?|pcs?|bowls?|plates?|glasses?|scoops?|slice?|slices?|rotis?|eggs?|cups?)?\s*(.*)$/);
+        let foodStr = trimmed;
+        if (numMatch) {
+          count = parseFloat(numMatch[1]) || 1;
+          foodStr = (numMatch[2] || '').trim();
+          if (!foodStr) foodStr = trimmed;
+        }
+
+        // Gram match e.g. "150g chicken"
+        const gramMatch = trimmed.match(/(\d+)\s*g(?:rams?)?\s*(.*)/);
+        let gramRatio = null;
+        if (gramMatch) {
+          const grams = parseFloat(gramMatch[1]);
+          gramRatio = grams / 100;
+          if (gramMatch[2]) foodStr = gramMatch[2].trim();
+        }
+
+        // Match against database
+        let bestMatch = null;
+        let bestScore = 0;
+
+        for (const item of FOOD_DATABASE) {
+          for (const key of item.keys) {
+            if (foodStr.includes(key) || key.includes(foodStr)) {
+              const score = key.length;
+              if (score > bestScore) {
+                bestScore = score;
+                bestMatch = item;
+              }
+            }
+          }
+        }
+
+        if (bestMatch) {
+          const itemMult = gramRatio !== null ? gramRatio : count;
+          totalCals += Math.round(bestMatch.cals * itemMult);
+          totalP += Math.round(bestMatch.p * itemMult * 10) / 10;
+          totalC += Math.round(bestMatch.c * itemMult * 10) / 10;
+          totalF += Math.round(bestMatch.f * itemMult * 10) / 10;
+          totalFiber += Math.round((bestMatch.fiber || 0) * itemMult * 10) / 10;
+          totalCa += Math.round((bestMatch.ca || 0) * itemMult);
+          totalFe += Math.round((bestMatch.fe || 0) * itemMult * 10) / 10;
+          totalVitC += Math.round((bestMatch.vitC || 0) * itemMult);
+          detected.push(`${count}x ${bestMatch.keys[0]}`);
+        } else {
+          // Heuristic fallback for unknown dish
+          let guessCals = 280;
+          let guessP = 10;
+          let guessC = 36;
+          let guessF = 10;
+
+          if (/chicken|meat|mutton|fish|beef/.test(foodStr)) {
+            guessCals = 320; guessP = 28; guessC = 12; guessF = 15;
+          } else if (/paneer|cheese|egg|anda|omelette/.test(foodStr)) {
+            guessCals = 250; guessP = 16; guessC = 14; guessF = 15;
+          } else if (/dal|lentil|chana|rajma|chole|bean/.test(foodStr)) {
+            guessCals = 200; guessP = 10; guessC = 28; guessF = 5;
+          } else if (/rice|chawal|khichdi|biryani|pulao/.test(foodStr)) {
+            guessCals = 280; guessP = 6; guessC = 48; guessF = 6;
+          } else if (/roti|paratha|bread|toast|naan/.test(foodStr)) {
+            guessCals = 160; guessP = 4; guessC = 26; guessF = 5;
+          } else if (/salad|sabzi|veggie|soup/.test(foodStr)) {
+            guessCals = 110; guessP = 3; guessC = 16; guessF = 4;
+          } else if (/shake|whey|smoothie/.test(foodStr)) {
+            guessCals = 240; guessP = 24; guessC = 20; guessF = 4;
+          }
+
+          totalCals += Math.round(guessCals * count);
+          totalP += Math.round(guessP * count);
+          totalC += Math.round(guessC * count);
+          totalF += Math.round(guessF * count);
+          totalFiber += Math.round(2.5 * count);
+          totalCa += Math.round(30 * count);
+          totalFe += Math.round(1.2 * count);
+          totalVitC += Math.round(3 * count);
+          detected.push(`${count}x ${trimmed}`);
+        }
+      });
+
+      return {
+        cals: Math.round(totalCals * mult),
+        protein: Math.round(totalP * mult * 10) / 10,
+        carbs: Math.round(totalC * mult * 10) / 10,
+        fats: Math.round(totalF * mult * 10) / 10,
+        fiber: Math.round(totalFiber * mult * 10) / 10,
+        calcium: Math.round(totalCa * mult),
+        iron: Math.round(totalFe * mult * 10) / 10,
+        vitC: Math.round(totalVitC * mult),
+        detectedItems: detected
+      };
+    }
+
+    // Live preview under the dish input
+    function previewDishEstimate() {
+      const input = document.getElementById('dishInput');
+      const portionSelect = document.getElementById('dishPortion');
+      const previewEl = document.getElementById('dishEstimatePreview');
+      if (!input || !previewEl) return;
+
+      const text = input.value.trim();
+      if (!text || text.length < 2) {
+        previewEl.classList.add('hidden');
+        previewEl.classList.remove('flex');
+        return;
+      }
+
+      const portion = portionSelect ? parseFloat(portionSelect.value) || 1.0 : 1.0;
+      const est = estimateDishNutrition(text, portion);
+
+      document.getElementById('prevCals').textContent = `~${est.cals} kcal`;
+      document.getElementById('prevProtein').textContent = `${est.protein}g Protein`;
+      document.getElementById('prevCarbs').textContent = `${est.carbs}g Carbs`;
+      document.getElementById('prevFats').textContent = `${est.fats}g Fats`;
+
+      previewEl.classList.remove('hidden');
+      previewEl.classList.add('flex');
+    }
+
+    // Add meal from form submit
+    async function handleDishSubmit(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('dishInput');
+      const mealTypeSel = document.getElementById('dishMealType');
+      const portionSel = document.getElementById('dishPortion');
+
+      const dishName = input ? input.value.trim() : '';
+      if (!dishName) {
+        showToast('Please type a dish or food name');
+        input?.focus();
+        return;
+      }
+
+      const mealType = mealTypeSel ? mealTypeSel.value : 'Lunch';
+      const portion = portionSel ? parseFloat(portionSel.value) || 1.0 : 1.0;
+      const est = estimateDishNutrition(dishName, portion);
+
+      if (!appData.nutrition) {
+        appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
+      }
+      if (!Array.isArray(appData.nutrition.meals)) {
+        appData.nutrition.meals = [];
+      }
+
+      const newMeal = {
+        id: 'meal_' + Date.now(),
+        date: new Date().toISOString(),
+        dish: dishName,
+        mealType: mealType,
+        portion: portion,
+        calories: est.cals,
+        protein: est.protein,
+        carbs: est.carbs,
+        fats: est.fats,
+        fiber: est.fiber,
+        calcium: est.calcium,
+        iron: est.iron,
+        vitC: est.vitC
+      };
+
+      appData.nutrition.meals.push(newMeal);
+      await saveData();
+
+      if (input) input.value = '';
+      const previewEl = document.getElementById('dishEstimatePreview');
+      if (previewEl) {
+        previewEl.classList.add('hidden');
+        previewEl.classList.remove('flex');
+      }
+
+      renderNutrition();
+      updateBadges();
+      showToast(`Logged "${dishName}"! +${est.protein}g Protein, ${est.cals} kcal.`);
+    }
+
+    // Quick add 1-tap chip
+    async function quickAddFoodPreset(dishName, mealType) {
+      const est = estimateDishNutrition(dishName, 1.0);
+      if (!appData.nutrition) {
+        appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
+      }
+      if (!Array.isArray(appData.nutrition.meals)) appData.nutrition.meals = [];
+
+      appData.nutrition.meals.push({
+        id: 'meal_' + Date.now(),
+        date: new Date().toISOString(),
+        dish: dishName,
+        mealType: mealType || 'Lunch',
+        portion: 1.0,
+        calories: est.cals,
+        protein: est.protein,
+        carbs: est.carbs,
+        fats: est.fats,
+        fiber: est.fiber,
+        calcium: est.calcium,
+        iron: est.iron,
+        vitC: est.vitC
+      });
+
+      await saveData();
+      renderNutrition();
+      updateBadges();
+      showToast(`Added ${dishName}! (+${est.protein}g Protein)`);
+    }
+
+    // Delete meal from today's log
+    async function deleteNutritionMeal(id) {
+      if (!appData.nutrition || !appData.nutrition.meals) return;
+      appData.nutrition.meals = appData.nutrition.meals.filter(m => m.id !== id);
+      await saveData();
+      renderNutrition();
+      updateBadges();
+      showToast('Meal removed from today’s log');
+    }
+
+    // Add or remove water intake
+    async function addWaterIntake(amountMl) {
+      if (!appData.nutrition) {
+        appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
+      }
+      const current = Number(appData.nutrition.waterLoggedMl || 0);
+      const updated = Math.max(0, current + amountMl);
+      appData.nutrition.waterLoggedMl = updated;
+      await saveData();
+      renderNutrition();
+      if (amountMl > 0) {
+        showToast(`+${amountMl}ml logged! Total: ${(updated / 1000).toFixed(2)}L 💧`);
+      } else {
+        showToast(`Water updated: ${(updated / 1000).toFixed(2)}L`);
+      }
+    }
+
+    // Reset today's nutrition & water
+    async function resetTodayNutrition() {
+      if (confirm('Reset today\'s logged meals and water count? Your target goals will remain saved.')) {
+        if (!appData.nutrition) return;
+        const todayStr = new Date().toISOString().slice(0, 10);
+        appData.nutrition.meals = (appData.nutrition.meals || []).filter(m => (m.date || '').slice(0, 10) !== todayStr);
+        appData.nutrition.waterLoggedMl = 0;
+        await saveData();
+        renderNutrition();
+        updateBadges();
+        showToast('Today’s nutrition & water log reset.');
+      }
+    }
+
+    // Goals Modal Handlers
+    function openNutritionGoalsModal() {
+      const modal = document.getElementById('nutritionGoalsModal');
+      if (modal) modal.classList.remove('hidden');
+      const n = appData.nutrition || {};
+      const pIn = document.getElementById('goalProteinInput');
+      const cIn = document.getElementById('goalCaloriesInput');
+      const wIn = document.getElementById('goalWaterInput');
+      if (pIn) pIn.value = n.proteinGoal || 120;
+      if (cIn) cIn.value = n.caloriesGoal || 2200;
+      if (wIn) wIn.value = (Number(n.waterGoalMl || 3000) / 1000).toFixed(1);
+    }
+
+    function closeNutritionGoalsModal() {
+      const modal = document.getElementById('nutritionGoalsModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleSaveNutritionGoals(e) {
+      if (e) e.preventDefault();
+      const pIn = document.getElementById('goalProteinInput');
+      const cIn = document.getElementById('goalCaloriesInput');
+      const wIn = document.getElementById('goalWaterInput');
+
+      if (!appData.nutrition) appData.nutrition = {};
+      if (pIn) appData.nutrition.proteinGoal = parseInt(pIn.value) || 120;
+      if (cIn) appData.nutrition.caloriesGoal = parseInt(cIn.value) || 2200;
+      if (wIn) appData.nutrition.waterGoalMl = Math.round((parseFloat(wIn.value) || 3.0) * 1000);
+
+      await saveData();
+      closeNutritionGoalsModal();
+      renderNutrition();
+      showToast('Daily Nutrition & Hydration targets updated!');
+    }
+
+    // Sleep Modal Handlers
+    function openLogSleepModal() {
+      const modal = document.getElementById('nutritionSleepModal');
+      if (modal) modal.classList.remove('hidden');
+      const n = appData.nutrition || {};
+      const hIn = document.getElementById('sleepHoursInput');
+      const bIn = document.getElementById('sleepBedtimeInput');
+      const wIn = document.getElementById('sleepWakeTimeInput');
+      const qSel = document.getElementById('sleepQualitySelect');
+
+      if (hIn) hIn.value = n.sleepHours || 7.5;
+      if (bIn) bIn.value = n.sleepBedtime || '23:30';
+      if (wIn) wIn.value = n.sleepWakeTime || '07:00';
+      if (qSel) qSel.value = n.sleepQuality || 'good';
+    }
+
+    function closeLogSleepModal() {
+      const modal = document.getElementById('nutritionSleepModal');
+      if (modal) modal.classList.add('hidden');
+    }
+
+    async function handleSaveSleep(e) {
+      if (e) e.preventDefault();
+      const hIn = document.getElementById('sleepHoursInput');
+      const bIn = document.getElementById('sleepBedtimeInput');
+      const wIn = document.getElementById('sleepWakeTimeInput');
+      const qSel = document.getElementById('sleepQualitySelect');
+
+      if (!appData.nutrition) appData.nutrition = {};
+      if (hIn) appData.nutrition.sleepHours = parseFloat(hIn.value) || 7.5;
+      if (bIn) appData.nutrition.sleepBedtime = bIn.value || '23:30';
+      if (wIn) appData.nutrition.sleepWakeTime = wIn.value || '07:00';
+      if (qSel) appData.nutrition.sleepQuality = qSel.value || 'good';
+
+      await saveData();
+      closeLogSleepModal();
+      renderNutrition();
+      showToast('Sleep log saved!');
+    }
+
+    // Main Render Function for Nutrition View
+    function renderNutrition() {
+      if (!appData.nutrition) {
+        appData.nutrition = {
+          proteinGoal: 120,
+          caloriesGoal: 2200,
+          waterGoalMl: 3000,
+          waterLoggedMl: 0,
+          sleepHours: 7.5,
+          sleepQuality: 'good',
+          sleepBedtime: '23:30',
+          sleepWakeTime: '07:00',
+          meals: []
+        };
+      }
+
+      const todayStr = new Date().toISOString().slice(0, 10);
+      const meals = Array.isArray(appData.nutrition.meals) ? appData.nutrition.meals : [];
+      const todayMeals = meals.filter(m => (m.date || '').slice(0, 10) === todayStr);
+
+      const totalProtein = todayMeals.reduce((acc, m) => acc + Number(m.protein || 0), 0);
+      const totalCalories = todayMeals.reduce((acc, m) => acc + Number(m.calories || 0), 0);
+      const totalCarbs = todayMeals.reduce((acc, m) => acc + Number(m.carbs || 0), 0);
+      const totalFats = todayMeals.reduce((acc, m) => acc + Number(m.fats || 0), 0);
+      const totalFiber = todayMeals.reduce((acc, m) => acc + Number(m.fiber || 0), 0);
+      const totalCa = todayMeals.reduce((acc, m) => acc + Number(m.calcium || 0), 0);
+      const totalFe = todayMeals.reduce((acc, m) => acc + Number(m.iron || 0), 0);
+      const totalVitC = todayMeals.reduce((acc, m) => acc + Number(m.vitC || 0), 0);
+
+      const pGoal = Number(appData.nutrition.proteinGoal) || 120;
+      const cGoal = Number(appData.nutrition.caloriesGoal) || 2200;
+      const wGoal = Number(appData.nutrition.waterGoalMl) || 3000;
+      const wLogged = Number(appData.nutrition.waterLoggedMl) || 0;
+      const sHours = Number(appData.nutrition.sleepHours) || 7.5;
+      const sQuality = appData.nutrition.sleepQuality || 'good';
+
+      // 1. Protein Card
+      const pPct = Math.min(100, Math.round((totalProtein / pGoal) * 100));
+      const pLeft = Math.max(0, Math.round(pGoal - totalProtein));
+      const elProteinCur = document.getElementById('nutrProteinCurrent');
+      const elProteinTarget = document.getElementById('nutrProteinTarget');
+      const elProteinPct = document.getElementById('nutrProteinPct');
+      const elProteinBar = document.getElementById('nutrProteinBar');
+      const elProteinRem = document.getElementById('nutrProteinRemaining');
+
+      if (elProteinCur) elProteinCur.textContent = Math.round(totalProtein);
+      if (elProteinTarget) elProteinTarget.textContent = pGoal;
+      if (elProteinPct) elProteinPct.textContent = `${pPct}%`;
+      if (elProteinBar) elProteinBar.style.width = `${pPct}%`;
+      if (elProteinRem) {
+        elProteinRem.textContent = pLeft > 0 ? `${pLeft}g left to hit goal` : '🎉 Goal achieved today!';
+      }
+
+      // 2. Calories Card
+      const cPct = Math.min(100, Math.round((totalCalories / cGoal) * 100));
+      const cLeft = Math.max(0, Math.round(cGoal - totalCalories));
+      const elCalCur = document.getElementById('nutrCaloriesCurrent');
+      const elCalTarget = document.getElementById('nutrCaloriesTarget');
+      const elCalPct = document.getElementById('nutrCaloriesPct');
+      const elCalBar = document.getElementById('nutrCaloriesBar');
+      const elCalRem = document.getElementById('nutrCaloriesRemaining');
+
+      if (elCalCur) elCalCur.textContent = Math.round(totalCalories);
+      if (elCalTarget) elCalTarget.textContent = cGoal.toLocaleString();
+      if (elCalPct) elCalPct.textContent = `${cPct}%`;
+      if (elCalBar) elCalBar.style.width = `${cPct}%`;
+      if (elCalRem) {
+        elCalRem.textContent = cLeft > 0 ? `${cLeft.toLocaleString()} kcal remaining` : 'Daily calorie goal reached';
+      }
+
+      // 3. Water Card
+      const wPct = Math.min(100, Math.round((wLogged / wGoal) * 100));
+      const elWaterCur = document.getElementById('nutrWaterCurrent');
+      const elWaterTarget = document.getElementById('nutrWaterTarget');
+      const elWaterPct = document.getElementById('nutrWaterPct');
+      const elWaterBar = document.getElementById('nutrWaterBar');
+      const elWaterGlasses = document.getElementById('nutrWaterGlasses');
+
+      if (elWaterCur) elWaterCur.textContent = (wLogged / 1000).toFixed(1);
+      if (elWaterTarget) elWaterTarget.textContent = (wGoal / 1000).toFixed(1);
+      if (elWaterPct) elWaterPct.textContent = `${wPct}%`;
+      if (elWaterBar) elWaterBar.style.width = `${wPct}%`;
+      if (elWaterGlasses) elWaterGlasses.textContent = `(${Math.round(wLogged / 250)} glasses)`;
+
+      // 4. Sleep Card
+      const elSleepHours = document.getElementById('nutrSleepHours');
+      const elSleepBar = document.getElementById('nutrSleepBar');
+      const elSleepBadge = document.getElementById('nutrSleepQualityBadge');
+      const elSleepTimes = document.getElementById('nutrSleepTimes');
+
+      if (elSleepHours) elSleepHours.textContent = sHours.toFixed(1);
+      if (elSleepBar) elSleepBar.style.width = `${Math.min(100, Math.round((sHours / 8.0) * 100))}%`;
+      if (elSleepBadge) {
+        const qualityMap = {
+          deep: '😴 Deep Rest',
+          good: '😊 Good Rest',
+          restless: '🥱 Restless',
+          poor: '😫 Poor Sleep'
+        };
+        elSleepBadge.textContent = qualityMap[sQuality] || '😊 Good Rest';
+      }
+      if (elSleepTimes) {
+        const bt = appData.nutrition.sleepBedtime || '23:30';
+        const wt = appData.nutrition.sleepWakeTime || '07:00';
+        elSleepTimes.textContent = `${bt} → ${wt}`;
+      }
+
+      // 5. Macro totals and segmented progress bar
+      const elMProtein = document.getElementById('macroProteinTotal');
+      const elMCarbs = document.getElementById('macroCarbsTotal');
+      const elMFats = document.getElementById('macroFatsTotal');
+      if (elMProtein) elMProtein.textContent = `${Math.round(totalProtein)}g`;
+      if (elMCarbs) elMCarbs.textContent = `${Math.round(totalCarbs)}g`;
+      if (elMFats) elMFats.textContent = `${Math.round(totalFats)}g`;
+
+      const macroGramsTotal = totalProtein + totalCarbs + totalFats;
+      const barP = document.getElementById('macroBarProtein');
+      const barC = document.getElementById('macroBarCarbs');
+      const barF = document.getElementById('macroBarFats');
+
+      if (macroGramsTotal > 0) {
+        const pShare = Math.round((totalProtein / macroGramsTotal) * 100);
+        const cShare = Math.round((totalCarbs / macroGramsTotal) * 100);
+        const fShare = 100 - pShare - cShare;
+        if (barP) barP.style.width = `${pShare}%`;
+        if (barC) barC.style.width = `${cShare}%`;
+        if (barF) barF.style.width = `${Math.max(0, fShare)}%`;
+      } else {
+        if (barP) barP.style.width = '0%';
+        if (barC) barC.style.width = '0%';
+        if (barF) barF.style.width = '0%';
+      }
+
+      // 6. Micronutrients
+      const elFiber = document.getElementById('microFiber');
+      const elCa = document.getElementById('microCalcium');
+      const elFe = document.getElementById('microIron');
+      const elVitC = document.getElementById('microVitC');
+
+      if (elFiber) elFiber.textContent = `${Math.round(totalFiber)}g`;
+      if (elCa) elCa.textContent = `${Math.round(totalCa)} mg`;
+      if (elFe) elFe.textContent = `${Math.round(totalFe * 10) / 10} mg`;
+      if (elVitC) elVitC.textContent = `${Math.round(totalVitC)} mg`;
+
+      // 7. Meals Log List
+      const mealsListEl = document.getElementById('nutrMealsList');
+      const mealsCountEl = document.getElementById('nutrMealsCount');
+      if (mealsCountEl) mealsCountEl.textContent = `${todayMeals.length} ${todayMeals.length === 1 ? 'meal' : 'meals'}`;
+
+      if (mealsListEl) {
+        if (todayMeals.length === 0) {
+          mealsListEl.innerHTML = `
+            <div class="py-8 text-center flex flex-col items-center justify-center gap-2 border border-dashed border-[var(--df-border)] rounded-xl">
+              <span class="material-symbols-outlined text-[32px] text-[var(--df-text-muted)] opacity-50">flatware</span>
+              <p class="text-xs font-semibold text-[var(--df-text)]">No meals logged yet today</p>
+              <p class="text-[11px] text-[var(--df-text-muted)]">Type any dish above (e.g. "2 paneer paratha with curd") or tap a 1-tap quick add chip!</p>
+            </div>
+          `;
+        } else {
+          mealsListEl.innerHTML = todayMeals.slice().reverse().map(m => {
+            const timeStr = m.date ? new Date(m.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : '';
+            const mealIcons = {
+              Breakfast: '🍳',
+              Lunch: '🍱',
+              Dinner: '🍲',
+              Snacks: '🥤'
+            };
+            const icon = mealIcons[m.mealType] || '🍽️';
+
+            return `
+              <div class="flex items-center justify-between p-3 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)] hover:border-[#d2f84a]/40 transition-colors">
+                <div class="flex items-center gap-3">
+                  <div class="w-8 h-8 rounded-lg bg-[var(--df-card)] border border-[var(--df-border)] flex items-center justify-center text-sm shadow-sm">
+                    ${icon}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="font-bold text-xs text-[var(--df-text)]">${escapeHtml(m.dish)}</span>
+                      <span class="text-[10px] px-1.5 py-0.2 rounded-md bg-[var(--df-card)] border border-[var(--df-border)] text-[var(--df-text-muted)] font-medium">${escapeHtml(m.mealType)}</span>
+                    </div>
+                    <span class="text-[10px] text-[var(--df-text-muted)] mt-0.5 block">${timeStr} • ${m.portion}x portion</span>
+                  </div>
+                </div>
+
+                <div class="flex items-center gap-3">
+                  <div class="flex items-center gap-1.5 text-right flex-wrap">
+                    <span class="px-2 py-0.5 rounded-lg bg-[#d2f84a]/15 text-[#2e6f40] dark:text-[#d2f84a] text-[11px] font-extrabold border border-[#d2f84a]/25">+${m.protein}g P</span>
+                    <span class="px-2 py-0.5 rounded-lg bg-[var(--df-card)] text-[var(--df-text)] text-[11px] font-semibold border border-[var(--df-border)]">${m.calories} cal</span>
+                    <span class="hidden sm:inline-block text-[10px] text-[var(--df-text-muted)]">${m.carbs}g C • ${m.fats}g F</span>
+                  </div>
+                  <button type="button" onclick="deleteNutritionMeal('${m.id}')" class="text-[var(--df-text-muted)] hover:text-rose-500 p-1 rounded-lg transition-colors cursor-pointer" title="Delete meal">
+                    <span class="material-symbols-outlined text-[16px]">delete</span>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
         }
       }
     }
@@ -9211,9 +10739,15 @@ Return ONLY valid JSON matching:
                 isSupabase: true
               };
               localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
+              closeLoginModal();
+              closeGoogleOAuthHelpModal();
               updateAuthUI();
               await loadInitialData();
               renderAll();
+              showToast(`Welcome back, ${currentUser.name}! Signed in with Google.`);
+              if (window.location.hash && window.location.hash.includes('access_token')) {
+                window.history.replaceState(null, '', window.location.pathname);
+              }
             }
           });
         } catch (e) {
@@ -9231,6 +10765,10 @@ Return ONLY valid JSON matching:
         showToast('Supabase connection unavailable. Please use email access.');
         return;
       }
+      const label = document.getElementById('googleLoginBtnLabel');
+      const origText = label ? label.textContent : '';
+      if (label) label.textContent = 'Connecting to Google...';
+
       try {
         const { data, error } = await supabaseClient.auth.signInWithOAuth({
           provider: 'google',
@@ -9239,9 +10777,15 @@ Return ONLY valid JSON matching:
           }
         });
         if (error) {
-          showToast(`Google Sign In: ${error.message}`);
+          if (label) label.textContent = origText;
+          if (error.message && (error.message.toLowerCase().includes('not enabled') || error.message.toLowerCase().includes('unsupported provider'))) {
+            openGoogleOAuthHelpModal();
+          } else {
+            showToast(`Google Sign In: ${error.message}`);
+          }
         }
       } catch (err) {
+        if (label) label.textContent = origText;
         showToast(`Auth error: ${err.message}`);
       }
     }
