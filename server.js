@@ -6,6 +6,8 @@ import os from 'os';
 import crypto from 'crypto';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
+import defaultPlannerData from './default_data.js';
+import staticHtmlContent from './html_content.js';
 
 dotenv.config();
 
@@ -96,7 +98,12 @@ function getUserDataFile(rawUser) {
 }
 
 app.get(['/', '/index.html', '/smart-planner-ai.html'], (req, res) => {
-  res.sendFile(findPath('smart-planner-ai.html'));
+  const localHtml = findPath('smart-planner-ai.html');
+  if (fs.existsSync(localHtml)) {
+    return res.sendFile(localHtml);
+  }
+  res.set('Content-Type', 'text/html; charset=utf-8');
+  return res.send(staticHtmlContent);
 });
 
 app.get('/api/health', (req, res) => {
@@ -302,7 +309,8 @@ app.get('/api/data', (req, res) => {
       const content = fs.readFileSync(DATA_FILE, 'utf-8');
       return res.json(JSON.parse(content));
     }
-    return res.json({});
+    // Fallback to static in-memory default data (user's real 10 tasks, 4 expenses, 8 journals, 6 meals)
+    return res.json(defaultPlannerData || {});
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

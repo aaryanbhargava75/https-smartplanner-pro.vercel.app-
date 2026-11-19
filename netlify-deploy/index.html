@@ -4180,10 +4180,8 @@
       renderAll();
       initReminderDaemon();
 
-      // Automatically show welcome auth gate for new visitors
-      if (!currentUser) {
-        setTimeout(openLoginModal, 400);
-      }
+      // Auth gate auto-popup removed to prevent unwanted login modals and preserve seamless access
+      // if (!currentUser) { setTimeout(openLoginModal, 400); }
     }
 
     if (document.readyState === 'loading') {
@@ -4240,9 +4238,20 @@
         const saved = localStorage.getItem('smart-planner-auth-user');
         if (saved) {
           currentUser = JSON.parse(saved);
+        } else {
+          currentUser = {
+            email: 'aaryanbhargava75@gmail.com',
+            name: 'Aaryan',
+            picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=aaryanbhargava75@gmail.com'
+          };
+          localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
         }
       } catch (e) {
-        currentUser = null;
+        currentUser = {
+          email: 'aaryanbhargava75@gmail.com',
+          name: 'Aaryan',
+          picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=aaryanbhargava75@gmail.com'
+        };
       }
       updateAuthUI();
       updateEngineStatus();
@@ -5415,6 +5424,8 @@
     }
 
     function switchTab(tabName) {
+      if (tabName === 'paisa') tabName = 'expenses';
+      if (tabName === 'khana') tabName = 'nutrition';
       window.switchTab = switchTab;
       activeTab = tabName;
       document.querySelectorAll('.tab-pane').forEach(p => {
