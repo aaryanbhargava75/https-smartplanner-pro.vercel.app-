@@ -46,7 +46,7 @@ app.use((req, res, next) => {
     res.set('Cache-Control', 'public, max-age=86400, stale-while-revalidate=604800');
   } else {
     // HTML pages
-    res.set('Cache-Control', 'public, max-age=3600, stale-while-revalidate=86400');
+    res.set('Cache-Control', 'no-cache, no-store, must-revalidate');
   }
 
   next();
@@ -61,7 +61,7 @@ function getGroqConfig() {
       const parsed = dotenv.parse(fs.readFileSync(envPath));
       Object.assign(process.env, parsed);
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const rawKeys = process.env.GROQ_API_KEYS || process.env.GROQ_API_KEY || '';
   const keys = rawKeys.split(',').map(k => k.trim()).filter(Boolean);
@@ -72,7 +72,7 @@ function getGroqConfig() {
 const DATA_FILE = path.join(__dirname, 'planner-data.json');
 const USER_DATA_DIR = path.join(__dirname, 'user_databases');
 if (!fs.existsSync(USER_DATA_DIR)) {
-  try { fs.mkdirSync(USER_DATA_DIR, { recursive: true }); } catch (e) {}
+  try { fs.mkdirSync(USER_DATA_DIR, { recursive: true }); } catch (e) { }
 }
 
 function getUserDataFile(rawUser) {
@@ -132,7 +132,11 @@ function getAuthAccounts() {
     if (fs.existsSync(AUTH_FILE)) {
       return JSON.parse(fs.readFileSync(AUTH_FILE, 'utf-8'));
     }
-  } catch (e) {}
+    const tmpAuth = path.join(os.tmpdir(), 'user_databases', 'auth_accounts.json');
+    if (fs.existsSync(tmpAuth)) {
+      return JSON.parse(fs.readFileSync(tmpAuth, 'utf-8'));
+    }
+  } catch (e) { }
   return {};
 }
 
@@ -142,7 +146,13 @@ function saveAuthAccounts(accounts) {
       fs.mkdirSync(USER_DATA_DIR, { recursive: true });
     }
     fs.writeFileSync(AUTH_FILE, JSON.stringify(accounts, null, 2), 'utf-8');
-  } catch (e) {}
+  } catch (e) {
+    try {
+      const tmpDir = path.join(os.tmpdir(), 'user_databases');
+      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+      fs.writeFileSync(path.join(tmpDir, 'auth_accounts.json'), JSON.stringify(accounts, null, 2), 'utf-8');
+    } catch (e2) { }
+  }
 }
 
 function hashPassword(pw) {
@@ -198,7 +208,7 @@ app.post('/api/auth/login', (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const accounts = getAuthAccounts();
     const user = accounts[cleanEmail];
-    
+
     if (user) {
       if (user.passwordHash !== hashPassword(password)) {
         return res.status(401).json({ error: 'Incorrect password! Please check your credentials.' });
@@ -269,10 +279,13 @@ app.get('/api/data', (req, res) => {
       const content = fs.readFileSync(filePath, 'utf-8');
       return res.json(JSON.parse(content));
     }
-    // If specific user has no file yet, return null/empty object so client uses clean state
-    if (user && user.trim()) {
-      return res.json({ isNewUser: true });
+    // Check /tmp fallback on Vercel
+    const tmpFile = path.join(os.tmpdir(), 'user_databases', path.basename(filePath));
+    if (fs.existsSync(tmpFile)) {
+      const content = fs.readFileSync(tmpFile, 'utf-8');
+      return res.json(JSON.parse(content));
     }
+    // Fallback to DATA_FILE (which contains the user's verified tasks & data)
     if (fs.existsSync(DATA_FILE)) {
       const content = fs.readFileSync(DATA_FILE, 'utf-8');
       return res.json(JSON.parse(content));
@@ -289,8 +302,18 @@ app.post('/api/data', (req, res) => {
     const body = req.body || {};
     const dataToSave = body.data || body;
     const filePath = getUserDataFile(user);
-    fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf-8');
-    return res.json({ success: true, user: user || 'guest', file: path.basename(filePath), timestamp: new Date().toISOString() });
+    let savedLocation = 'local';
+    try {
+      if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
+      fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf-8');
+    } catch (writeErr) {
+      // Vercel read-only filesystem fallback to /tmp
+      const tmpDir = path.join(os.tmpdir(), 'user_databases');
+      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+      fs.writeFileSync(path.join(tmpDir, path.basename(filePath)), JSON.stringify(dataToSave, null, 2), 'utf-8');
+      savedLocation = 'tmp';
+    }
+    return res.json({ success: true, user: user || 'guest', file: path.basename(filePath), location: savedLocation, timestamp: new Date().toISOString() });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -367,30 +390,80 @@ Date & Multi-Day Recurring Range Resolution Rules:
 Return ONLY a single valid JSON object, no markdown fences, no prose, matching exactly this shape:
 {
  "timerAction":{"start":boolean,"durationMinutes":number,"task":string}|null,
- "tasks":[{"title":string,"category":"Work"|"Personal & Errands"|"Health"|"Finance"|"Documents"|"General","priority":"urgent"|"high"|"medium"|"low","date":"YYYY-MM-DD","time":"HH:MM"|null,"durationMinutes":number}],
+ "tasks":[{"title":string,"category":"Work"|"Personal & Errands"|"Health"|"Finance"|"Documents"|"General","priority":"urgent"|"high"|"medium"|"low","date":"YYYY-MM-DD","time":"HH:MM"|null,"durationMinutes":number,"reminder":boolean,"meetingLink":string|null}],
  "milestones":[{"title":string,"targetDate":"YYYY-MM-DD"|null,"category":"Career"|"Project"|"Financial"|"Learning"|"Personal","keySteps":[string]}],
  "whatNotToDo":[{"rule":string,"reason":string}],
  "expenses":[{"item":string,"amount":number,"category":"Food & Dining"|"Transport"|"Subscriptions"|"Shopping"|"Bills"|"General","date":"YYYY-MM-DD"}],
+ "meals":[{"dish":string,"mealType":"Breakfast"|"Lunch"|"Dinner"|"Snacks","portion":number,"calories":number,"protein":number,"carbs":number,"fats":number,"fiber":number,"calcium":number,"iron":number,"vitC":number,"date":"YYYY-MM-DD"}],
  "incomes":[{"source":string,"amount":number,"category":"Salary"|"Freelance"|"Investments"|"Business"|"Rental"|"Other","date":"YYYY-MM-DD"}],
  "assets":[{"name":string,"invested":number,"currentValue":number,"category":"Stocks"|"Gold & Silver"|"Real Estate / Property"|"Mutual Funds"|"Crypto"|"Cash & Bank"|"PF / FD / Debt"|"Other","notes":string}],
  "timeLogs":[{"activity":string,"durationMinutes":number,"category":"Social Media"|"Gaming"|"Streaming / TV"|"Procrastination"|"Other","impact":"High"|"Medium"|"Low","date":"YYYY-MM-DD"}],
  "mentalInsight":{"dominantFeeling":string,"rootCause":string,"actionableFix":string,"energyScore":number},
  "journal":[{"activity":string,"startTime":"HH:MM","endTime":"HH:MM"|null,"durationMinutes":number,"category":"Work & Deep Focus"|"Coding & Dev"|"Sleep & Recovery"|"Study & Learning"|"Meetings & Calls"|"Fitness & Health"|"Leisure & Break"|"Chores & Errands"|"Personal","mood":"🔥 Deep Work"|"⚡ Productive"|"😌 Relaxed"|"☕ Neutral"|"💤 Sleep / Rest"|"🥱 Lethargic / Foggy"|"😫 Stressed / Anxious"|"🤯 Overwhelmed","feeling":string,"rootCause":string,"howToFix":string,"notes":string,"date":"YYYY-MM-DD"}]
 }
+FOOD & NUTRITION (DIET & MACROS) EXTRACTION RULES:
+- When the user mentions food, snacks, drinks, or supplements they ate, drank, or consumed (e.g. "4 piece shawarma ke khae", "half plate peri peri chicken momos khae", "subah 4 boiled eggs aur doodh", "gym ke baad 1 scoop whey protein", "lunch me 2 roti aur dal"):
+  * Extract into "meals" array!
+  * Accurately calculate/estimate nutrition based on portion:
+    - "dish": clean title with portion (e.g. "Shawarma (4 pcs)", "Peri Peri Chicken Momos (Half Plate)")
+    - "portion": numeric portion multiplier (e.g. 1)
+    - "mealType": infer "Breakfast" (morning), "Lunch" (afternoon), "Dinner" (evening/night), or "Snacks" (street food / small bites)
+    - "calories": realistic kcal estimate (e.g. 4 pcs shawarma ~720 kcal; half plate peri peri chicken momos ~240 kcal; 1 scoop whey ~125 kcal)
+    - "protein": protein in grams (e.g. 4 pcs chicken shawarma ~48g; half plate chicken momos ~21g; 1 scoop whey ~25g; 2 boiled eggs ~12g)
+    - "carbs": carbohydrates in grams
+    - "fats": fats in grams
+    - "fiber": fiber in grams
+    - "calcium": calcium in mg
+    - "iron": iron in mg
+    - "vitC": vitamin C in mg
+    - "date": "${today}"
+  * CRITICAL: NEVER classify food already eaten as a "task"! (It's not a future to-do).
+  * CRITICAL: Do NOT create an "expenses" entry with amount: 0 if no monetary amount was stated in the note! Only create an expense if the user explicitly mentioned paying or spending money (e.g. "200 rs ke momos", "400 ka shawarma").
+
+REMINDER & FUTURE MEETING / APPOINTMENT SCHEDULING RULES:
+- When the user asks to schedule, remind, or set up a meeting or task with a specific date and time (e.g. "remind me 1 november 2 baje nitin bhaia ke saaath meeting set krle", "kal shaam 5 baje client sync yaad dilana", "10 nov ko 3 baje interview schedule kar"):
+  * Date Resolution (Strict YYYY-MM-DD):
+    - Named dates like "1 november", "1st nov", "1 nov" -> resolve to "${year}-11-01" (e.g. "2026-11-01").
+    - "kal / tomorrow" -> "${tomorrowDate}".
+    - "parso / day after tomorrow" -> resolve relative to today (${today}).
+    - Always set "date": "YYYY-MM-DD" accurately.
+  * Time Resolution (24-hour HH:MM format):
+    - "2 baje" / "dopahar 2 baje" / "2 pm" -> "14:00".
+    - "subah 10 baje" / "10 am" -> "10:00".
+    - "shaam 5 baje" / "5 pm" -> "17:00".
+    - "raat 9 baje" / "9 pm" -> "21:00".
+  * Title Formatting:
+    - Strip meta prompts: "remind me", "yaad dilana", "set krle", "set kar do", "schedule kar".
+    - Clean person names / titles: e.g. "nitin bhaia ke saaath meeting" -> "Meeting with Nitin Bhaiya".
+    - Capitalize appropriately.
+  * Task Properties:
+    - "category": "Work" (or "Personal & Errands").
+    - "priority": "high" or "urgent".
+    - "reminder": true.
+    - "meetingLink": "https://meet.google.com/new" (for meetings/calls/sync/appointments).
+    - "durationMinutes": 60 (or 30).
+  * Auto-Add to Schedule Timeline / Journal:
+    - Also create a corresponding schedule entry in "journal" so it appears on the Daily Calendar / Timeline for that date:
+      {"activity":"Meeting with Nitin Bhaiya","startTime":"14:00","endTime":"15:00","durationMinutes":60,"category":"Meetings & Calls","mood":"⚡ Productive","date":"${year}-11-01","notes":"Scheduled meeting with Nitin Bhaiya (Reminder active)"}.
+
 TASK EXTRACTION & PRIORITY CLASSIFICATION RULES:
 - CRITICAL EXCLUSIONS FOR TASKS:
   * NEVER create a task for setting or starting a timer / pomodoro (e.g. "set 25 min timer", "25 min ka timer lagade", "start 25 min timer", "pomodoro 25 mins", "focus timer"). Extract these strictly into "timerAction": {"start": true, "durationMinutes": 25, "task": "Deep Work"} and NEVER add to "tasks"!
-  * NEVER create a task for items that are ALREADY DONE, PASSED, or CLEARED (e.g. "round toh clear hogya", "interview clear ho gaya", "meeting done", "hogya", "kar liya", "pass hogya"). Extract these as "journal" accomplishments!
-  * NEVER create a task for food eaten, snacks, or money spent (e.g. "30 ke chips khalie", "30 rpee ka kharcha", "coke pi 20 ki"). Extract these strictly into "expenses" with clean item name and amount!
+  * NEVER create a task for PAST COMPLETED ACTIVITIES OR THINGS THE USER WATCHED, STUDIED, WORKED ON, OR DID (e.g. "meine business analystwali video dekhi hrithik mehlawat ki", "aaj 2 ghante coding ki", "sql practice kari", "resume bhej diya", "round toh clear hogya", "interview clear ho gaya", "meeting done", "hogya", "kar liya", "pass hogya", "i watched a video", "worked on api", "studied sql"). Extract ALL of these strictly into "journal" (with accurate category like "Study & Learning", "Coding & Dev", "Work & Deep Focus") and NEVER add to "tasks"!
+  * NEVER create a task for ONGOING / CURRENTLY IN-PROGRESS WORK UPDATES — anything the user tells you they are currently doing right now (e.g. "abhi business analyst video dekh raha hu", "coding kr rha hu", "project pe kaam krrha", "working on dashboard right now", "currently studying"). Extract these strictly into "journal" (Active Work / Focus Log, mood: "🔥 Deep Work") and NEVER add to "tasks"!
+  * Hinglish Tense Rule of Thumb:
+    - Past / Continuous verbs ('dekhi', 'dekha', 'kiya', 'kia', 'kari', 'padha', 'khai', 'khaya', 'kr rha', 'krrha', 'kar raha', 'dekh rha', 'watched', 'did', 'studied', 'working on') -> ALWAYS goes to "journal" / "meals", NEVER "tasks"!
+    - Future obligation / imperative / deadline ('karna hai', 'karni hai', 'dekhni hai', 'padhna hai', 'bhejna hai', 'remind me', 'set krle', 'urgent', 'need to', 'tomorrow', 'before 4 PM') -> Goes to "tasks"!
+  * NEVER create a task for food eaten, snacks, or drinks (e.g. "4 piece shawarma", "momos khae", "Meine ek maggi khai", "3 paneer besan cheele", "30 ke chips khalie"). Extract strictly into "meals" (and "expenses" ONLY IF money was spent)!
   * NEVER create a task for bad habits, relapses, mental stress, or emotional venting (e.g. "muthi lag gayi", "dimag ki dahi", "mood off", "relapse"). Extract these strictly into "journal" (with mood emoji like "😫 Stressed / Anxious" or "🤯 Overwhelmed") and "timeLogs" (Procrastination / High Impact)!
-  * Only extract ACTUAL FUTURE TO-DOS (actionable tasks yet to be done) into "tasks".
+  * Only extract ACTUAL FUTURE TO-DOS (actionable pending tasks yet to be done) into "tasks".
 - Title Cleaning (CRITICAL): Always clean the task title! Strip out urgency/priority words, meta notes, and commentary from the title. 
   Example: "legal document pdna kaafi important hai high prior" -> title: "Read legal document", priority: "high".
   Example: "kal RTI post office me submit karni hai urgent" -> title: "Submit RTI application at post office", priority: "urgent".
 - Priority Hierarchy:
   * "urgent": Immediate time-sensitive deadlines today, blocker items, explicit "urgent", "asap", "critical", "emergency", "aaj hi", "abhi turant", "right now", "sabse pehle", "p1".
   * "high": Major goals, key milestones, legal/career/interviews/exams, explicit "kaafi important", "high priority", "high prior", "bohot zaruri", "must do", "zaruri", "crucial", "p2".
-  * "medium": Standard daily to-dos, ongoing routine tasks, general work items.
+  * "medium": Standard upcoming daily to-dos and general future work items.
   * "low": Casual, optional, "jab time mile", "fursat me", "someday", "leisure", exploratory tasks.
 - Milestones ("Kya karna hai" - Big Goals):
   * Extract major projects or overarching objectives as milestones (e.g. "Get Job & Clear Interviews", "Complete Main Project Launch", "Fulfill RTI bus filing").
@@ -449,56 +522,130 @@ Return ONLY a valid JSON object matching this exact shape:
   }
 });
 
+// Shared deterministic guard preventing past/ongoing activity logs from polluting Tasks
+function isFutureTaskClauseServer(clause) {
+  const lower = (clause || '').toLowerCase();
+  return /\b(karna|karni|karne|krna|krni|krle|krdo|kar\s*do|kar\s*le|kar\s*lena|dekhna|dekhni|padhna|padhni|pdhna|pdhni|likhna|likhni|bhejna|bhejni|banana|banani|lana|laana|lena|dena|jana|jaana|milna|submit\s*karn[ai]|call\s*karn[ai]|baat\s*karn[ai]|set\s*k(?:r|ar)?(?:le|lo|do|na)|schedule\s*k(?:r|ar)?(?:le|lo|do|na)?|karunga|karungi|karenge|dekhunga|padhunga|bhejunga|remind\s*me|reminder|yaad\s*dilana|yaad\s*rakhna|urgent|asap|high\s*prior(?:ity)?|low\s*prior(?:ity)?|must\s*do|need\s*to|have\s*to|got\s*to|gotta|plan\s+(?:my|to)|book\s+(?:a|an|my)|tomorrow|parso|before\s+\d|by\s+\d{1,2}\s*(?:am|pm|baje))\b/i.test(lower);
+}
+
+function classifyNonTaskActivityServer(clause) {
+  const lower = (clause || '').toLowerCase();
+  if (!lower || isFutureTaskClauseServer(lower)) return null;
+
+  const isHinglishOngoing = /\b(?:raha|rha|rahi|rhi)(?:\s*(?:hu|hun|hoon|tha|thi|hai|h))?\b|(?:kr|kar|dekh|padh|pdh|parh|likh|bana|seekh|sikh|sun|chala|baith|chal|soch)(?:rha|raha|rhi|rahi)\b|\b(?:i\s+am|i'm|im|am)\s+(?:currently\s+)?(?:watching|studying|working|coding|reading|writing|building|practicing|solving|debugging|doing)\b|\bworking\s+on\b/i.test(lower);
+  const isHinglishPast = /\b(dekha|dekhi|dekhe|dekh\s*li|dekh\s*liya|dekh\s*liye|dekh\s*chuka|dekhli|dekhliya|kiya|kia|kari|kara|kiye|kar\s*li|kar\s*liya|kar\s*di|kar\s*diya|kr\s*liya|kr\s*diya|kr\s*li|kr\s*di|krli|krdi|krliya|krdiya|padha|padhi|padhe|parha|parhi|pdha|pdhi|padh\s*li|padh\s*liya|pdh\s*liya|likha|likhi|likh\s*liya|likh\s*diya|banaya|banayi|banai|bana\s*liya|bana\s*diya|seekha|seekhi|sikha|sikhi|sikh\s*liya|seekh\s*liya|suna|suni|sun\s*liya|samjha|samjhi|bheja|bheji|bhej\s*diya|bhej\s*di|diya|liya|hui|hua|hue|gaya|gayi|gya|gyi|aaya|aayi|khela|kheli|chalaya|chalayi|nipta\s*diya|niptaya|hogya|ho\s*gya|ho\s*gayi|ho\s*chuka|tha|thi|khai|khaya|khayi|khae|khaye|piya)\b|\b(?:coding|practice|padhai|parhai|study|baat|meeting|workout|exercise|walk|jogging|running|meditation|revision|kaam|taiyari|prep|preparation|research|debugging|testing)\s+ki\b|\b(?:i\s+(?:just\s+|already\s+)?(?:watched|studied|did|worked|finished|completed|learned|learnt|read|wrote|built|created|made|sent|called|met|attended|practiced|practised|revised|solved|debugged|coded|played|exercised|ran|walked|slept|woke)|(?:just|already)\s+(?:watched|studied|did|done|finished|completed|sent|called|met|built|solved|revised)|(?:watched|studied|completed|finished|practiced|practised|solved|debugged|coded)\b)/i.test(lower);
+  const isFirstPersonPast = /\b(meine|maine|mene|humne|hamne)\b/i.test(lower) && /\b(ki|kya|kra|krrha)\b/i.test(lower);
+
+  if (isHinglishOngoing) return 'ongoing';
+  if (isHinglishPast || isFirstPersonPast) return 'past';
+  return null;
+}
+
+function sanitizeParsedResponse(parsed, rawText) {
+  if (!parsed || typeof parsed !== 'object') return parsed;
+  if (!Array.isArray(parsed.tasks) || parsed.tasks.length === 0) return parsed;
+
+  const now = new Date();
+  const today = now.toISOString().slice(0, 10);
+  const currentTime = now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
+
+  const clauses = String(rawText || '')
+    .split(/\r?\n|(?<=[.!?])\s+|(?:\s+aur\s+|\s+and\s+|;\s*)/i)
+    .map(s => s.trim())
+    .filter(s => s.length > 1);
+
+  const nonTaskClauses = clauses.filter(c => classifyNonTaskActivityServer(c) !== null);
+  const futureClauses = clauses.filter(c => classifyNonTaskActivityServer(c) === null);
+  const onlyActivityLogs = nonTaskClauses.length > 0 && futureClauses.length === 0;
+
+  if (!Array.isArray(parsed.journal)) parsed.journal = [];
+  const hasMealsOrExpenses = (parsed.meals?.length > 0) || (parsed.expenses?.length > 0);
+
+  const keptTasks = [];
+  for (const t of parsed.tasks) {
+    const titleStr = typeof t === 'string' ? t : (t.title || '');
+    const titleKind = classifyNonTaskActivityServer(titleStr);
+
+    // Strip task if its own title is past/ongoing OR if the entire input had zero future task clauses
+    if (titleKind !== null || onlyActivityLogs) {
+      if (!hasMealsOrExpenses && parsed.journal.length === 0) {
+        const cleanActivity = titleStr
+          .replace(/^(watch|do|complete|finish|read|study)\s+/i, (m, v) => {
+            const map = { watch: 'Watched ', do: 'Did ', complete: 'Completed ', finish: 'Finished ', read: 'Read ', study: 'Studied ' };
+            return map[v.toLowerCase()] || m;
+          })
+          .trim() || String(rawText).trim();
+        const kind = titleKind || classifyNonTaskActivityServer(rawText);
+        parsed.journal.unshift({
+          activity: cleanActivity,
+          startTime: currentTime,
+          endTime: currentTime,
+          durationMinutes: Number(t.durationMinutes) || 30,
+          category: /video|lecture|course|study|padh|sql|analyst|read|article|learn/i.test(rawText) ? 'Study & Learning' : (/code|coding|bug|api|dev/i.test(rawText) ? 'Coding & Dev' : 'Work & Deep Focus'),
+          mood: kind === 'ongoing' ? '🔥 Deep Work' : '⚡ Productive',
+          notes: String(rawText).trim(),
+          date: t.date || today
+        });
+      }
+      continue;
+    }
+    keptTasks.push(t);
+  }
+
+  parsed.tasks = keptTasks;
+  return parsed;
+}
+
 app.post('/api/parse', async (req, res) => {
   try {
     const { text, recentJournal } = req.body || {};
     if (!text || !text.trim()) return res.status(400).json({ error: 'text is required' });
-    
+
     const { keys, model } = getGroqConfig();
     if (!keys || keys.length === 0) return res.status(500).json({ error: 'Server has no GROQ_API_KEY configured in .env' });
 
+    const candidateModels = [...new Set([model, 'openai/gpt-oss-20b'].filter(Boolean))];
     let lastErr = null;
-    for (let i = 0; i < keys.length; i++) {
-      const activeKey = keys[i];
-      try {
-        const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${activeKey}` },
-          body: JSON.stringify({
-            model: model,
-            messages: [
-              { role: 'system', content: systemPrompt(recentJournal) },
-              { role: 'user', content: text }
-            ],
-            temperature: 0.2,
-            response_format: { type: 'json_object' }
-          })
-        });
+    for (const candidateModel of candidateModels) {
+      for (let i = 0; i < keys.length; i++) {
+        const activeKey = keys[i];
+        try {
+          const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${activeKey}` },
+            signal: AbortSignal.timeout(3500),
+            body: JSON.stringify({
+              model: candidateModel,
+              messages: [
+                { role: 'system', content: systemPrompt(recentJournal) },
+                { role: 'user', content: text }
+              ],
+              temperature: 0.2,
+              response_format: { type: 'json_object' }
+            })
+          });
 
-        if (r.ok) {
-          const data = await r.json();
-          const content = data.choices?.[0]?.message?.content;
-          if (content) {
-            const cleaned = content.trim().replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
-            console.log(`✓ /api/parse succeeded with Groq Key #${i + 1}`);
-            return res.json(JSON.parse(cleaned));
+          if (r.ok) {
+            const data = await r.json();
+            const content = data.choices?.[0]?.message?.content;
+            if (content) {
+              const cleaned = content.trim().replace(/^```json/i, '').replace(/^```/, '').replace(/```$/, '').trim();
+              const parsed = sanitizeParsedResponse(JSON.parse(cleaned), text);
+              console.log(`✓ /api/parse succeeded (${candidateModel}, Key #${i + 1}) -> tasks: ${(parsed.tasks || []).length}, journal: ${(parsed.journal || []).length}`);
+              return res.json(parsed);
+            }
           }
-        }
 
-        const errText = await r.text().catch(() => '');
-        console.warn(`⚠️ Groq Key #${i + 1} /api/parse failed (${r.status}): ${errText.slice(0, 150)}`);
-        lastErr = `Groq error ${r.status}: ${errText.slice(0, 300)}`;
-
-        if (r.status === 429 || r.status === 401 || r.status >= 500) {
-          console.log(`Failing over to next Groq key in pool...`);
-          continue;
+          const errText = await r.text().catch(() => '');
+          console.warn(`⚠️ Groq Key #${i + 1} (${candidateModel}) /api/parse failed (${r.status}): ${errText.slice(0, 120)}`);
+          lastErr = `Groq error ${r.status}: ${errText.slice(0, 300)}`;
+        } catch (err) {
+          lastErr = err.message;
         }
-      } catch (err) {
-        lastErr = err.message;
       }
     }
 
-    return res.status(500).json({ error: lastErr || 'All Groq keys in pool failed' });
+    return res.status(500).json({ error: lastErr || 'All Groq models/keys in pool failed' });
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
@@ -700,14 +847,14 @@ function parseBankSmsHeuristic(text) {
 
   // Amount extraction
   const amtMatch = text.match(/(?:rs\.?|inr|₹)\s*([\d,]+(?:\.\d+)?)/i) ||
-                   text.match(/(?:debited\s*(?:by|for)?|spent|paid)\s*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)/i);
+    text.match(/(?:debited\s*(?:by|for)?|spent|paid)\s*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)/i);
   if (amtMatch) {
     result.amount = parseFloat(amtMatch[1].replace(/,/g, ''));
   }
 
   // Merchant extraction
   const mMatch = text.match(/(?:at|to|info[:\s]|spent on)\s+([A-Za-z0-9\s&'-]{2,25}?)(?:\s+(?:on|via|upi|ref|bal|available|\.|\d))/i) ||
-                 text.match(/(?:at|to)\s+([A-Za-z0-9&'-]{2,20})/i);
+    text.match(/(?:at|to)\s+([A-Za-z0-9&'-]{2,20})/i);
   if (mMatch && mMatch[1]) {
     const rawM = mMatch[1].trim();
     if (!/bank|card|account|a\/c|ending|your/i.test(rawM)) {
@@ -830,7 +977,7 @@ async function handleIncomingSms(req, res) {
           store = JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
         }
         if (!Array.isArray(store.expenses)) store.expenses = [];
-        
+
         savedRecord = {
           id: 'e_sms_' + Date.now().toString(36),
           item: parsedExpense.item || 'Bank Expense',
@@ -884,7 +1031,7 @@ app.post('/api/parse-image', async (req, res) => {
     }
 
     const { key, model } = getGroqConfig();
-    
+
     // If OCR text is available, run through systemPrompt
     if (textToAnalyze) {
       if (key) {
@@ -945,6 +1092,9 @@ app.get('/manifest.json', (req, res) => {
 });
 
 app.get('*', (req, res) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   res.sendFile(path.join(__dirname, 'smart-planner-ai.html'));
 });
 

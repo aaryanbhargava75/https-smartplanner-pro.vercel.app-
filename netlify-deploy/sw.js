@@ -1,4 +1,4 @@
-const CACHE_NAME = 'smart-planner-v2';
+const CACHE_NAME = 'smart-planner-v8';
 const ASSETS_TO_CACHE = [
   '/',
   '/manifest.json'
@@ -45,3 +45,29 @@ self.addEventListener('fetch', (e) => {
     })
   );
 });
+
+// Handle push notification clicks (Directly opens Google Meet / Meeting Link)
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  const urlToOpen = (event.notification.data && event.notification.data.url) || '/';
+  
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if ('focus' in client) {
+          if (urlToOpen && urlToOpen !== '/') {
+            if (client.url === urlToOpen) {
+              return client.focus();
+            }
+          } else {
+            return client.focus();
+          }
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow(urlToOpen);
+      }
+    })
+  );
+});
+

@@ -1,0 +1,608 @@
+{
+  "currencySymbol": "₹",
+  "tasks": [
+    {
+      "id": "t_nitin_meeting_mvvgqqbm",
+      "title": "Meeting with Nitin Bhaiya",
+      "category": "Work",
+      "priority": "high",
+      "date": "2026-11-01",
+      "time": "14:00",
+      "duration": 60,
+      "status": "todo",
+      "reminder": true,
+      "reminderTime": "14:00",
+      "meetingLink": "https://meet.google.com/new",
+      "source": "AI Voice / Brain Dump"
+    },
+    {
+      "id": "t_6r9qzbu82",
+      "date": "2026-10-20",
+      "time": "16:00",
+      "title": "Complete product planner app",
+      "source": "AI Brain Dump",
+      "status": "done",
+      "category": "Work",
+      "duration": 30,
+      "priority": "medium"
+    },
+    {
+      "id": "t_e4puhaa28",
+      "date": "2026-10-20",
+      "time": "17:00",
+      "title": "Meeting with Shefali",
+      "source": "AI Brain Dump",
+      "status": "todo",
+      "category": "Work",
+      "duration": 30,
+      "priority": "urgent"
+    },
+    {
+      "id": "t_i4cil0q11",
+      "date": "2026-10-20",
+      "time": "17:00",
+      "title": "Read legal document",
+      "source": "AI Brain Dump",
+      "status": "todo",
+      "category": "Documents",
+      "duration": 30,
+      "priority": "urgent"
+    },
+    {
+      "id": "t_6o1rjlhl3",
+      "date": "2026-10-20",
+      "time": "18:00",
+      "title": "Update resume",
+      "source": "AI Brain Dump",
+      "status": "todo",
+      "category": "Work",
+      "duration": 30,
+      "priority": "urgent"
+    },
+    {
+      "id": "t_ttksrr2a8",
+      "date": "2026-10-20",
+      "title": "Upload product on Super Base",
+      "source": "AI Brain Dump",
+      "status": "todo",
+      "category": "Work",
+      "duration": 30,
+      "priority": "high"
+    },
+    {
+      "id": "t_p1",
+      "time": "11:00 AM",
+      "title": "Set 25 minute timer",
+      "status": "todo",
+      "category": "Personal & Errands",
+      "priority": "medium"
+    },
+    {
+      "id": "t_p2",
+      "time": "11:00 AM",
+      "title": "Review weekly project roadmap & milestones",
+      "status": "todo",
+      "category": "Work",
+      "priority": "urgent"
+    },
+    {
+      "id": "t_p3",
+      "time": "11:00 AM",
+      "title": "Team sync & design sprint review",
+      "status": "todo",
+      "category": "Work",
+      "priority": "high"
+    },
+    {
+      "id": "t_p4",
+      "time": "11:00 AM",
+      "title": "Read 20 pages & personal journaling",
+      "status": "todo",
+      "category": "Personal & Errands",
+      "priority": "low"
+    }
+  ],
+  "milestones": [
+    {
+      "id": "m1",
+      "title": "Land Target Career Role & Clear Interviews",
+      "category": "Career",
+      "keySteps": [
+        {
+          "done": true,
+          "text": "Polished portfolio & resume"
+        },
+        {
+          "done": true,
+          "text": "Create 3 mock interview videos"
+        },
+        {
+          "done": false,
+          "text": "Daily 10 direct applications"
+        }
+      ],
+      "progress": 67,
+      "targetDate": "2026-11-15"
+    },
+    {
+      "id": "m2",
+      "title": "Complete RTI Bus & Legal Applications",
+      "category": "Personal",
+      "keySteps": [
+        {
+          "done": true,
+          "text": "Draft RTI document"
+        },
+        {
+          "done": false,
+          "text": "Submit at post office"
+        }
+      ],
+      "progress": 50,
+      "targetDate": "2026-10-23"
+    }
+  ],
+  "notToDoList": [
+    {
+      "id": "nd1",
+      "rule": "Don't open phone / social media until first 2 urgent tasks are done",
+      "active": true,
+      "reason": "Protects morning cognitive energy & stops procrastination"
+    },
+    {
+      "id": "nd2",
+      "rule": "No YouTube or Instagram doomscrolling before 7:00 PM",
+      "active": true,
+      "reason": "Prevents attention fragmentation & focus leaks"
+    },
+    {
+      "id": "nd3",
+      "rule": "Don't multitask while reviewing legal documents",
+      "active": true,
+      "reason": "Ensures zero errors & rapid completion"
+    }
+  ],
+  "expenses": [
+    {
+      "id": "e_npjjf734z",
+      "date": "2026-10-19",
+      "item": "pizza",
+      "amount": 1000,
+      "source": "Auto-Extracted",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_dsnxbzspo",
+      "date": "2026-10-19",
+      "item": "Momos",
+      "amount": 140,
+      "source": "Auto-Extracted",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_6rm7xnpk4",
+      "date": "2026-10-16",
+      "item": "chips",
+      "amount": 30,
+      "source": "Auto-Extracted",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_uzgmy686c",
+      "date": "2026-10-03",
+      "item": "pizza",
+      "amount": 520,
+      "source": "Auto-Extracted",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_oa4kvb9m8",
+      "date": "2026-10-03",
+      "item": "pizza",
+      "amount": 520,
+      "source": "Auto-Extracted",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_sms_muqqhga3",
+      "date": "2026-10-02",
+      "item": "Netflix",
+      "amount": 149,
+      "source": "Phone SMS Sync",
+      "category": "Subscriptions"
+    },
+    {
+      "id": "e_sms_muqqd7cp",
+      "date": "2026-10-02",
+      "item": "ZOMATO",
+      "amount": 450,
+      "source": "Phone SMS Sync",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "e_9guh7ahcm",
+      "date": "2026-10-02",
+      "item": "Pepsi",
+      "amount": 30,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "cjfh373nmu3yon2p",
+      "date": "2026-09-16",
+      "item": "coke zero",
+      "amount": 20,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "18dd7mu1mu3yxkjf",
+      "date": "2026-09-16",
+      "item": "momos",
+      "amount": 390,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "5orkj5mlmu3yxkjf",
+      "date": "2026-09-16",
+      "item": "coke zero",
+      "amount": 20,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "jxuhgpmymu49wikg",
+      "date": "2026-09-01",
+      "item": "YT Premium",
+      "amount": 149,
+      "source": "AI braindump",
+      "category": "Subscriptions"
+    },
+    {
+      "id": "kq24zippmu49xb86",
+      "date": "2026-09-01",
+      "item": "coke zero",
+      "amount": 10,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "68eb27ramuewbfw9",
+      "date": "2026-09-24",
+      "item": "Uber bike",
+      "amount": 85,
+      "source": "AI braindump",
+      "category": "Transport"
+    },
+    {
+      "id": "zdev5m98muewbo9a",
+      "date": "2026-09-24",
+      "item": "bus",
+      "amount": 520,
+      "source": "AI braindump",
+      "category": "Transport"
+    },
+    {
+      "id": "ijo1b9t3muewd9fj",
+      "date": "2026-09-23",
+      "item": "phone recharge",
+      "amount": 420,
+      "source": "AI braindump",
+      "category": "Bills"
+    },
+    {
+      "id": "ktz3tamemupjdbzh",
+      "date": "2026-10-01",
+      "item": "Fix",
+      "amount": 3000,
+      "source": "AI braindump",
+      "category": "General"
+    },
+    {
+      "id": "qfw2wnmjmuqonaxd",
+      "date": "2026-10-02",
+      "item": "Pepsi",
+      "amount": 30,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "s656jgtfmuqoo9t6",
+      "date": "2026-10-02",
+      "item": "Pepsi",
+      "amount": 30,
+      "source": "AI braindump",
+      "category": "Food & Dining"
+    },
+    {
+      "id": "nnpj33v9muqos0us",
+      "date": "2026-10-02",
+      "item": "SIP cut",
+      "amount": 600,
+      "source": "AI braindump",
+      "category": "General"
+    },
+    {
+      "id": "t35la527muqos0us",
+      "date": "2026-10-02",
+      "item": "SIP cut",
+      "amount": 700,
+      "source": "AI braindump",
+      "category": "General"
+    }
+  ],
+  "incomes": [
+    {
+      "id": "i_loxqqiazm",
+      "date": "2026-10-19",
+      "amount": 500,
+      "source": "Mummy",
+      "category": "Other"
+    },
+    {
+      "id": "k5ds7jn9muewhnlp",
+      "date": "2026-09-24",
+      "amount": 45000,
+      "source": "Salary",
+      "category": "Salary",
+      "sourceOrigin": "🧪 Demo Auto-Sync"
+    }
+  ],
+  "assets": [
+    {
+      "id": "hk6ui8otmu4aigm1",
+      "date": "2026-09-16",
+      "name": "Quant Small Cap",
+      "notes": "1600 rupee monthly SIP",
+      "source": "AI braindump",
+      "category": "Mutual Funds",
+      "invested": 38798,
+      "currentValue": 47148
+    }
+  ],
+  "journal": [
+    {
+      "id": "j_nitin_meeting_mvvgqqbm",
+      "activity": "Meeting with Nitin Bhaiya",
+      "startTime": "14:00",
+      "endTime": "15:00",
+      "duration": 60,
+      "durationMinutes": 60,
+      "category": "Meetings & Calls",
+      "mood": "⚡ Productive",
+      "date": "2026-11-01",
+      "notes": "Scheduled via voice dump: remind me 1 november 2 baje nitin bhaia ke saaath meeting set krle"
+    },
+    {
+      "id": "j_mvqqqmasqgavw",
+      "activity": "Milestone Cleared: Complete product planner app",
+      "startTime": "15:00",
+      "endTime": "15:30",
+      "duration": 30,
+      "category": "Work & Deep Focus",
+      "mood": "⚡ Productive",
+      "notes": "Complete product planner app"
+    },
+    {
+      "id": "j_mvginnxx665qq",
+      "mood": "⚡ Productive",
+      "notes": "Complete product planner app",
+      "endTime": "15:30",
+      "activity": "Milestone Cleared: Complete product planner app",
+      "category": "Work & Deep Focus",
+      "duration": 30,
+      "startTime": "15:00"
+    },
+    {
+      "id": "j_mvghxgvx7lb7f",
+      "mood": "⚡ Productive",
+      "notes": "Complete product planner app",
+      "endTime": "15:30",
+      "activity": "Milestone Cleared: Complete product planner app",
+      "category": "Work & Deep Focus",
+      "duration": 30,
+      "startTime": "15:00"
+    },
+    {
+      "id": "j_mvghsks4sp7ss",
+      "mood": "⚡ Productive",
+      "notes": "bhai product planner wala app 4 baje tk urgently done krke rkhdio",
+      "activity": "Milestone Cleared: product planner wala app 4 baje tk urgently done krke rkhdio",
+      "category": "Work & Deep Focus",
+      "duration": 30,
+      "startTime": "15:10"
+    },
+    {
+      "id": "j_y8bdh097v",
+      "mood": "⚡ Productive",
+      "notes": "Scheduled from voice/brain dump",
+      "endTime": "17:30",
+      "activity": "Schedule meeting with Shefali",
+      "category": "Meetings & Calls",
+      "duration": 30,
+      "startTime": "17:00"
+    },
+    {
+      "id": "j_ganxjoz6q",
+      "mood": "⚡ Productive",
+      "notes": "Scheduled from voice/brain dump",
+      "endTime": "17:30",
+      "activity": "Meeting with Shefali",
+      "category": "Meetings & Calls",
+      "duration": 30,
+      "startTime": "17:00"
+    },
+    {
+      "id": "j_legal_doc_1700",
+      "mood": "⚡ Productive",
+      "notes": "Scheduled for 5:00 PM",
+      "endTime": "21:15",
+      "activity": "Read legal document",
+      "category": "Work & Deep Focus",
+      "duration": 30,
+      "startTime": "20:45"
+    },
+    {
+      "id": "j_resume_1800",
+      "mood": "⚡ Productive",
+      "notes": "Scheduled for 6:00 PM",
+      "endTime": "19:15",
+      "activity": "Update resume",
+      "category": "Work & Deep Focus",
+      "duration": 30,
+      "startTime": "18:45"
+    },
+    {
+      "id": "j_mvgidmfc",
+      "notes": "bro yaha project banega try to upload it and submit it and put it in ur resume",
+      "endTime": "16:45",
+      "activity": "project smart ai planner",
+      "category": "Deep Work",
+      "duration": 105,
+      "startTime": "15:00"
+    }
+  ],
+  "screenTime": {
+    "apps": [
+      {
+        "icon": "public",
+        "name": "X (Twitter)",
+        "color": "blue",
+        "notes": "Mostly Feed & Discussions",
+        "impact": "High",
+        "minutes": 166,
+        "category": "Social Media",
+        "duration": "2 hr 46 mins",
+        "isDistraction": true
+      },
+      {
+        "icon": "photo_camera",
+        "name": "Instagram",
+        "color": "pink",
+        "notes": "Mostly Reels & Stories",
+        "impact": "High",
+        "minutes": 104,
+        "category": "Social Media",
+        "duration": "1 hr 44 mins",
+        "isDistraction": true
+      },
+      {
+        "icon": "play_circle",
+        "name": "YouTube",
+        "color": "red",
+        "notes": "Educational podcasts & videos",
+        "impact": "Medium",
+        "minutes": 48,
+        "category": "Streaming / Videos",
+        "duration": "48 mins",
+        "isDistraction": false
+      },
+      {
+        "icon": "apps",
+        "name": "Other",
+        "color": "emerald",
+        "notes": "System & utility apps",
+        "impact": "Low",
+        "minutes": 28,
+        "category": "General",
+        "duration": "28 mins",
+        "isDistraction": false
+      }
+    ],
+    "unlocks": 31,
+    "rootCause": "170 notifications caused 31 impulsive unlocks, losing 4.5+ hours to algorithmic feed scrolling on X and Instagram.",
+    "actionable": "Disable lockscreen banners for X and Instagram. Put phone in Do Not Disturb mode during video editing sessions to reclaim 3+ hours daily.",
+    "wastedTime": "4 hrs, 30 mins",
+    "totalMinutes": 345,
+    "notifications": 170,
+    "totalScreenTime": "5 hrs, 45 mins"
+  },
+  "nutrition": {
+    "proteinGoal": 120,
+    "caloriesGoal": 2200,
+    "waterGoalMl": 3000,
+    "waterLoggedMl": 0,
+    "sleepHours": 7.5,
+    "sleepQuality": "good",
+    "sleepBedtime": "23:30",
+    "sleepWakeTime": "07:00",
+    "meals": []
+  },
+  "wasteLogs": [
+    {
+      "id": "6eub63y9mu3yvfep",
+      "date": "2026-09-16",
+      "impact": "Medium",
+      "activity": "Instagram",
+      "category": "Social Media",
+      "duration": 90
+    },
+    {
+      "id": "xfknq04jmu3yvfep",
+      "date": "2026-09-16",
+      "impact": "Medium",
+      "activity": "YouTube",
+      "category": "Streaming / TV",
+      "duration": 47
+    }
+  ],
+  "diaryEntries": [
+    {
+      "id": "d_rant_mvgfm70c",
+      "title": "Late scope changes & sync call venting",
+      "content": "Client threw three new unexpected changes in the sprint right before deployment. Needed to step away, make some tea, and write this out so it doesn't pollute the rest of my day. Going to hold the line on scope creep tomorrow morning.",
+      "dateStr": "10:09 AM, Today",
+      "moodKey": "rant",
+      "createdAt": 1792471151100,
+      "moodEmoji": "😤",
+      "moodLabel": "Venting / Rant"
+    },
+    {
+      "id": "d_win_mvgfm6xm",
+      "title": "24-Hour Circular Dial & Live Clock working smoothly",
+      "content": "Finally got the SVG annular clock dial to render the exact start and end minute angles with live ticking red needle. Feels super satisfying to see the whole day laid out at a glance.",
+      "dateStr": "Yesterday at 10:09 AM",
+      "moodKey": "win",
+      "createdAt": 1792384751102,
+      "moodEmoji": "🔥",
+      "moodLabel": "Hyped / Win"
+    }
+  ],
+  "screenTimeData": {
+    "apps": [
+      {
+        "icon": "apps",
+        "name": "X (Twitter)",
+        "note": "Social Media",
+        "minutes": 165,
+        "isBlocked": false
+      },
+      {
+        "icon": "photo_camera",
+        "name": "Instagram",
+        "note": "Social Media",
+        "minutes": 105,
+        "isBlocked": false
+      },
+      {
+        "icon": "play_circle",
+        "name": "YouTube",
+        "note": "Streaming / TV",
+        "minutes": 50,
+        "isBlocked": false
+      },
+      {
+        "icon": "apps",
+        "name": "Other",
+        "note": "Other",
+        "minutes": 25,
+        "isBlocked": false
+      }
+    ],
+    "unlocks": 31,
+    "totalMinutes": 345,
+    "notifications": 170
+  },
+  "googleDriveConnected": true
+}
