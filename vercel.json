@@ -3,16 +3,7 @@
   "rewrites": [
     {
       "source": "/(.*)",
-      "destination": {
-        "type": "service",
-        "service": "smart-planner-ai"
-      }
+      "destination": "/api/index.js"
     }
-  ],
-  "services": {
-    "smart-planner-ai": {
-      "root": ".",
-      "entrypoint": "server.js"
-    }
-  }
+  ]
 }

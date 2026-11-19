@@ -69,8 +69,20 @@ function getGroqConfig() {
   return { key: keys[0] || '', keys, model };
 }
 
-const DATA_FILE = path.join(__dirname, 'planner-data.json');
-const USER_DATA_DIR = path.join(__dirname, 'user_databases');
+function findPath(relPath) {
+  const candidates = [
+    path.join(__dirname, relPath),
+    path.join(process.cwd(), relPath),
+    path.join(__dirname, '..', relPath)
+  ];
+  for (const c of candidates) {
+    if (fs.existsSync(c)) return c;
+  }
+  return path.join(__dirname, relPath);
+}
+
+const DATA_FILE = findPath('planner-data.json');
+const USER_DATA_DIR = findPath('user_databases');
 if (!fs.existsSync(USER_DATA_DIR)) {
   try { fs.mkdirSync(USER_DATA_DIR, { recursive: true }); } catch (e) { }
 }
@@ -84,7 +96,7 @@ function getUserDataFile(rawUser) {
 }
 
 app.get(['/', '/index.html', '/smart-planner-ai.html'], (req, res) => {
-  res.sendFile(path.join(__dirname, 'smart-planner-ai.html'));
+  res.sendFile(findPath('smart-planner-ai.html'));
 });
 
 app.get('/api/health', (req, res) => {
@@ -1095,7 +1107,7 @@ app.get('*', (req, res) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
   res.set('Pragma', 'no-cache');
   res.set('Expires', '0');
-  res.sendFile(path.join(__dirname, 'smart-planner-ai.html'));
+  res.sendFile(findPath('smart-planner-ai.html'));
 });
 
 const PORT = process.env.PORT || 3000;
