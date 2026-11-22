@@ -477,13 +477,13 @@
 
     <!-- Clean Minimal Footer -->
     <div class="pt-3 border-t border-[var(--df-sidebar-border)] px-2 flex items-center justify-between gap-2 shrink-0">
-      <div class="flex items-center gap-2 min-w-0 cursor-pointer" onclick="openSettingsModal()" title="Settings &amp; Account">
+      <div class="flex items-center gap-2 min-w-0 cursor-pointer hover:opacity-90 transition-opacity" onclick="openLoginModal()" title="Switch Workspace / Profile (Aaryan vs Guest vs New User)">
         <div id="sidebarUserAvatar" class="w-7 h-7 rounded-full bg-[#1f241b] text-[#d4dec8] flex items-center justify-center font-semibold text-xs uppercase border border-white/[0.1] shrink-0">
           AK
         </div>
         <div class="flex flex-col min-w-0">
           <span id="sidebarUserName" class="text-xs font-medium text-[#d4d8cf] truncate leading-tight">Aarav Khanna</span>
-          <span class="text-[11px] text-[#989f92] truncate leading-tight">Sab isi device pe saved hai</span>
+          <span class="text-[11px] text-[#989f92] truncate leading-tight">Click to switch profile</span>
         </div>
       </div>
       <button onclick="openSettingsModal()" class="text-[#989f92] hover:text-white p-1 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer" title="Settings">
