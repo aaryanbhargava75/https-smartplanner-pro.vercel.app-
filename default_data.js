@@ -2,153 +2,69 @@ export default {
   "currencySymbol": "₹",
   "tasks": [
     {
-      "id": "t_mw6lgc2rdjdfz",
-      "title": "Meeting with Meri  Set Krde  Didi Aat",
+      "id": "t_nitin_meeting",
+      "title": "Meeting with Nitin Bhaiya",
       "category": "Work",
-      "priority": "medium",
-      "date": "2026-11-07",
-      "time": "21:35",
-      "duration": 60,
-      "status": "done",
-      "reminder": true,
-      "reminderTime": "21:35",
-      "meetingLink": "https://meet.google.com/new",
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "t_mw6lfmkatfwbl",
-      "title": "Meeting with 9:34 Meri  Set Krde  Didi",
-      "category": "Work",
-      "priority": "medium",
-      "date": "2026-11-07",
-      "time": "09:34",
-      "duration": 60,
-      "status": "done",
-      "reminder": true,
-      "reminderTime": "09:34",
-      "meetingLink": "https://meet.google.com/new",
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "t_mw6kbqj07nvbx",
-      "title": "Meine ek maggi khai",
-      "category": "General",
-      "priority": "medium",
-      "date": "2026-11-07",
-      "time": null,
+      "priority": "high",
+      "time": "14:00",
+      "date": "2026-11-01",
       "duration": 60,
       "status": "todo",
-      "reminder": false,
-      "reminderTime": null,
-      "meetingLink": null,
-      "source": "Auto-Extracted"
+      "reminder": true,
+      "reminderTime": "14:00",
+      "source": "AI Voice"
     },
     {
-      "id": "t_mw6k9o0z9eaon",
-      "title": "Meeting with Meri  Set Krde Moni Dii Ke Saat H Gmeet Pr",
+      "id": "t_p1",
+      "title": "Set 25 minute timer",
+      "category": "Personal & Errands",
+      "priority": "medium",
+      "time": "11:00 AM",
+      "status": "todo"
+    },
+    {
+      "id": "t_p2",
+      "title": "Review weekly project roadmap & milestones",
       "category": "Work",
       "priority": "urgent",
-      "date": "2026-11-07",
-      "time": "21:02",
-      "duration": 60,
-      "status": "done",
-      "reminder": true,
-      "reminderTime": "21:02",
-      "meetingLink": "https://meet.google.com/new",
-      "source": "Auto-Extracted"
+      "time": "11:00 AM",
+      "status": "todo"
     },
     {
-      "id": "t_mw6k6bc51q32e",
-      "title": "Seb khaara hun mei ek",
-      "category": "General",
-      "priority": "medium",
-      "date": "2026-11-07",
-      "time": "20:58",
-      "duration": 60,
-      "status": "todo",
-      "reminder": true,
-      "reminderTime": "20:58",
-      "meetingLink": null,
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "t_mvxc5cy6fltvf",
-      "title": "Plan my week",
-      "category": "General",
-      "priority": "medium",
-      "date": "2026-11-01",
-      "time": null,
-      "duration": 60,
-      "status": "todo",
-      "reminder": false,
-      "reminderTime": null,
-      "meetingLink": null,
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "t_mvxc382rws538",
-      "title": "Meeting with Meri  Set Tkrde Nitin Bhaiya  Important",
+      "id": "t_p3",
+      "title": "Team sync & design sprint review",
       "category": "Work",
       "priority": "high",
-      "date": "2026-11-01",
-      "time": "16:00",
-      "duration": 60,
-      "status": "todo",
-      "reminder": true,
-      "reminderTime": "16:00",
-      "meetingLink": "https://meet.google.com/new",
-      "source": "Auto-Extracted"
+      "time": "11:00 AM",
+      "status": "todo"
     },
     {
-      "id": "t1",
-      "title": "Welcome to Dayframe! Tap checkbox to mark complete",
-      "category": "Personal",
-      "priority": "medium",
-      "date": "2026-10-30",
-      "duration": 30,
-      "status": "done",
-      "source": "Dayframe"
-    },
-    {
-      "id": "t2",
-      "title": "Drag & drop tasks onto the 24-Hour Circular Dial",
-      "category": "Work",
-      "priority": "high",
-      "date": "2026-10-30",
-      "duration": 45,
-      "status": "todo",
-      "source": "Dayframe"
-    },
-    {
-      "id": "t3",
-      "title": "Try recording a Voice Note or tracking an expense",
-      "category": "Health",
+      "id": "t_p4",
+      "title": "Read 20 pages & personal journaling",
+      "category": "Personal & Errands",
       "priority": "low",
-      "date": "2026-10-30",
-      "duration": 15,
-      "status": "todo",
-      "source": "Dayframe"
+      "time": "11:00 AM",
+      "status": "todo"
     }
   ],
-  "milestones": [
-    {
-      "id": "m1",
-      "title": "7-Day Focus & Planning Streak",
-      "category": "Habits",
-      "targetDate": "2026-11-06",
-      "progress": 20,
-      "keySteps": [
-        {
-          "text": "Organize daily priorities",
-          "done": true
-        },
-        {
-          "text": "Log evening reflection",
-          "done": false
-        }
-      ]
-    }
-  ],
+  "expenses": [],
+  "incomes": [],
+  "assets": [],
+  "wasteLogs": [],
+  "journal": [],
+  "dailyReflections": {},
+  "coachInsights": {},
+  "nutrition": {
+    "proteinGoal": 120,
+    "caloriesGoal": 2200,
+    "waterGoalMl": 3000,
+    "waterLoggedMl": 0,
+    "sleepHours": 7.5,
+    "sleepQuality": "good",
+    "sleepBedtime": "23:30",
+    "sleepWakeTime": "07:00",
+    "meals": []
+  },
   "notToDoList": [
     {
       "id": "nd_gaming",
@@ -191,257 +107,26 @@ export default {
       "active": true
     }
   ],
-  "expenses": [
-    {
-      "id": "e_mwn9noxl",
-      "item": "bro kal 2 thumbs up zero li 20 rupeek i",
-      "amount": 20,
-      "category": "General",
-      "date": "2026-11-19",
-      "source": "Manual"
-    },
-    {
-      "id": "e_mwm2v7e1u",
-      "item": "Coke Zero",
-      "amount": 20,
-      "category": "Food & Dining",
-      "date": "2026-10-30",
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "e_wveiu6dm4",
-      "item": "Shawarma",
-      "amount": 180,
-      "category": "Food & Dining",
-      "date": "2026-10-30",
-      "source": "Auto-Extracted"
-    },
-    {
-      "id": "e_mvuxs3h8nfs5i",
-      "item": "Coke / Beverage",
-      "amount": 180,
-      "category": "Food & Dining",
-      "date": "2026-10-30",
-      "source": "Auto-Extracted"
-    }
-  ],
-  "incomes": [],
-  "assets": [],
-  "journal": [
-    {
-      "id": "j_mwna7n3gco3pq",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwna501c01t3u",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9mogl3k2vc",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9ix8ygwku4",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9hyvvj2y0n",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwao9h424viyr",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwakb23x0vi7l",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwajeqexfe8h2",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "13:45",
-      "endTime": "15:30",
-      "duration": 105,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    }
-  ],
-  "screenTime": {
-    "totalScreenTime": "0 hrs, 0 mins",
-    "totalMinutes": 0,
-    "unlocks": 0,
-    "notifications": 0,
-    "wastedTime": "0 mins",
-    "apps": [],
-    "wasteTimeline": [],
-    "rootCause": "No screen time distractions logged yet today.",
-    "actionable": "Start your day with clean focus blocks."
-  },
-  "nutrition": {
-    "proteinGoal": 120,
-    "caloriesGoal": 2200,
-    "waterGoalMl": 3000,
-    "waterLoggedMl": 0,
-    "sleepHours": 7.5,
-    "sleepQuality": "good",
-    "sleepBedtime": "23:30",
-    "sleepWakeTime": "07:00",
-    "meals": [
-      {
-        "id": "meal_mvuxrum0s2zjc",
-        "date": "2026-10-30T17:46:14",
-        "dish": "Shawarma (4 pcs)",
-        "mealType": "Snacks",
-        "portion": 1,
-        "calories": 720,
-        "protein": 48,
-        "carbs": 30,
-        "fats": 36,
-        "fiber": 2,
-        "calcium": 30,
-        "iron": 2,
-        "vitC": 5
-      },
-      {
-        "id": "meal_mvuxrum2frehm",
-        "date": "2026-10-30T17:46:14",
-        "dish": "Peri Peri Chicken Momos (Half Plate)",
-        "mealType": "Snacks",
-        "portion": 1,
-        "calories": 240,
-        "protein": 21,
-        "carbs": 30,
-        "fats": 6,
-        "fiber": 2,
-        "calcium": 30,
-        "iron": 2,
-        "vitC": 5
-      },
-      {
-        "id": "meal_mvuxs5tmuqjyn",
-        "date": "2026-10-30T17:46:29",
-        "dish": "Shawarma (1 serving)",
-        "mealType": "Lunch",
-        "portion": 1,
-        "calories": 360,
-        "protein": 24,
-        "carbs": 30,
-        "fats": 15,
-        "fiber": 2,
-        "calcium": 50,
-        "iron": 2,
-        "vitC": 0
-      },
-      {
-        "id": "meal_mvuxs5tmhxhu1",
-        "date": "2026-10-30T17:46:29",
-        "dish": "Coke Zero (1 can)",
-        "mealType": "Snacks",
-        "portion": 1,
-        "calories": 280,
-        "protein": 10,
-        "carbs": 36,
-        "fats": 10,
-        "fiber": 3,
-        "calcium": 30,
-        "iron": 1,
-        "vitC": 3
-      },
-      {
-        "id": "meal_mw6kb7gnsc23p",
-        "date": "2026-11-07T15:32:37.127Z",
-        "dish": "meine ek plate raajma chawal",
-        "mealType": "Dinner",
-        "portion": 1,
-        "calories": 175,
-        "protein": 3.5,
-        "carbs": 38,
-        "fats": 0.5,
-        "fiber": 0.6,
-        "calcium": 10,
-        "iron": 0.6,
-        "vitC": 0
-      },
-      {
-        "id": "meal_mw6le8ng20jmc",
-        "date": "2026-11-07T16:02:58.252Z",
-        "dish": "ki meine kadhi chawal  ek katora",
-        "mealType": "Dinner",
-        "portion": 1,
-        "calories": 175,
-        "protein": 3.5,
-        "carbs": 38,
-        "fats": 0.5,
-        "fiber": 0.6,
-        "calcium": 10,
-        "iron": 0.6,
-        "vitC": 0
-      }
-    ]
-  },
   "diaryEntries": [
     {
-      "id": "d_rant_mwn9hyw6",
+      "id": "d_rant_mwng0894",
       "title": "Late scope changes & sync call venting",
       "content": "Client threw three new unexpected changes in the sprint right before deployment. Needed to step away, make some tea, and write this out so it doesn't pollute the rest of my day. Going to hold the line on scope creep tomorrow morning.",
       "moodKey": "rant",
       "moodEmoji": "😤",
       "moodLabel": "Venting / Rant",
-      "createdAt": 1795060921830,
-      "dateStr": "09:32 AM, Today"
+      "createdAt": 1795071851464,
+      "dateStr": "12:34 PM, Today"
     },
     {
-      "id": "d_win_mwn9hyte",
+      "id": "d_win_mwng086c",
       "title": "24-Hour Circular Dial & Live Clock working smoothly",
       "content": "Finally got the SVG annular clock dial to render the exact start and end minute angles with live ticking red needle. Feels super satisfying to see the whole day laid out at a glance.",
       "moodKey": "win",
       "moodEmoji": "🔥",
       "moodLabel": "Hyped / Win",
-      "createdAt": 1794974521830,
-      "dateStr": "Yesterday at 09:32 AM"
+      "createdAt": 1794985451464,
+      "dateStr": "Yesterday at 12:34 PM"
     }
   ]
 };

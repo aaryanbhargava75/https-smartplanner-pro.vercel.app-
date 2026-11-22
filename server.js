@@ -290,27 +290,69 @@ app.get('/api/security-audit', (req, res) => {
   });
 });
 
+const USER_CACHE = {};
+
 app.get('/api/data', (req, res) => {
   try {
-    const user = req.query.user || req.headers['x-user-email'] || req.headers['x-user-id'];
-    const filePath = getUserDataFile(user);
-    if (fs.existsSync(filePath)) {
-      const content = fs.readFileSync(filePath, 'utf-8');
-      return res.json(JSON.parse(content));
+    const rawUser = req.query.user || req.headers['x-user-email'] || req.headers['x-user-id'] || 'guest';
+    const cleanUser = String(rawUser).trim().toLowerCase().replace(/[^a-z0-9@._-]/g, '_');
+    
+    // 1. In-memory cache (survives requests inside running container)
+    if (USER_CACHE[cleanUser]) {
+      return res.json(USER_CACHE[cleanUser]);
     }
-    // Check /tmp fallback on Vercel
+
+    // 2. Check local disk
+    const filePath = getUserDataFile(rawUser);
+    if (fs.existsSync(filePath)) {
+      try {
+        const content = fs.readFileSync(filePath, 'utf-8');
+        const data = JSON.parse(content);
+        USER_CACHE[cleanUser] = data;
+        return res.json(data);
+      } catch (e) {}
+    }
+
+    // 3. Check /tmp fallback on Vercel
     const tmpFile = path.join(os.tmpdir(), 'user_databases', path.basename(filePath));
     if (fs.existsSync(tmpFile)) {
-      const content = fs.readFileSync(tmpFile, 'utf-8');
-      return res.json(JSON.parse(content));
+      try {
+        const content = fs.readFileSync(tmpFile, 'utf-8');
+        const data = JSON.parse(content);
+        USER_CACHE[cleanUser] = data;
+        return res.json(data);
+      } catch (e) {}
     }
-    // Fallback to DATA_FILE (which contains the user's verified tasks & data)
-    if (fs.existsSync(DATA_FILE)) {
-      const content = fs.readFileSync(DATA_FILE, 'utf-8');
-      return res.json(JSON.parse(content));
+
+    // 4. Default dataset: Aaryan gets Aaryan's verified dataset
+    if (cleanUser.includes('aaryan') || cleanUser === 'guest' || !rawUser) {
+      if (fs.existsSync(DATA_FILE)) {
+        try {
+          const content = fs.readFileSync(DATA_FILE, 'utf-8');
+          const data = JSON.parse(content);
+          USER_CACHE[cleanUser] = data;
+          return res.json(data);
+        } catch (e) {}
+      }
+      USER_CACHE[cleanUser] = defaultPlannerData || {};
+      return res.json(defaultPlannerData || {});
     }
-    // Fallback to static in-memory default data (user's real 10 tasks, 4 expenses, 8 journals, 6 meals)
-    return res.json(defaultPlannerData || {});
+
+    // 5. Any OTHER user gets a clean, private, isolated workspace (NOT Aaryan's personal tasks!)
+    const cleanUserData = {
+      currencySymbol: '₹',
+      tasks: [],
+      expenses: [],
+      journal: [],
+      nutrition: { meals: [] },
+      milestones: [],
+      notToDoList: [],
+      incomes: [],
+      assets: [],
+      isNewUser: true
+    };
+    USER_CACHE[cleanUser] = cleanUserData;
+    return res.json(cleanUserData);
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -318,22 +360,32 @@ app.get('/api/data', (req, res) => {
 
 app.post('/api/data', (req, res) => {
   try {
-    const user = req.query.user || req.headers['x-user-email'] || (req.body && req.body.user);
+    const rawUser = req.query.user || req.headers['x-user-email'] || (req.body && req.body.user) || 'guest';
+    const cleanUser = String(rawUser).trim().toLowerCase().replace(/[^a-z0-9@._-]/g, '_');
     const body = req.body || {};
     const dataToSave = body.data || body;
-    const filePath = getUserDataFile(user);
-    let savedLocation = 'local';
+    
+    // Update in-memory cache immediately
+    USER_CACHE[cleanUser] = dataToSave;
+
+    const filePath = getUserDataFile(rawUser);
+    let savedLocation = 'cache';
     try {
       if (!fs.existsSync(USER_DATA_DIR)) fs.mkdirSync(USER_DATA_DIR, { recursive: true });
       fs.writeFileSync(filePath, JSON.stringify(dataToSave, null, 2), 'utf-8');
+      savedLocation = 'local';
     } catch (writeErr) {
       // Vercel read-only filesystem fallback to /tmp
-      const tmpDir = path.join(os.tmpdir(), 'user_databases');
-      if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
-      fs.writeFileSync(path.join(tmpDir, path.basename(filePath)), JSON.stringify(dataToSave, null, 2), 'utf-8');
-      savedLocation = 'tmp';
+      try {
+        const tmpDir = path.join(os.tmpdir(), 'user_databases');
+        if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
+        fs.writeFileSync(path.join(tmpDir, path.basename(filePath)), JSON.stringify(dataToSave, null, 2), 'utf-8');
+        savedLocation = 'tmp';
+      } catch (tmpErr) {
+        savedLocation = 'memory-only';
+      }
     }
-    return res.json({ success: true, user: user || 'guest', file: path.basename(filePath), location: savedLocation, timestamp: new Date().toISOString() });
+    return res.json({ success: true, user: cleanUser, file: path.basename(filePath), location: savedLocation, timestamp: new Date().toISOString() });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -422,6 +474,27 @@ Return ONLY a single valid JSON object, no markdown fences, no prose, matching e
  "journal":[{"activity":string,"startTime":"HH:MM","endTime":"HH:MM"|null,"durationMinutes":number,"category":"Work & Deep Focus"|"Coding & Dev"|"Sleep & Recovery"|"Study & Learning"|"Meetings & Calls"|"Fitness & Health"|"Leisure & Break"|"Chores & Errands"|"Personal","mood":"🔥 Deep Work"|"⚡ Productive"|"😌 Relaxed"|"☕ Neutral"|"💤 Sleep / Rest"|"🥱 Lethargic / Foggy"|"😫 Stressed / Anxious"|"🤯 Overwhelmed","feeling":string,"rootCause":string,"howToFix":string,"notes":string,"date":"YYYY-MM-DD"}]
 }
 FOOD & NUTRITION (DIET & MACROS) EXTRACTION RULES:
+- DUAL EXTRACTION FOR FOOD PURCHASES (CRITICAL):
+  * When the user mentions BUYING, ORDERING OR SPENDING ON FOOD OR DRINKS (e.g. "520 ka pza khalia", "bro kal 2 thumbs up zero li 20 rupeek i", "180 ka shawarma", "shawarma 180", "120 ke momos", "dinner 390", "20 ruppe ki chai", "coke zero 20 rs", "maggi 30 rs"):
+    1. Extract into "expenses" with the accurate amount and category "Food & Dining"!
+    2. SIMULTANEOUSLY extract into "meals" array with the dish name, portion, and ACCURATE nutrition (calories, protein, carbs, fats)!
+  * Do NOT put it only in expenses! Food purchases MUST always populate BOTH "expenses" AND "meals"!
+- ACCURATE NUTRITION ESTIMATES (INCLUDING FAST FOOD & JUNK FOOD - 'GANDI CHEEZ'):
+  * Zero / Diet drinks (Thumbs Up Zero, Coke Zero, Diet Coke, Pepsi Black): calories: 1, protein: 0, carbs: 0, fats: 0
+  * Regular sodas (Thumbs Up, Coke, Pepsi, Sprite, Fanta, Cold drink 1 can): calories: 140, protein: 0, carbs: 35, fats: 0
+  * Pizza (1 slice / small personal): calories: 260, protein: 10, carbs: 30, fats: 11
+  * Pizza (medium / whole dinner e.g. 520 rs): calories: 750, protein: 28, carbs: 85, fats: 32
+  * Shawarma (1 roll): calories: 420, protein: 26, carbs: 35, fats: 18
+  * Momos (half plate chicken): calories: 240, protein: 16, carbs: 26, fats: 7
+  * Momos (half plate veg / steamed): calories: 180, protein: 6, carbs: 28, fats: 4
+  * Momos (fried): calories: 320, protein: 8, carbs: 32, fats: 18
+  * Maggi / 2-minute noodles (1 pack): calories: 310, protein: 7, carbs: 44, fats: 12
+  * Chips / Lays / Kurkure (1 pack): calories: 270, protein: 3, carbs: 28, fats: 16
+  * Biscuits (3-4 pcs): calories: 140, protein: 2, carbs: 24, fats: 4
+  * Samosa (1 pc): calories: 250, protein: 4, carbs: 28, fats: 14
+  * Chole Bhature (2 bhature + chole): calories: 680, protein: 16, carbs: 75, fats: 34
+  * Beer (330ml): calories: 150, protein: 1, carbs: 13, fats: 0
+  * Hard liquor (whiskey / rum / vodka 60ml): calories: 130, protein: 0, carbs: 0, fats: 0
 - When the user mentions food, snacks, drinks, or supplements they ate, drank, or consumed (e.g. "4 piece shawarma ke khae", "half plate peri peri chicken momos khae", "subah 4 boiled eggs aur doodh", "gym ke baad 1 scoop whey protein", "lunch me 2 roti aur dal"):
   * Extract into "meals" array!
   * Accurately calculate/estimate nutrition based on portion:

@@ -1,19 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
-  <!-- Theme Early Initializer -->
+  <!-- Theme Early Initializer (Enforce Matte-Dark by default) -->
   <script>
     (function() {
-      let saved = localStorage.getItem('smart-planner-theme');
-      if (!saved) {
-        saved = 'dark';
-        localStorage.setItem('smart-planner-theme', 'dark');
-      }
-      if (saved === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      localStorage.setItem('smart-planner-theme', 'dark');
+      document.documentElement.classList.add('dark');
     })();
   </script>
 
@@ -270,48 +262,53 @@
     }
 
     :root {
-      --df-bg: #f7f8f5;
-      --df-card: #ffffff;
-      --df-card-inner: #f2f4ee;
-      --df-border: rgba(18, 25, 16, 0.09);
-      --df-border-subtle: rgba(18, 25, 16, 0.05);
-      --df-text: #141711;
-      --df-text-muted: #52594d;
-      --df-sidebar-bg: #11130f;
-      --df-sidebar-card: #181b15;
-      --df-sidebar-border: rgba(255, 255, 255, 0.06);
-      --df-sidebar-text: #e6e8e3;
-      --df-sidebar-muted: #7a8075;
-      --df-header-bg: rgba(247, 248, 245, 0.85);
-      --df-input-bg: #ffffff;
-      --df-pill-bg: #eef1ea;
-      --df-lime: #a4d03b;
-      --df-lime-text: #10140a;
-      --df-insight-bg: #eff4e8;
-      --df-insight-border: rgba(114, 146, 42, 0.25);
-      --df-insight-text: #3a4a21;
-    }
-    html.dark {
-      --df-bg: #121410;
-      --df-card: #181b15;
-      --df-card-inner: #131611;
-      --df-border: rgba(255, 255, 255, 0.075);
+      --df-bg: #0e100d;
+      --df-card: #161913;
+      --df-card-inner: #12140f;
+      --df-border: rgba(255, 255, 255, 0.08);
       --df-border-subtle: rgba(255, 255, 255, 0.04);
       --df-text: #f3f4f0;
-      --df-text-muted: #a6aca0;
-      --df-sidebar-bg: #0e100d;
-      --df-sidebar-card: #161913;
-      --df-sidebar-border: rgba(255, 255, 255, 0.08);
+      --df-text-muted: #9da396;
+      --df-sidebar-bg: #0b0d0a;
+      --df-sidebar-card: #141712;
+      --df-sidebar-border: rgba(255, 255, 255, 0.07);
       --df-sidebar-text: #f0f2ed;
       --df-sidebar-muted: #989f92;
-      --df-header-bg: rgba(18, 20, 16, 0.8);
-      --df-input-bg: #171a14;
-      --df-pill-bg: #21261c;
+      --df-header-bg: rgba(14, 16, 13, 0.85);
+      --df-input-bg: #151812;
+      --df-pill-bg: #1e231a;
       --df-lime: #a4d03b;
       --df-lime-text: #0f120b;
       --df-insight-bg: #191e14;
       --df-insight-border: rgba(164, 208, 59, 0.2);
       --df-insight-text: #c9d9a7;
+    }
+    html.dark {
+      --df-bg: #0e100d;
+      --df-card: #161913;
+      --df-card-inner: #12140f;
+      --df-border: rgba(255, 255, 255, 0.08);
+      --df-border-subtle: rgba(255, 255, 255, 0.04);
+      --df-text: #f3f4f0;
+      --df-text-muted: #9da396;
+      --df-sidebar-bg: #0b0d0a;
+      --df-sidebar-card: #141712;
+      --df-sidebar-border: rgba(255, 255, 255, 0.07);
+      --df-sidebar-text: #f0f2ed;
+      --df-sidebar-muted: #989f92;
+      --df-header-bg: rgba(14, 16, 13, 0.85);
+      --df-input-bg: #151812;
+      --df-pill-bg: #1e231a;
+      --df-lime: #a4d03b;
+      --df-lime-text: #0f120b;
+      --df-insight-bg: #191e14;
+      --df-insight-border: rgba(164, 208, 59, 0.2);
+      --df-insight-text: #c9d9a7;
+    }
+
+    html, body, #appRoot, main, .tab-pane {
+      background-color: #0e100d !important;
+      color: #f3f4f0 !important;
     }
 
     @layer base {
@@ -396,7 +393,7 @@
     }
   </style>
 </head>
-<body class="bg-surface text-on-surface antialiased flex min-h-screen selection:bg-primary-container selection:text-on-primary">
+<body class="bg-[#0e100d] text-[#f3f4f0] antialiased flex min-h-screen selection:bg-[#a4d03b]/30 selection:text-[#f3f4f0]">
 
   <!-- ========================================================================= -->
   <!-- SIDEBAR (DESKTOP) -->
@@ -2796,18 +2793,18 @@
   <!-- ========================================================================= -->
   <!-- MODAL: USER AUTH GATE (SIGN IN & SIGN UP) -->
   <!-- ========================================================================= -->
-  <div id="loginModal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+  <div id="loginModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden flex items-center justify-center p-4">
     <div class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl max-w-md w-full shadow-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200">
       
       <!-- Header -->
       <div class="p-5 pb-3 border-b border-[var(--df-border)] flex items-center justify-between">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-[#d2f84a]/20 border border-[#d2f84a]/30 flex items-center justify-center text-[#2e6f40] dark:text-[#d2f84a] shadow-sm">
-            <span class="material-symbols-outlined text-[22px]">lock</span>
+          <div class="w-10 h-10 rounded-xl bg-[#a4d03b]/20 border border-[#a4d03b]/30 flex items-center justify-center text-[#a4d03b] shadow-sm">
+            <span class="material-symbols-outlined text-[22px]">account_circle</span>
           </div>
           <div>
-            <h3 class="text-base font-extrabold text-[var(--df-text)]">Dayframe Cloud Account</h3>
-            <p class="text-[11px] text-[var(--df-text-muted)]">Private &amp; password-protected workspace</p>
+            <h3 class="text-base font-extrabold text-[var(--df-text)]">Switch Profile / Login</h3>
+            <p class="text-[11px] text-[var(--df-text-muted)]">Har user ka apna alag private database load hoga</p>
           </div>
         </div>
         <button onclick="closeLoginModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1 rounded-lg hover:bg-[var(--df-card-inner)] transition-colors cursor-pointer">
@@ -2818,8 +2815,56 @@
       <!-- Body -->
       <div class="p-5 sm:p-6 flex flex-col gap-4 text-xs">
         
-        <!-- Google Sign-In Button (Official Google Look) -->
-        <button type="button" id="googleOAuthBtn" onclick="signInWithGoogleSupabase()" class="w-full py-3 px-4 rounded-xl bg-white hover:bg-neutral-100 text-neutral-800 font-bold text-xs flex items-center justify-center gap-3 transition-all border border-neutral-300 shadow-sm active:scale-[0.99] cursor-pointer">
+        <!-- 1-Click Quick Profile Switch -->
+        <div class="flex flex-col gap-2">
+          <span class="text-[11px] font-semibold text-[var(--df-text-muted)]">Quick Profiles (1-Click Switch):</span>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" onclick="quickSwitchProfile('aaryanbhargava75@gmail.com', 'Aaryan')" class="p-2.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-[#a4d03b]/10 border border-[var(--df-border)] hover:border-[#a4d03b]/40 text-left flex items-center gap-2.5 transition-all cursor-pointer">
+              <img src="https://api.dicebear.com/7.x/bottts/svg?seed=aaryanbhargava75@gmail.com" class="w-7 h-7 rounded-full bg-[#181b15] border border-white/10 shrink-0"/>
+              <div class="min-w-0">
+                <div class="font-bold text-[var(--df-text)] truncate">Aaryan</div>
+                <div class="text-[10px] text-[#a4d03b] truncate">Owner Account</div>
+              </div>
+            </button>
+            <button type="button" onclick="quickSwitchProfile('guest', 'Guest User')" class="p-2.5 rounded-xl bg-[var(--df-card-inner)] hover:bg-neutral-800 border border-[var(--df-border)] text-left flex items-center gap-2.5 transition-all cursor-pointer">
+              <div class="w-7 h-7 rounded-full bg-[#181b15] border border-white/10 flex items-center justify-center text-[var(--df-text-muted)] shrink-0">
+                <span class="material-symbols-outlined text-[16px]">person</span>
+              </div>
+              <div class="min-w-0">
+                <div class="font-bold text-[var(--df-text)] truncate">Guest Mode</div>
+                <div class="text-[10px] text-[var(--df-text-muted)] truncate">Fresh Workspace</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="flex items-center gap-3 my-1">
+          <div class="h-px bg-[var(--df-border)] flex-1"></div>
+          <span class="text-[10px] uppercase font-semibold text-[var(--df-text-muted)] tracking-wider">ya apna naam / email daalo</span>
+          <div class="h-px bg-[var(--df-border)] flex-1"></div>
+        </div>
+
+        <!-- Simple 1-Step Form: Just Name or Email -->
+        <form onsubmit="handleEasyLogin(event)" class="flex flex-col gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
+              <span>Aapka Naam ya Gmail / Email:</span>
+            </label>
+            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#a4d03b] rounded-xl px-3.5 py-2.5 transition-colors">
+              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">mail</span>
+              <input type="text" id="easyLoginInput" required placeholder="e.g. rahul@gmail.com ya Priya" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
+            </div>
+          </div>
+
+          <button type="submit" class="w-full py-3 px-4 rounded-xl bg-[#a4d03b] hover:bg-[#92ba32] text-[#0e100d] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer active:scale-98">
+            <span class="material-symbols-outlined text-[18px]">bolt</span>
+            <span>Open My Private Workspace</span>
+          </button>
+        </form>
+
+        <!-- Google Sign-In Button -->
+        <button type="button" id="googleOAuthBtn" onclick="signInWithGoogleSupabase()" class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-100 text-neutral-800 font-bold text-xs flex items-center justify-center gap-2.5 transition-all border border-neutral-300 shadow-sm active:scale-[0.99] cursor-pointer mt-0.5">
           <svg class="w-4 h-4 flex-shrink-0" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z"/>
             <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z"/>
@@ -2829,142 +2874,9 @@
           <span id="googleLoginBtnLabel">Continue with Google (Gmail)</span>
         </button>
 
-        <div id="gsiButtonContainer" class="flex justify-center"></div>
-
-        <!-- Divider -->
-        <div class="flex items-center gap-3 my-0.5">
-          <div class="h-px bg-[var(--df-border)] flex-1"></div>
-          <span class="text-[10px] uppercase font-semibold text-[var(--df-text-muted)] tracking-wider">or with email &amp; password</span>
-          <div class="h-px bg-[var(--df-border)] flex-1"></div>
-        </div>
-
-        <!-- Auth Mode Switcher Tabs: Sign In vs Sign Up -->
-        <div class="grid grid-cols-2 p-1 rounded-xl bg-[var(--df-card-inner)] border border-[var(--df-border)]">
-          <button type="button" id="tabBtnSignIn" onclick="setAuthMode('signin')" class="py-2 rounded-lg font-extrabold text-xs transition-all bg-[var(--df-card)] text-[var(--df-text)] shadow-sm cursor-pointer">
-            Sign In
-          </button>
-          <button type="button" id="tabBtnSignUp" onclick="setAuthMode('signup')" class="py-2 rounded-lg font-semibold text-xs transition-all text-[var(--df-text-muted)] hover:text-[var(--df-text)] cursor-pointer">
-            Create Account
-          </button>
-        </div>
-
-        <!-- Alert Error Banner -->
-        <div id="authErrorAlert" class="hidden p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-500 text-xs flex items-center gap-2">
-          <span class="material-symbols-outlined text-[18px]">error</span>
-          <span id="authErrorText" class="font-semibold leading-snug">Error message goes here</span>
-        </div>
-
-        <!-- Form 1: SIGN IN -->
-        <form id="formSignIn" onsubmit="handleAccountLogin(event)" class="flex flex-col gap-3">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
-              <span>Gmail / Email Address</span>
-              <span class="text-[10px] text-[#2e6f40] dark:text-[#d2f84a] font-medium">Your private DB key</span>
-            </label>
-            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
-              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">mail</span>
-              <input type="email" id="signInEmail" required placeholder="e.g. yourname@gmail.com" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
-              <span>Password</span>
-              <span class="text-[10px] text-rose-500 font-semibold">*Required to unlock</span>
-            </label>
-            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
-              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">lock</span>
-              <input type="password" id="signInPassword" required placeholder="Enter your password" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-              <button type="button" onclick="togglePasswordVisibility('signInPassword', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
-                <span class="material-symbols-outlined text-[18px]">visibility</span>
-              </button>
-            </div>
-          </div>
-
-          <button type="submit" id="btnSubmitSignIn" class="w-full py-3 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">lock_open</span>
-            <span>Sign In to My Planner</span>
-          </button>
-
-          <p class="text-[11px] text-center text-[var(--df-text-muted)] mt-1">
-            New here? <button type="button" onclick="setAuthMode('signup')" class="text-[#2e6f40] dark:text-[#d2f84a] font-bold hover:underline cursor-pointer">Create a new account</button>
-          </p>
-        </form>
-
-        <!-- Form 2: CREATE ACCOUNT (SIGN UP) -->
-        <form id="formSignUp" onsubmit="handleAccountSignUp(event)" class="hidden flex flex-col gap-3">
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
-              <span>Full Name</span>
-            </label>
-            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
-              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">person</span>
-              <input type="text" id="signUpName" required placeholder="e.g. Alex Sharma" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label class="text-[11px] font-semibold text-[var(--df-text-muted)] flex items-center justify-between">
-              <span>Gmail / Email Address</span>
-              <span class="text-[10px] text-[#2e6f40] dark:text-[#d2f84a] font-medium">100% Private Cloud DB</span>
-            </label>
-            <div class="flex items-center gap-2 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3.5 py-2.5 transition-colors">
-              <span class="material-symbols-outlined text-[18px] text-[var(--df-text-muted)]">mail</span>
-              <input type="email" id="signUpEmail" required placeholder="e.g. yourname@gmail.com" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
-                <span>Create Password</span>
-              </label>
-              <div class="flex items-center gap-1.5 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3 py-2.5 transition-colors">
-                <input type="password" id="signUpPassword" required minlength="4" placeholder="Min 4 chars" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-                <button type="button" onclick="togglePasswordVisibility('signUpPassword', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px]">visibility</span>
-                </button>
-              </div>
-            </div>
-
-            <div class="flex flex-col gap-1.5">
-              <label class="text-[11px] font-semibold text-[var(--df-text-muted)]">
-                <span>Confirm Password</span>
-              </label>
-              <div class="flex items-center gap-1.5 bg-[var(--df-card-inner)] border border-[var(--df-border)] focus-within:border-[#d2f84a] rounded-xl px-3 py-2.5 transition-colors">
-                <input type="password" id="signUpPasswordConfirm" required minlength="4" placeholder="Repeat password" class="bg-transparent text-[var(--df-text)] text-xs outline-none flex-1 placeholder:text-[var(--df-text-muted)]/50 font-medium"/>
-                <button type="button" onclick="togglePasswordVisibility('signUpPasswordConfirm', this)" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-0.5 cursor-pointer">
-                  <span class="material-symbols-outlined text-[16px]">visibility</span>
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <button type="submit" id="btnSubmitSignUp" class="w-full py-3 px-4 rounded-xl bg-[#d2f84a] hover:bg-[#c4ec3e] text-[#0c1511] font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md mt-1 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">verified_user</span>
-            <span>Create Password-Protected Account</span>
-          </button>
-
-          <p class="text-[11px] text-center text-[var(--df-text-muted)] mt-1">
-            Already have an account? <button type="button" onclick="setAuthMode('signin')" class="text-[#2e6f40] dark:text-[#d2f84a] font-bold hover:underline cursor-pointer">Sign in here</button>
-          </p>
-        </form>
-
-        <p class="text-[10px] text-center text-[var(--df-text-muted)] mt-0.5">
-          🔒 100% Private &amp; Encrypted. Your schedule, tasks &amp; data cannot be opened without your password.
+        <p class="text-[10px] text-center text-[var(--df-text-muted)] mt-1">
+          🔒 Aapka data kisi dusre user se share nahi hota. Har account ka private isolated workspace hai.
         </p>
-
-        <!-- Footer actions -->
-        <div class="pt-2.5 border-t border-[var(--df-border)] flex items-center justify-between text-[11px]">
-          <button type="button" onclick="openGoogleOAuthHelpModal()" class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] text-[10px] underline flex items-center gap-1 cursor-pointer">
-            <span class="material-symbols-outlined text-[12px]">settings</span>
-            <span>Google Setup Info</span>
-          </button>
-          <button type="button" onclick="closeLoginModal()" class="text-[#2e6f40] dark:text-[#d2f84a] hover:underline font-bold flex items-center gap-0.5 cursor-pointer" title="Continue as temporary guest">
-            <span>Continue as Guest</span>
-            <span class="material-symbols-outlined text-[13px]">chevron_right</span>
-          </button>
-        </div>
 
       </div>
     </div>
@@ -4345,7 +4257,33 @@
       const userEmail = (currentUser && currentUser.email) ? currentUser.email.trim().toLowerCase() : '';
       const userKey = getUserStorageKey();
 
-      // 1. Try Supabase Cloud DB if connected
+      // 1. PRIORITY 1: Check localStorage FIRST (Preserves user's local work, prevents server defaults from wiping edits)
+      const local = localStorage.getItem(userKey);
+      if (local) {
+        try {
+          const parsed = JSON.parse(local);
+          if (parsed && typeof parsed === 'object') {
+            appData = { ...defaultSeedData, ...parsed };
+            const sel = document.getElementById('globalCurrencySelect');
+            if (sel && appData.currencySymbol) sel.value = appData.currencySymbol;
+            updateEngineStatus();
+            // Asynchronously sync local data to backend
+            try {
+              const url = userEmail ? `/api/data?user=${encodeURIComponent(userEmail)}` : '/api/data';
+              fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', ...(userEmail ? { 'x-user-email': userEmail } : {}) },
+                body: JSON.stringify({ user: userEmail, data: appData })
+              }).catch(() => {});
+            } catch (e) {}
+            return;
+          }
+        } catch (e) {
+          console.warn('Local storage parse error:', e);
+        }
+      }
+
+      // 2. PRIORITY 2: Try Supabase Cloud DB if connected
       if (supabaseClient && userEmail) {
         try {
           const cloudData = await loadSupabaseData();
@@ -4362,7 +4300,7 @@
         }
       }
 
-      // 2. Check local Node.js backend loopback
+      // 3. PRIORITY 3: Check Node.js backend loopback
       try {
         const url = userEmail ? `/api/data?user=${encodeURIComponent(userEmail)}` : '/api/data';
         const res = await fetch(url, {
@@ -4381,23 +4319,35 @@
         }
       } catch (e) {}
 
-      // 3. Isolated user-specific storage key in localStorage
-      const local = localStorage.getItem(userKey);
-      if (local) {
-        try {
-          appData = { ...defaultSeedData, ...JSON.parse(local) };
-          const sel = document.getElementById('globalCurrencySelect');
-          if (sel && appData.currencySymbol) sel.value = appData.currencySymbol;
-          updateEngineStatus();
-          return;
-        } catch (e) {}
+      // 4. PRIORITY 4: Fallback for clean user / guest
+      // If Aaryan or guest: load verified default seed dataset
+      if (!userEmail || userEmail.includes('aaryan') || userEmail.includes('guest')) {
+        appData = JSON.parse(JSON.stringify(defaultSeedData));
+      } else {
+        // Any OTHER user gets an isolated, clean starter workspace (NOT Aaryan's private tasks!)
+        appData = {
+          currencySymbol: '₹',
+          tasks: [],
+          expenses: [],
+          journal: [],
+          nutrition: {
+            proteinGoal: 120,
+            caloriesGoal: 2000,
+            waterGoalMl: 3000,
+            waterLoggedMl: 0,
+            sleepHours: 7.5,
+            meals: []
+          },
+          milestones: [],
+          notToDoList: [],
+          incomes: [],
+          assets: []
+        };
       }
-
-      // Fresh state for this user/guest:
-      appData = JSON.parse(JSON.stringify(defaultSeedData));
 
       const sel = document.getElementById('globalCurrencySelect');
       if (sel && appData.currencySymbol) sel.value = appData.currencySymbol;
+      localStorage.setItem(userKey, JSON.stringify(appData));
       if (userEmail) {
         saveData();
       }
@@ -6702,6 +6652,12 @@
           source: 'Manual'
         });
         showToast(`Logged ${formatCurrency(amount, true)} for ${item}`);
+        if (cat === 'Food & Dining' || (typeof isFoodClauseOrItem === 'function' && isFoodClauseOrItem(item))) {
+          if (typeof autoSyncFoodExpenseToNutrition === 'function') {
+            autoSyncFoodExpenseToNutrition(item, dt, amount);
+            if (typeof renderKhanaView === 'function') renderKhanaView();
+          }
+        }
       }
 
       saveData();
@@ -9024,14 +8980,24 @@ Return ONLY valid JSON matching:
       if (data.expenses?.length) {
         if (!appData.expenses) appData.expenses = [];
         data.expenses.filter(e => Number(e.amount) > 0).forEach(e => {
+          const expItem = e.item || e.title || 'Expense';
+          const expAmt = Number(e.amount) || 0;
+          const expCat = e.category || 'Food & Dining';
+          const expDate = e.date || new Date().toISOString().split('T')[0];
           appData.expenses.unshift({
             id: 'e_' + Math.random().toString(36).substr(2, 9),
-            item: e.item || e.title || 'Expense',
-            amount: Number(e.amount) || 0,
-            category: e.category || 'Food & Dining',
-            date: e.date || new Date().toISOString().split('T')[0],
+            item: expItem,
+            amount: expAmt,
+            category: expCat,
+            date: expDate,
             source: 'Auto-Extracted'
           });
+          // Auto-sync food purchases to Nutrition / Khana
+          if (typeof autoSyncFoodExpenseToNutrition === 'function') {
+            if (expCat === 'Food & Dining' || isFoodClauseOrItem(expItem) || isFoodClauseOrItem(rawInputText)) {
+              autoSyncFoodExpenseToNutrition(expItem || rawInputText, expDate, expAmt);
+            }
+          }
         });
       }
 
@@ -9259,36 +9225,52 @@ Return ONLY valid JSON matching:
         // -------------------------------------------------------------
         // B. EXPENSES / MONEY SPENT / FOOD PURCHASE
         // -------------------------------------------------------------
-        const hasSpendKeyword = /\b(chips|coke|chai|coffee|pizza|burger|khana|swiggy|zomato|blinkit|zepto|auto|cab|uber|ola|metro|petrol|kharcha|spent|khalie|khaya|khai|piya|liya|khareeda|paid|debit|debit(?:ed)?|rs\.?|₹|\$|inr|rpee|rupaye?|rupees|bucks|ke\s+(?:chips|coke|chai|saman))\b/i.test(lower);
+        const hasSpendKeyword = /\b(chips|coke|chai|coffee|pizza|pza|burger|khana|shawarma|shwarma|momos?|maggi|maggie|thumbs\s*up|thums\s*up|cold\s*drink|swiggy|zomato|blinkit|zepto|auto|cab|uber|ola|metro|petrol|kharcha|spent|khalie|khaya|khai|piya|liya|li|lee|khareeda|paid|debit|debit(?:ed)?|rs\.?|₹|\$|inr|rpee|rupeek?\s*i?|rupaye?|rupees|bucks|ke\s+(?:chips|coke|chai|saman))\b/i.test(lower);
         const hasNumber = /\d+/.test(lower);
 
-        if (hasSpendKeyword && (hasNumber || /chips|kharcha|khalie/i.test(lower))) {
+        if (hasSpendKeyword && (hasNumber || /chips|kharcha|khalie|shawarma|momos|coke|thumbs/i.test(lower))) {
           if (!appData.expenses) appData.expenses = [];
           const numMatch = lower.match(/\d+(?:,\d+)*(?:\.\d+)?/);
           const amount = numMatch ? Number(numMatch[0].replace(/,/g, '')) : 30;
 
           let item = 'Snack / Expense';
-          if (/chips/i.test(lower)) item = 'Chips / Snacks';
+          if (/thumbs\s*up\s*zero|thums\s*up\s*zero/i.test(lower)) item = 'Thumbs Up Zero';
+          else if (/thumbs\s*up|thums\s*up/i.test(lower)) item = 'Thumbs Up';
+          else if (/coke\s*zero/i.test(lower)) item = 'Coke Zero';
           else if (/coke/i.test(lower)) item = 'Coke / Beverage';
+          else if (/shawarma|shwarma/i.test(lower)) item = 'Shawarma';
+          else if (/momos?/i.test(lower)) item = 'Momos';
+          else if (/pizza|pza/i.test(lower)) item = 'Pizza';
+          else if (/maggi|maggie/i.test(lower)) item = 'Maggi';
+          else if (/chips/i.test(lower)) item = 'Chips / Snacks';
           else if (/chai|tea/i.test(lower)) item = 'Chai / Tea';
           else if (/coffee/i.test(lower)) item = 'Coffee';
           else if (/swiggy|zomato|khana/i.test(lower)) item = 'Food Delivery';
           else if (/auto|cab|uber|ola|metro/i.test(lower)) item = 'Travel / Transit';
           else if (/petrol/i.test(lower)) item = 'Fuel / Petrol';
           else {
-            const clean = clause.replace(/\b(\d+|ka|ke|ki|rs|rpee|rupaye?|rupees|inr|kharcha|spent|khalie|khaya|khai|bhai|yaar)\b/gi, '').trim();
+            const clean = clause.replace(/\b(\d+|ka|ke|ki|rs|rpee|rupeek?\s*i?|rupaye?|rupees|inr|kharcha|spent|khalie|khaya|khai|li|lee|liya|bhai|yaar)\b/gi, '').trim();
             item = clean.length > 2 ? clean.charAt(0).toUpperCase() + clean.slice(1) : 'General Expense';
           }
 
+          const cat = /auto|cab|uber|ola|metro|petrol/i.test(lower) ? 'Transport' : 'Food & Dining';
           appData.expenses.unshift({
             id: 'e_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
             item: item,
             amount: amount,
-            category: /auto|cab|uber|ola|metro|petrol/i.test(lower) ? 'Transport' : 'Food & Dining',
+            category: cat,
             date: today,
             source: 'Auto-Extracted'
           });
           expensesAdded++;
+
+          // Auto-sync food expense into nutrition meals
+          if (cat === 'Food & Dining' || isFoodClauseOrItem(item) || isFoodClauseOrItem(clause)) {
+            if (typeof autoSyncFoodExpenseToNutrition === 'function') {
+              autoSyncFoodExpenseToNutrition(clause, today, amount);
+            }
+          }
+
           return; // Strictly skip adding to tasks!
         }
 
@@ -11596,8 +11578,42 @@ Return ONLY valid JSON matching:
       if (alertEl) alertEl.classList.add('hidden');
     }
 
+    // EASY FRICTIONLESS LOGIN & MULTI-USER WORKSPACE SWITCHING
+    function handleEasyLogin(e) {
+      if (e) e.preventDefault();
+      const input = document.getElementById('easyLoginInput');
+      const raw = (input ? input.value : '').trim();
+      if (!raw) {
+        showAuthError('Please enter your Name or Email');
+        input?.focus();
+        return;
+      }
+      const isEmail = raw.includes('@');
+      const cleanEmail = isEmail ? raw.toLowerCase() : `${raw.toLowerCase().replace(/[^a-z0-9]/g, '')}@workspace.local`;
+      const name = isEmail ? (raw.split('@')[0].charAt(0).toUpperCase() + raw.split('@')[0].slice(1)) : raw;
+      quickSwitchProfile(cleanEmail, name);
+    }
+    window.handleEasyLogin = handleEasyLogin;
+
+    async function quickSwitchProfile(email, name) {
+      const cleanEmail = String(email).trim().toLowerCase();
+      const displayName = name || cleanEmail.split('@')[0];
+      
+      currentUser = {
+        email: cleanEmail,
+        name: displayName,
+        picture: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(cleanEmail)}`
+      };
+      localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
+      closeLoginModal();
+      updateAuthUI();
+      await loadInitialData();
+      renderAll();
+      showToast(`Switched to ${displayName}'s workspace!`);
+    }
+    window.quickSwitchProfile = quickSwitchProfile;
+
     // SIGN IN EXISTING USER (PASSWORD PROTECTED)
-    async function handleAccountLogin(e) {
       if (e) e.preventDefault();
       clearAuthError();
       const emailInput = document.getElementById('signInEmail');
@@ -11821,6 +11837,30 @@ Return ONLY valid JSON matching:
     // NUTRITION, MACROS, MICROS, WATER & SLEEP ENGINE
     // =========================================================================
     const FOOD_DATABASE = [
+      // Fast Food, Junk Food, Street Food & Cold Drinks ("Gandi Cheez" & Beverages)
+      { keys: ['thumbs up zero', 'thums up zero', 'coke zero', 'diet coke', 'pepsi black', 'zero soda', 'diet soda', 'zero cola'], cals: 1, p: 0, c: 0, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0 },
+      { keys: ['thumbs up', 'thums up', 'coke', 'coca cola', 'pepsi', 'sprite', 'fanta', 'limca', 'mountain dew', 'cold drink', 'soft drink', 'soda'], cals: 140, p: 0, c: 35, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0 },
+      { keys: ['shawarma roll', 'chicken shawarma', 'shawarma', 'shwarma'], cals: 420, p: 26, c: 35, f: 18, fiber: 2.5, ca: 60, fe: 2.0, vitC: 4 },
+      { keys: ['peri peri chicken momos', 'chicken momos', 'momos chicken', 'chicken momo'], cals: 240, p: 16, c: 26, f: 7, fiber: 1.5, ca: 30, fe: 1.5, vitC: 2 },
+      { keys: ['fried momos', 'kurkure momos'], cals: 320, p: 8, c: 32, f: 18, fiber: 1.5, ca: 25, fe: 1.2, vitC: 1 },
+      { keys: ['veg momos', 'steamed momos', 'paneer momos', 'momos', 'momo'], cals: 180, p: 6, c: 28, f: 4, fiber: 2.0, ca: 40, fe: 1.2, vitC: 3 },
+      { keys: ['pizza slice', 'pza slice', 'slice pizza', 'pizza', 'pza'], cals: 260, p: 10, c: 30, f: 11, fiber: 2.0, ca: 140, fe: 1.8, vitC: 2 },
+      { keys: ['burger', 'chicken burger', 'veg burger', 'mcaloo tikki', 'crispy burger'], cals: 350, p: 14, c: 38, f: 16, fiber: 2.5, ca: 80, fe: 2.0, vitC: 3 },
+      { keys: ['maggi', 'maggie', '2 minute noodles', 'instant noodles', 'noodles', 'chowmein', 'hakka noodles'], cals: 310, p: 7, c: 44, f: 12, fiber: 2.0, ca: 20, fe: 1.8, vitC: 0 },
+      { keys: ['chips', 'lays', 'kurkure', 'bingo', 'doritos', 'namkeen', 'bhujia'], cals: 270, p: 3, c: 28, f: 16, fiber: 1.5, ca: 15, fe: 0.8, vitC: 5 },
+      { keys: ['biscuit', 'biscuits', 'parle g', 'good day', 'oreo', 'cookie', 'cookies'], cals: 140, p: 2, c: 24, f: 4, fiber: 0.8, ca: 20, fe: 0.6, vitC: 0 },
+      { keys: ['chole bhature', 'bhature', 'bhatura'], cals: 680, p: 16, c: 75, f: 34, fiber: 7.0, ca: 90, fe: 4.0, vitC: 5 },
+      { keys: ['pav bhaji', 'bhaji'], cals: 400, p: 8, c: 52, f: 18, fiber: 4.5, ca: 50, fe: 2.5, vitC: 15 },
+      { keys: ['samosa', 'aloo samosa'], cals: 250, p: 4, c: 28, f: 14, fiber: 2.0, ca: 20, fe: 1.2, vitC: 4 },
+      { keys: ['kachori', 'khasta kachori'], cals: 280, p: 5, c: 26, f: 17, fiber: 2.5, ca: 25, fe: 1.5, vitC: 1 },
+      { keys: ['pakora', 'pakode', 'bread pakora', 'bhajiya'], cals: 260, p: 6, c: 24, f: 16, fiber: 2.5, ca: 30, fe: 1.8, vitC: 3 },
+      { keys: ['kathi roll', 'paneer roll', 'egg roll', 'chicken roll', 'roll', 'wrap'], cals: 390, p: 18, c: 40, f: 18, fiber: 3.0, ca: 80, fe: 2.2, vitC: 4 },
+      { keys: ['french fries', 'fries'], cals: 310, p: 3.5, c: 41, f: 15, fiber: 3.5, ca: 15, fe: 0.8, vitC: 6 },
+      { keys: ['beer', 'can beer', 'pint beer'], cals: 150, p: 1, c: 13, f: 0, fiber: 0, ca: 15, fe: 0.1, vitC: 0 },
+      { keys: ['whiskey', 'rum', 'vodka', 'gin', 'daru', 'alcohol', 'scotch', 'peg'], cals: 130, p: 0, c: 0, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0 },
+      { keys: ['ice cream', 'kulfi', 'soft serve'], cals: 210, p: 4, c: 28, f: 10, fiber: 0.5, ca: 120, fe: 0.2, vitC: 1 },
+      { keys: ['gulab jamun', 'rasgulla', 'sweet', 'mithai', 'jalebi'], cals: 175, p: 3, c: 26, f: 7, fiber: 0.5, ca: 40, fe: 0.5, vitC: 0 },
+
       // Eggs & Poultry
       { keys: ['boiled egg', 'egg boiled', 'anda boil'], cals: 70, p: 6, c: 0.5, f: 5, fiber: 0, ca: 25, fe: 0.9, vitC: 0 },
       { keys: ['egg white', 'anda safed'], cals: 17, p: 3.6, c: 0.2, f: 0.1, fiber: 0, ca: 2, fe: 0, vitC: 0 },
@@ -12028,6 +12068,89 @@ Return ONLY valid JSON matching:
         detectedItems: detected
       };
     }
+
+    // Check if an expense item or dump clause represents food/drinks
+    function isFoodClauseOrItem(str) {
+      if (!str || typeof str !== 'string') return false;
+      const lower = str.toLowerCase().trim();
+      const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
+      return foodKeywords.test(lower);
+    }
+    window.isFoodClauseOrItem = isFoodClauseOrItem;
+
+    // Automatically sync food/drink purchases into appData.nutrition.meals
+    function autoSyncFoodExpenseToNutrition(rawDishName, dateStr, amount) {
+      if (!rawDishName) return;
+      const lower = String(rawDishName).toLowerCase().trim();
+      
+      // Clean noise words
+      let cleanDish = rawDishName
+        .replace(/\b(bro|bhai|yaar|kal|aaj|today|yesterday|meine|maine|mene|li|lee|liya|khaya|khayi|khaye|khae|khalie|khali|piya|piye|pi|pee|spent|kharcha|rupeek\s*i|rupeek|rupaye?|rupees|rs\.?|₹|inr|ka|ke|ki|aur|and)\b/gi, ' ')
+        .replace(/\d+\s*(?:rs|rupaye?|rupees|rpee|bucks)?/gi, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+
+      let count = 1;
+      const countMatch = lower.match(/\b(\d+)\s*(?:thumbs|thums|coke|pizza|momos|shawarma|roti|eggs?|biscuit|pack|slice|beer|peg|cup|plate|glass)/i);
+      if (countMatch && countMatch[1]) {
+        count = parseFloat(countMatch[1]) || 1;
+      }
+
+      if (!cleanDish || cleanDish.length < 2) {
+        cleanDish = rawDishName;
+      }
+
+      let displayDish = cleanDish.charAt(0).toUpperCase() + cleanDish.slice(1);
+      if (/thumbs\s*up\s*zero|thums\s*up\s*zero/i.test(lower)) displayDish = count > 1 ? `Thumbs Up Zero (${count} cans)` : 'Thumbs Up Zero';
+      else if (/coke\s*zero/i.test(lower)) displayDish = count > 1 ? `Coke Zero (${count} cans)` : 'Coke Zero';
+      else if (/diet\s*coke/i.test(lower)) displayDish = count > 1 ? `Diet Coke (${count} cans)` : 'Diet Coke';
+      else if (/pza|pizza/i.test(lower)) displayDish = amount >= 300 ? 'Pizza (Medium / Dinner)' : 'Pizza (Slice)';
+      else if (/momos?/i.test(lower)) displayDish = /chicken/i.test(lower) ? 'Chicken Momos' : 'Momos';
+      else if (/shawarma|shwarma/i.test(lower)) displayDish = count > 1 ? `Shawarma (${count} pcs)` : 'Shawarma';
+      else if (/maggi|maggie/i.test(lower)) displayDish = count > 1 ? `Maggi (${count} packs)` : 'Maggi';
+      else if (/chai|tea/i.test(lower)) displayDish = 'Chai / Tea';
+      else if (/chips|lays|kurkure/i.test(lower)) displayDish = 'Chips / Snack';
+
+      if (!appData.nutrition) {
+        appData.nutrition = { proteinGoal: 120, caloriesGoal: 2000, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
+      }
+      if (!Array.isArray(appData.nutrition.meals)) appData.nutrition.meals = [];
+
+      const targetDate = dateStr || new Date().toISOString().split('T')[0];
+      const targetIso = targetDate.includes('T') ? targetDate : `${targetDate}T${new Date().toTimeString().slice(0, 8)}`;
+
+      // Prevent exact duplicates within the same day
+      const isDuplicate = appData.nutrition.meals.some(m => {
+        const mDate = (m.date || '').split('T')[0];
+        const tDate = targetDate.split('T')[0];
+        return mDate === tDate && m.dish && m.dish.toLowerCase() === displayDish.toLowerCase();
+      });
+      if (isDuplicate) return;
+
+      const est = estimateDishNutrition(displayDish, count);
+      const hour = new Date().getHours();
+      const mealType = hour < 11 ? 'Breakfast' : hour < 16 ? 'Lunch' : hour < 19 ? 'Snacks' : 'Dinner';
+
+      appData.nutrition.meals.unshift({
+        id: 'meal_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+        date: targetIso,
+        dish: displayDish,
+        mealType: mealType,
+        portion: count,
+        calories: est.cals,
+        protein: est.protein || 0,
+        carbs: est.carbs || 0,
+        fats: est.fats || 0,
+        fiber: est.fiber || 0,
+        calcium: est.calcium || 0,
+        iron: est.iron || 0,
+        vitC: est.vitC || 0,
+        source: 'Expense Sync'
+      });
+
+      showToast(`🍗 Synced to Khana: ${displayDish} (+${est.protein || 0}g Protein, ${est.cals} kcal)`);
+    }
+    window.autoSyncFoodExpenseToNutrition = autoSyncFoodExpenseToNutrition;
 
     // Live preview under the dish input
     function previewDishEstimate() {

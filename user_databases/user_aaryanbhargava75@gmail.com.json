@@ -229,81 +229,11 @@
   "assets": [],
   "journal": [
     {
-      "id": "j_mwna7n3gco3pq",
+      "id": "j_mwng0ao5kzc5t",
       "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
       "startTime": "15:00",
       "endTime": "15:30",
       "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwna501c01t3u",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9mogl3k2vc",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9ix8ygwku4",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwn9hyvvj2y0n",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwao9h424viyr",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwakb23x0vi7l",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "15:00",
-      "endTime": "15:30",
-      "duration": 30,
-      "category": "Work & Deep Focus",
-      "mood": "⚡ Productive",
-      "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
-    },
-    {
-      "id": "j_mwajeqexfe8h2",
-      "activity": "Milestone Cleared: Welcome to Dayframe! Tap checkbox to mark complete",
-      "startTime": "13:45",
-      "endTime": "15:30",
-      "duration": 105,
       "category": "Work & Deep Focus",
       "mood": "⚡ Productive",
       "notes": "Welcome to Dayframe! Tap checkbox to mark complete"
