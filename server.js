@@ -621,6 +621,23 @@ function isFutureTaskClauseServer(clause) {
   return /\b(karna|karni|karne|krna|krni|krle|krdo|kar\s*do|kar\s*le|kar\s*lena|dekhna|dekhni|padhna|padhni|pdhna|pdhni|likhna|likhni|bhejna|bhejni|banana|banani|lana|laana|lena|dena|jana|jaana|milna|submit\s*karn[ai]|call\s*karn[ai]|baat\s*karn[ai]|set\s*k(?:r|ar)?(?:le|lo|do|na)|schedule\s*k(?:r|ar)?(?:le|lo|do|na)?|karunga|karungi|karenge|dekhunga|padhunga|bhejunga|remind\s*me|reminder|yaad\s*dilana|yaad\s*rakhna|urgent|asap|high\s*prior(?:ity)?|low\s*prior(?:ity)?|must\s*do|need\s*to|have\s*to|got\s*to|gotta|plan\s+(?:my|to)|book\s+(?:a|an|my)|tomorrow|parso|before\s+\d|by\s+\d{1,2}\s*(?:am|pm|baje))\b/i.test(lower);
 }
 
+
+function isFoodClauseOrItemServer(str) {
+  if (!str || typeof str !== 'string') return false;
+  const lower = str.toLowerCase().trim();
+  const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|coke\s*zero|pepsi\s*black|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn\s*chicken|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|pasta|macaroni|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
+  return foodKeywords.test(lower);
+}
+
+function isFoodIntakeClauseServer(clause) {
+  const lower = (clause || '').toLowerCase();
+  if (!lower || isFutureTaskClauseServer(lower)) return false;
+  const hasDish = isFoodClauseOrItemServer(lower);
+  if (!hasDish) return false;
+  const hasBuyFuture = /\b(buy|order|lana|laana|khareed|khareedna|banana|cook|make|mangwa)\b/i.test(lower);
+  return !hasBuyFuture;
+}
+
 function classifyNonTaskActivityServer(clause) {
   const lower = (clause || '').toLowerCase();
   if (!lower || isFutureTaskClauseServer(lower)) return null;
@@ -658,6 +675,23 @@ function sanitizeParsedResponse(parsed, rawText) {
   for (const t of parsed.tasks) {
     const titleStr = typeof t === 'string' ? t : (t.title || '');
     const titleKind = classifyNonTaskActivityServer(titleStr);
+
+    // Filter out food items mistakenly classified as tasks
+    const isFood = isFoodClauseOrItemServer(titleStr) || isFoodIntakeClauseServer(titleStr);
+    if (isFood) {
+      if (!Array.isArray(parsed.meals)) parsed.meals = [];
+      const alreadyMeal = parsed.meals.some(m => (m.dish || '').toLowerCase().includes(titleStr.toLowerCase()));
+      if (!alreadyMeal) {
+        parsed.meals.push({
+          dish: titleStr,
+          mealType: 'Snacks',
+          portion: 1,
+          calories: 280,
+          protein: 3.8
+        });
+      }
+      continue; // Strictly NEVER keep food as a task!
+    }
 
     // Strip task if its own title is past/ongoing OR if the entire input had zero future task clauses
     if (titleKind !== null || onlyActivityLogs) {

@@ -4012,7 +4012,15 @@
           meals: []
         }
       };
-      window.appData = appData;
+      try {
+        Object.defineProperty(window, 'appData', {
+          get() { return appData; },
+          set(v) { appData = v; },
+          configurable: true
+        });
+      } catch (e) {
+        window.appData = appData;
+      }
 
       let activeTab = 'overview';
       let draggedTaskId = null;
@@ -5185,12 +5193,12 @@
       function isFoodIntakeClause(clause) {
         const lower = (clause || '').toLowerCase();
         if (!lower || isFutureTaskClause(lower)) return false;
-        const hasDish = /\b(shwarma|shawarma|momos?|momo|maggi|maggie|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein\s*shake|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|noodles|burger|pizza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|khana)\b/i.test(lower);
+        const hasDish = /\b(shwarma|shawarma|momos?|momo|maggi|maggie|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein\s*shake|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|noodles|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|khana|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn\s*chicken|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|chole\s*bhature|bhature|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|chowmein|pasta|macaroni|chips|lays|kurkure|namkeen|bhujia|biscuit|biscuits|cookie|cookies|chikki|ice\s*cream|kulfi|mithai|gulab\s*jamun|rasgulla|jalebi|sweet|sweets|coke|diet\s*coke|coke\s*zero|pepsi\s*black|thumbs\s*up|thums\s*up|pepsi|sprite|fanta|dew|drink|soda|juice|chai|tea|coffee|cold\s*drink)\b/i.test(lower);
         if (!hasDish) return false;
         const hasEatVerb = /\b(khae|khaye|khaya|khayi|khai|khaai|khalie|khali|piya|piye|pi|pee|liya|lee|had|ate|eaten|eats|drank|drink|consumed|peice|piece|pieces|pcs|plate|half\s*plate|full\s*plate|bowl|glass|cup|scoop|gram|grams|slice|portion|lunch|dinner|breakfast|snack)\b/i.test(lower);
-        const hasQty = /^\s*(?:meine\s+|maine\s+|mene\s+)?(?:ek\s+|\d+(?:\.\d+)?\s+)/i.test(lower);
+        const hasQtyOrPortion = /^\s*(?:meine\s+|maine\s+|mene\s+)?(?:ek\s+|\d+(?:\.\d+)?\s+|thode?\s*se|thoda?\s*sa?|thodi\s*si?|kuch\s+|half\s+|full\s+|small\s+|medium\s+|large\s+)/i.test(lower);
         const hasBuyFuture = /\b(buy|order|lana|laana|khareed|khareedna|banana|cook|make|mangwa)\b/i.test(lower);
-        return hasEatVerb || (hasQty && !hasBuyFuture);
+        return (hasEatVerb || hasQtyOrPortion || !hasBuyFuture) && !hasBuyFuture;
       }
 
       function extractDurationFromClause(clause) {
@@ -5844,15 +5852,8 @@
         }
 
         // Ensure tasks exist in appData.tasks
-        if (!appData.tasks || appData.tasks.length === 0) {
-          appData.tasks = [
-            { id: 't_nitin_meeting', title: 'Meeting with Nitin Bhaiya', category: 'Work', priority: 'high', time: '14:00', date: '2026-11-01', duration: 60, status: 'todo', reminder: true, reminderTime: '14:00', source: 'AI Voice' },
-            { id: 't_p1', title: 'Set 25 minute timer', category: 'Personal & Errands', priority: 'medium', time: '11:00 AM', status: 'todo' },
-            { id: 't_p2', title: 'Review weekly project roadmap & milestones', category: 'Work', priority: 'urgent', time: '11:00 AM', status: 'todo' },
-            { id: 't_p3', title: 'Team sync & design sprint review', category: 'Work', priority: 'high', time: '11:00 AM', status: 'todo' },
-            { id: 't_p4', title: 'Read 20 pages & personal journaling', category: 'Personal & Errands', priority: 'low', time: '11:00 AM', status: 'todo' }
-          ];
-          saveData();
+        if (!Array.isArray(appData.tasks)) {
+          appData.tasks = [];
         }
 
         const tasks = appData.tasks || [];
@@ -9419,7 +9420,7 @@ CRITICAL CLASSIFICATION & EXCLUSION RULES:
 3. Hinglish Tense Check: Past/Continuous ("dekhi", "kiya", "kia", "kari", "padha", "khai", "kr rha", "krrha", "dekh rha", "watched", "did", "working on") -> "journal" or "meals", NEVER "tasks". Only future intent ("karna hai", "karni hai", "dekhni hai", "remind me", "urgent", "tomorrow", "set krle", "need to") -> "tasks".
 4. When the user mentions food, snacks, drinks, or supplements they ate, drank, or consumed (e.g. "4 piece shawarma ke khae", "half plate peri peri chicken momos khae", "Meine ek maggi khai", "3 paneer besan cheele", "2 boiled eggs aur doodh", "1 scoop whey protein"):
    - Extract strictly into "meals" array with realistic macros: "dish" (clean title e.g. "Shawarma (4 pcs)", "Peri Peri Chicken Momos (Half Plate)"), "mealType", "portion", "calories", "protein", "carbs", "fats", "fiber", "calcium", "iron", "vitC", "date".
-   - NEVER create a task for food eaten in the past!
+   - NEVER create a task for food, snacks, fast food, street food, drinks or sides (e.g. "thode se peri peri fries", "2 burger", "french fries", "coke zero", "momos", "pizza", "maggi", "dal chawal"). Any food item consumed MUST ALWAYS go into "meals" (and "expenses" if money spent). IT MUST NEVER BE ADDED TO "tasks"!
    - Do NOT create a 0-rupee entry in "expenses" unless money/spending was explicitly stated.
 5. NEVER create a task for bad habits, relapses, mental stress, or emotional venting (e.g. "muthi lag gayi", "dimag ki dahi", "mood off", "relapse"). Extract these strictly into "journal" (with mood emoji like "😫 Stressed / Anxious" or "🤯 Overwhelmed") and "timeLogs" (Procrastination / High Impact)!
 6. Only extract ACTUAL FUTURE TO-DOS (actionable pending tasks yet to be done) into "tasks".
@@ -9667,30 +9668,33 @@ Return ONLY valid JSON matching:
 
             // Guard against past/ongoing activity logs or standalone food mistakenly classified as tasks
             const actKind = classifyNonTaskActivity(cleanTitle) || (rawOnlyNonTask ? classifyNonTaskActivity(rawInputText) : null);
-            if (actKind !== null || isFoodIntakeClause(cleanTitle)) {
-              if (isFoodIntakeClause(cleanTitle) || isFoodIntakeClause(rawInputText)) {
-                // Avoid duplicate meal if data.meals already captured it
-                if (!(data.meals && data.meals.length)) {
+            const isFoodItem = isFoodIntakeClause(cleanTitle) || isFoodClauseOrItem(cleanTitle) || isFoodIntakeClause(rawTitle) || isFoodClauseOrItem(rawTitle);
+            if (actKind !== null || isFoodItem) {
+              if (isFoodItem) {
+                // Avoid duplicate meal if data.meals or appData.nutrition.meals already captured it
+                const alreadyCaptured = (data.meals && data.meals.some(m => (m.dish || '').toLowerCase().includes(lower) || lower.includes((m.dish || '').toLowerCase()))) ||
+                  (appData.nutrition && Array.isArray(appData.nutrition.meals) && appData.nutrition.meals.some(m => (m.dish || '').toLowerCase().includes(lower)));
+                if (!alreadyCaptured) {
                   const est = estimateDishNutrition(cleanTitle, 1.0);
                   if (!appData.nutrition) appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
                   if (!Array.isArray(appData.nutrition.meals)) appData.nutrition.meals = [];
                   appData.nutrition.meals.push({
                     id: 'meal_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
                     date: new Date().toISOString(),
-                    dish: cleanTitle,
+                    dish: cleanTitle.charAt(0).toUpperCase() + cleanTitle.slice(1),
                     mealType: new Date().getHours() < 11 ? 'Breakfast' : new Date().getHours() < 16 ? 'Lunch' : new Date().getHours() < 19 ? 'Snacks' : 'Dinner',
                     portion: 1,
-                    calories: est.cals,
-                    protein: est.protein,
-                    carbs: est.carbs,
-                    fats: est.fats,
-                    fiber: est.fiber,
-                    calcium: est.calcium,
-                    iron: est.iron,
-                    vitC: est.vitC
+                    calories: est.cals || 280,
+                    protein: est.protein || 3.8,
+                    carbs: est.carbs || 36,
+                    fats: est.fats || 12,
+                    fiber: est.fiber || 2,
+                    calcium: est.calcium || 20,
+                    iron: est.iron || 1,
+                    vitC: est.vitC || 2
                   });
                 }
-                return;
+                return; // NEVER ADD TO TASKS!
               }
 
               if (actKind === 'past') markMatchingPendingTaskDone(rawInputText || cleanTitle);
@@ -9935,7 +9939,7 @@ Return ONLY valid JSON matching:
 
         // Split into individual statements/clauses by newline, punctuation, or conjunctions (' aur ', ' and ')
         const clauses = text
-          .split(/\r?\n|(?<=[.!?])\s+|(?:\s+aur\s+|\s+and\s+|;\s*)/i)
+          .split(/\r?\n|(?<=[.!?])\s+|(?:s+aur\s+|\s+and\s+|[,;]|\s+(?=(?:thode?\s*se|thoda?\s*sa?|thodi\s*si?|kuch|\d+(?:\.\d+)?\s*(?:burger|roti|anda|egg|coke|fries|momos?|plate|pack|can|bottle|glass|cup|bowl|pieces?|pcs?))))/i)
           .map(s => s.trim())
           .filter(s => s.length > 1);
 
@@ -10026,7 +10030,11 @@ Return ONLY valid JSON matching:
 
             let displayTitle = cleanFood ? (cleanFood.charAt(0).toUpperCase() + cleanFood.slice(1)) : clause;
             if (/shwarma|shawarma/i.test(cleanFood)) displayTitle = `Shawarma (${count} pcs)`;
-            else if (/momos?/i.test(cleanFood)) displayTitle = /half/i.test(cleanFood) ? 'Peri Peri Chicken Momos (Half Plate)' : 'Chicken Momos';
+            else if (/peri\s*peri\s*(?:chicken\s*)?momos?/i.test(cleanFood)) displayTitle = /half/i.test(cleanFood) ? 'Peri Peri Chicken Momos (Half Plate)' : 'Peri Peri Chicken Momos';
+            else if (/momos?/i.test(cleanFood)) displayTitle = /half/i.test(cleanFood) ? 'Momos (Half Plate)' : 'Momos';
+            else if (/peri\s*peri\s*fries/i.test(cleanFood)) displayTitle = /thode?\s*se|thoda?\s*sa?|thodi|kuch/i.test(lower) ? 'Peri Peri Fries (Small Portion)' : 'Peri Peri Fries';
+            else if (/french\s*fries|fries/i.test(cleanFood)) displayTitle = /thode?\s*se|thoda?\s*sa?|thodi|kuch/i.test(lower) ? 'French Fries (Small Portion)' : 'French Fries';
+            else if (/burger/i.test(cleanFood)) displayTitle = count > 1 ? `${count} Burger` : 'Burger';
 
             appData.nutrition.meals.push({
               id: 'meal_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
@@ -10239,6 +10247,45 @@ Return ONLY valid JSON matching:
 
           if (cleanTitle.length < 3) return;
           if (/\b(timer|pomodoro)\b/i.test(lower)) return;
+
+          // STRICT GUARD: Food items, snacks, fast food, beverages must NEVER become tasks unless future cooking/buying intent is stated!
+          const hasFoodFutureAction = /\b(banana|banani|banane|cook|make|order|lana|laana|buy|khareed|khareedna|mangwa|mangwana)\b/i.test(lower) || isFutureTaskClause(lower);
+          if (!hasFoodFutureAction && (isFoodIntakeClause(clause) || isFoodClauseOrItem(clause) || isFoodClauseOrItem(cleanTitle) || isFoodIntakeClause(cleanTitle))) {
+            if (!appData.nutrition) {
+              appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
+            }
+            if (!Array.isArray(appData.nutrition.meals)) appData.nutrition.meals = [];
+
+            const est = estimateDishNutrition(cleanTitle || clause, 1.0);
+            const mealType = new Date().getHours() < 11 ? 'Breakfast' : new Date().getHours() < 16 ? 'Lunch' : new Date().getHours() < 19 ? 'Snacks' : 'Dinner';
+            
+            let displayDish = cleanTitle || clause;
+            if (/peri\s*peri\s*fries/i.test(lower)) displayDish = /thode?\s*se|thoda?\s*sa?|thodi|kuch/i.test(lower) ? 'Peri Peri Fries (Small Portion)' : 'Peri Peri Fries';
+            else if (/french\s*fries|fries/i.test(lower)) displayDish = /thode?\s*se|thoda?\s*sa?|thodi|kuch/i.test(lower) ? 'French Fries (Small Portion)' : 'French Fries';
+            else if (/burger/i.test(lower)) displayDish = 'Burger';
+            else if (/coke\s*zero/i.test(lower)) displayDish = 'Coke Zero';
+            else if (/thumbs\s*up/i.test(lower)) displayDish = 'Thumbs Up';
+            displayDish = displayDish.charAt(0).toUpperCase() + displayDish.slice(1);
+
+            appData.nutrition.meals.push({
+              id: 'meal_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
+              date: new Date().toISOString(),
+              dish: displayDish,
+              mealType: mealType,
+              portion: 1,
+              calories: est.cals || 280,
+              protein: est.protein || 3.8,
+              carbs: est.carbs || 36,
+              fats: est.fats || 12,
+              fiber: est.fiber || 2,
+              calcium: est.calcium || 20,
+              iron: est.iron || 1,
+              vitC: est.vitC || 2
+            });
+
+            showToast(`🍗 Logged to Nutrition: ${displayDish} (+${est.protein}g Protein, ${est.cals} kcal)`);
+            return; // Strictly skip adding to tasks!
+          }
 
           let priority = 'medium';
           if (/urgent|asap|critical|emergency|aaj hi|abhi turant|sabse pehle/i.test(lower)) {
@@ -12666,7 +12713,9 @@ Return ONLY valid JSON matching:
         { keys: ['kachori', 'khasta kachori'], cals: 280, p: 5, c: 26, f: 17, fiber: 2.5, ca: 25, fe: 1.5, vitC: 1 },
         { keys: ['pakora', 'pakode', 'bread pakora', 'bhajiya'], cals: 260, p: 6, c: 24, f: 16, fiber: 2.5, ca: 30, fe: 1.8, vitC: 3 },
         { keys: ['kathi roll', 'paneer roll', 'egg roll', 'chicken roll', 'roll', 'wrap'], cals: 390, p: 18, c: 40, f: 18, fiber: 3.0, ca: 80, fe: 2.2, vitC: 4 },
-        { keys: ['french fries', 'fries'], cals: 310, p: 3.5, c: 41, f: 15, fiber: 3.5, ca: 15, fe: 0.8, vitC: 6 },
+        { keys: ['peri peri fries', 'french fries', 'fries', 'potato wedges', 'wedges', 'aloo fries'], cals: 290, p: 3.8, c: 38, f: 14, fiber: 3.5, ca: 16, fe: 0.9, vitC: 7 },
+        { keys: ['chicken nuggets', 'nuggets', 'veg nuggets', 'popcorn chicken'], cals: 280, p: 15, c: 18, f: 17, fiber: 1.5, ca: 20, fe: 1.0, vitC: 0 },
+        { keys: ['garlic bread', 'cheese garlic bread'], cals: 220, p: 5, c: 25, f: 11, fiber: 1.2, ca: 60, fe: 1.1, vitC: 0 },
         { keys: ['beer', 'can beer', 'pint beer'], cals: 150, p: 1, c: 13, f: 0, fiber: 0, ca: 15, fe: 0.1, vitC: 0 },
         { keys: ['whiskey', 'rum', 'vodka', 'gin', 'daru', 'alcohol', 'scotch', 'peg'], cals: 130, p: 0, c: 0, f: 0, fiber: 0, ca: 0, fe: 0, vitC: 0 },
         { keys: ['ice cream', 'kulfi', 'soft serve'], cals: 210, p: 4, c: 28, f: 10, fiber: 0.5, ca: 120, fe: 0.2, vitC: 1 },
@@ -12771,7 +12820,7 @@ Return ONLY valid JSON matching:
         const lower = text.toLowerCase().trim();
 
         // Split multi-item phrases e.g. "2 roti with dal and curd"
-        const parts = lower.split(/\s*(?:with|\+|and|,|&)\s*/);
+        const parts = lower.split(/\s*(?:with|\+|and|,|&|\baur\b)\s*/);
         let totalCals = 0;
         let totalP = 0;
         let totalC = 0;
@@ -12783,15 +12832,21 @@ Return ONLY valid JSON matching:
         const detected = [];
 
         parts.forEach(part => {
-          const trimmed = part.trim();
+          let trimmed = part.trim();
           if (!trimmed) return;
 
-          // Check for leading quantity e.g. "2 eggs", "3 roti", "150g chicken"
+          // Check for portion modifiers like "thode se", "thoda sa", "thodi si", "kuch", "small"
           let count = 1;
+          if (/\b(thode?\s*se|thoda?\s*sa?|thodi\s*si?|kuch|small|chhota)\b/i.test(trimmed)) {
+            count = 0.85;
+            trimmed = trimmed.replace(/\b(thode?\s*se|thoda?\s*sa?|thodi\s*si?|kuch|small|chhota)\b/gi, '').trim();
+          }
+
+          // Check for leading quantity e.g. "2 eggs", "3 roti", "150g chicken"
           const numMatch = trimmed.match(/^(\d+(?:\.\d+)?)\s*(?:pieces?|pcs?|bowls?|plates?|glasses?|scoops?|slice?|slices?|rotis?|eggs?|cups?)?\s*(.*)$/);
           let foodStr = trimmed;
           if (numMatch) {
-            count = parseFloat(numMatch[1]) || 1;
+            count = parseFloat(numMatch[1]) || count;
             foodStr = (numMatch[2] || '').trim();
             if (!foodStr) foodStr = trimmed;
           }
@@ -12884,7 +12939,7 @@ Return ONLY valid JSON matching:
       function isFoodClauseOrItem(str) {
         if (!str || typeof str !== 'string') return false;
         const lower = str.toLowerCase().trim();
-        const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
+        const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|coke\s*zero|pepsi\s*black|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn\s*chicken|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|pasta|macaroni|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
         return foodKeywords.test(lower);
       }
       window.isFoodClauseOrItem = isFoodClauseOrItem;
