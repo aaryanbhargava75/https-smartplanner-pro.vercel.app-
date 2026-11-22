@@ -19,76 +19,55 @@ async function testLive() {
   await page.goto('https://smartplanner-pro.vercel.app', { waitUntil: 'domcontentloaded', timeout: 30000 });
   await new Promise(r => setTimeout(r, 2500));
 
-  // 1. Check Theme & Colors
-  const themeCheck = await page.evaluate(() => {
-    const bodyBg = window.getComputedStyle(document.body).backgroundColor;
-    const isDark = document.documentElement.classList.contains('dark');
-    return { bodyBg, isDark };
-  });
-  console.log('Theme check:', themeCheck);
+  // Screenshot 1: Overview
+  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_1_overview.png'), fullPage: true });
+  console.log('Saved vercel_live_1_overview.png');
 
-  // 2. Open login modal and take screenshot
+  // Screenshot 2: Tasks
   await page.evaluate(() => {
-    if (typeof openLoginModal === 'function') openLoginModal();
+    if (typeof switchTab === 'function') switchTab('tasks');
   });
-  await new Promise(r => setTimeout(r, 800));
-  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_login_modal.png'), fullPage: false });
-  console.log('Saved vercel_live_login_modal.png');
+  await new Promise(r => setTimeout(r, 1000));
+  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_2_tasks.png'), fullPage: true });
+  console.log('Saved vercel_live_2_tasks.png');
 
-  // Close login modal
+  // Screenshot 3: Schedule
   await page.evaluate(() => {
-    if (typeof closeLoginModal === 'function') closeLoginModal();
+    if (typeof switchTab === 'function') switchTab('schedule');
   });
-  await new Promise(r => setTimeout(r, 500));
+  await new Promise(r => setTimeout(r, 1000));
+  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_3_schedule.png'), fullPage: true });
+  console.log('Saved vercel_live_3_schedule.png');
 
-  // 3. Test Brain Dump: "bro kal 2 thumbs up zero li 20 rupeek i"
-  console.log('Testing food expense dump: bro kal 2 thumbs up zero li 20 rupeek i...');
-  await page.evaluate(async () => {
-    const input = document.getElementById('overviewHeroInput');
-    if (input) {
-      input.value = 'bro kal 2 thumbs up zero li 20 rupeek i';
-      if (typeof handleHeroInputLive === 'function') handleHeroInputLive(input.value);
-    }
-    if (typeof submitOverviewHeroTask === 'function') {
-      await submitOverviewHeroTask();
-    }
-  });
-  await new Promise(r => setTimeout(r, 3500));
-
-  // 4. Switch to Paisa (Expenses) Tab
+  // Screenshot 4: Paisa
   await page.evaluate(() => {
-    if (typeof switchTab === 'function') switchTab('expenses');
+    if (typeof switchTab === 'function') switchTab('paisa');
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 1000));
   await page.screenshot({ path: path.join(artifactDir, 'vercel_live_4_paisa.png'), fullPage: true });
   console.log('Saved vercel_live_4_paisa.png');
 
-  // 5. Switch to Khana (Nutrition) Tab
+  // Screenshot 5: Khana
   await page.evaluate(() => {
-    if (typeof switchTab === 'function') switchTab('nutrition');
+    if (typeof switchTab === 'function') switchTab('khana');
   });
-  await new Promise(r => setTimeout(r, 1500));
+  await new Promise(r => setTimeout(r, 1000));
   await page.screenshot({ path: path.join(artifactDir, 'vercel_live_5_khana.png'), fullPage: true });
   console.log('Saved vercel_live_5_khana.png');
 
-  // 6. Test Page Reload to verify Persistence
-  console.log('Reloading page to verify data persistence...');
-  await page.reload({ waitUntil: 'domcontentloaded' });
-  await new Promise(r => setTimeout(r, 2500));
-
-  // Switch to Khana again after reload to verify data persisted
+  // Screenshot 6: Journal
   await page.evaluate(() => {
-    if (typeof switchTab === 'function') switchTab('nutrition');
+    if (typeof switchTab === 'function') switchTab('journal');
   });
-  await new Promise(r => setTimeout(r, 1500));
-  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_5_khana_persisted.png'), fullPage: true });
-  console.log('Saved vercel_live_5_khana_persisted.png');
+  await new Promise(r => setTimeout(r, 1000));
+  await page.screenshot({ path: path.join(artifactDir, 'vercel_live_6_journal.png'), fullPage: true });
+  console.log('Saved vercel_live_6_journal.png');
 
   await browser.close();
-  console.log('All verifications & screenshots completed successfully!');
+  console.log('All live vercel screenshots captured successfully!');
 }
 
 testLive().catch(err => {
-  console.error('Verification error:', err);
+  console.error('Capture error:', err);
   process.exit(1);
 });
