@@ -477,13 +477,13 @@
 
     <!-- Clean Minimal Footer -->
     <div class="pt-3 border-t border-[var(--df-sidebar-border)] px-2 flex items-center justify-between gap-2 shrink-0">
-      <div class="flex items-center gap-2 min-w-0 cursor-pointer hover:opacity-90 transition-opacity" onclick="openLoginModal()" title="Switch Workspace / Profile (Aaryan vs Guest vs New User)">
+      <div class="flex items-center gap-2 min-w-0 cursor-pointer" onclick="openSettingsModal()" title="Settings &amp; Account">
         <div id="sidebarUserAvatar" class="w-7 h-7 rounded-full bg-[#1f241b] text-[#d4dec8] flex items-center justify-center font-semibold text-xs uppercase border border-white/[0.1] shrink-0">
           AK
         </div>
         <div class="flex flex-col min-w-0">
           <span id="sidebarUserName" class="text-xs font-medium text-[#d4d8cf] truncate leading-tight">Aarav Khanna</span>
-          <span class="text-[11px] text-[#989f92] truncate leading-tight">Click to switch profile</span>
+          <span class="text-[11px] text-[#989f92] truncate leading-tight">Sab isi device pe saved hai</span>
         </div>
       </div>
       <button onclick="openSettingsModal()" class="text-[#989f92] hover:text-white p-1 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer" title="Settings">
@@ -4096,8 +4096,6 @@
       // if (!currentUser) { setTimeout(openLoginModal, 400); }
     }
 
-    if (document.readyState === 'loading') {
-      
     function changeScheduleDay(delta) {
       showToast(delta < 0 ? 'Kal ka schedule' : 'Agle din ka schedule');
     }
@@ -4135,7 +4133,8 @@
       }
     } catch (e) {}
 
-    window.addEventListener('DOMContentLoaded', initApp);
+    if (document.readyState === 'loading') {
+      window.addEventListener('DOMContentLoaded', initApp);
     } else {
       initApp();
     }
@@ -5557,7 +5556,9 @@
         const isExpense = /(?:₹|rs\.?|\$|inr)\s*\d+|\b\d+\s*(?:ke|ka|ki|rs|rpee|rupaye?|rupees|inr|bucks)\b|\b(?:chips|coke|chai|coffee|pizza|burger|khana|swiggy|zomato|auto|cab|metro|petrol|kharcha|khalie|khaya)\b/i.test(lower);
         if (isExpense && (/\d+/.test(lower) || /chips|kharcha|khalie|khaya/i.test(lower))) {
           if (!appData.expenses) appData.expenses = [];
-          const numMatch = lower.match(/\d+(?:,\d+)*(?:\.\d+)?/);
+          const moneyMatch = lower.match(/(?:rs\.?|₹|\$|inr|rpee|rupeek?\s*i?|rupaye?|rupees|bucks)\s*(\d+(?:,\d+)*(?:\.\d+)?)/i) ||
+                             lower.match(/(\d+(?:,\d+)*(?:\.\d+)?)\s*(?:rs|rpee|rupeek?\s*i?|rupaye?|rupees|bucks|inr)/i);
+          const numMatch = moneyMatch ? [moneyMatch[1]] : lower.match(/\d+(?:,\d+)*(?:\.\d+)?/);
           const amount = numMatch ? Number(numMatch[0].replace(/,/g, '')) : 30;
           let item = 'Expense / Snack';
           if (/chips/i.test(lower)) item = 'Chips / Snacks';
@@ -9230,7 +9231,9 @@ Return ONLY valid JSON matching:
 
         if (hasSpendKeyword && (hasNumber || /chips|kharcha|khalie|shawarma|momos|coke|thumbs/i.test(lower))) {
           if (!appData.expenses) appData.expenses = [];
-          const numMatch = lower.match(/\d+(?:,\d+)*(?:\.\d+)?/);
+          const moneyMatch = lower.match(/(?:rs\.?|₹|\$|inr|rpee|rupeek?\s*i?|rupaye?|rupees|bucks)\s*(\d+(?:,\d+)*(?:\.\d+)?)/i) ||
+                             lower.match(/(\d+(?:,\d+)*(?:\.\d+)?)\s*(?:rs|rpee|rupeek?\s*i?|rupaye?|rupees|bucks|inr)/i);
+          const numMatch = moneyMatch ? [moneyMatch[1]] : lower.match(/\d+(?:,\d+)*(?:\.\d+)?/);
           const amount = numMatch ? Number(numMatch[0].replace(/,/g, '')) : 30;
 
           let item = 'Snack / Expense';
@@ -11614,6 +11617,7 @@ Return ONLY valid JSON matching:
     window.quickSwitchProfile = quickSwitchProfile;
 
     // SIGN IN EXISTING USER (PASSWORD PROTECTED)
+    async function handleAccountLogin(e) {
       if (e) e.preventDefault();
       clearAuthError();
       const emailInput = document.getElementById('signInEmail');
