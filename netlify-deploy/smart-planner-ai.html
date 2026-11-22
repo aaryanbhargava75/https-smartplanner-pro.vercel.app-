@@ -704,6 +704,22 @@
               class="w-full bg-transparent border-0 outline-none text-sm sm:text-[15px] text-[var(--df-text)] placeholder:text-[var(--df-text-muted)]/75 resize-none font-normal leading-relaxed"></textarea>
 
             <!-- Real-Time Live Intent Pill -->
+            <!-- Live Voice Recording Banner (Tap to start / Tap to stop) -->
+            <div id="heroRecordingIndicator"
+              class="hidden items-center justify-between text-xs py-2 px-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-400 select-none transition-all">
+              <div class="flex items-center gap-2">
+                <span class="relative flex h-2.5 w-2.5">
+                  <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                  <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span>
+                </span>
+                <span class="font-semibold text-red-400">Sun raha hoon... <span id="heroVoiceTimer" class="font-mono font-bold text-red-300">00:00</span></span>
+              </div>
+              <button type="button" onclick="toggleHeroVoiceNote()" class="text-[11px] font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-300 px-2 py-0.5 rounded-md cursor-pointer transition-colors">
+                Tap to stop ⏹️
+              </button>
+            </div>
+
+            <!-- Real-Time Live Intent Pill -->
             <div id="heroLiveIntentBar"
               class="hidden items-center gap-2 text-xs py-1 px-2.5 rounded-lg bg-[#a4d03b]/10 text-[#a4d03b] border border-[#a4d03b]/20 font-medium select-none">
               <span class="w-1.5 h-1.5 rounded-full bg-[#a4d03b] animate-pulse"></span>
@@ -5104,8 +5120,6 @@
       // =========================================================================
       // OVERVIEW HERO INPUT, VOICE NOTE & LIVE PARSE FEEDBACK SYSTEM
       // =========================================================================
-      let heroVoiceRecognition = null;
-      let isHeroVoiceRecording = false;
 
       function handleHeroInputLive(val) {
         updateHeroSubmitButton();
@@ -5326,101 +5340,314 @@
         }
       }
 
-      // Voice Note Recording for Overview Hero
-      function toggleHeroVoiceNote() {
+      // Voice Note Recording for Overview Hero (Tap once to record, Tap again to finish)
+      let heroVoiceRecognition = null;
+      let heroVoiceMediaRecorder = null;
+      let heroVoiceAudioChunks = [];
+      let heroVoiceTimerInterval = null;
+      let heroVoiceSeconds = 0;
+      let heroVoiceStream = null;
+      let heroVoiceSpeechText = "";
+      let isHeroVoiceRecording = false;
+
+      async function toggleHeroVoiceNote() {
         if (isHeroVoiceRecording) {
-          stopHeroVoiceNote();
+          await stopHeroVoiceNote();
         } else {
           startHeroVoiceNote();
         }
       }
 
-      function startHeroVoiceNote() {
-        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const btn = document.getElementById('heroVoiceNoteBtn');
-        const btnText = document.getElementById('heroVoiceBtnText');
-        const micIcon = document.getElementById('heroVoiceMicIcon');
-        const input = document.getElementById('overviewHeroInput');
+      async function startHeroVoiceNote() {
+        const btn = document.getElementById("heroVoiceNoteBtn");
+        const micIcon = document.getElementById("heroVoiceMicIcon");
+        const indicator = document.getElementById("heroRecordingIndicator");
+        const timerLabel = document.getElementById("heroVoiceTimer");
+        const input = document.getElementById("overviewHeroInput");
 
-        if (!SpeechRec) {
-          showToast('⚠️ Speech recognition is supported in Google Chrome & Edge.');
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showToast("⚠️ Microphone recording not supported in this browser.");
           return;
         }
 
+        // Request microphone access
         try {
-          heroVoiceRecognition = new SpeechRec();
-          heroVoiceRecognition.continuous = true;
-          heroVoiceRecognition.interimResults = true;
-          heroVoiceRecognition.lang = 'en-IN'; // Optimized for Indian English, Hinglish & Hindi
-
-          let initialVal = input ? input.value : '';
-          if (initialVal && !initialVal.endsWith(' ')) initialVal += ' ';
-
-          heroVoiceRecognition.onstart = () => {
-            isHeroVoiceRecording = true;
-            if (btn) {
-              btn.className = 'w-8 h-8 rounded-full bg-red-500/15 text-red-400 animate-pulse flex items-center justify-center transition-all cursor-pointer';
-            }
-            if (btnText) btnText.textContent = 'Listening...';
-            if (micIcon) {
-              micIcon.textContent = 'mic';
-              micIcon.className = 'material-symbols-outlined text-[19px] text-red-400';
-            }
-            showToast('🎙️ Listening... Speak your task, activity log, or reminder');
-          };
-
-          heroVoiceRecognition.onresult = (event) => {
-            let interimTranscript = '';
-            let finalTranscript = '';
-            for (let i = 0; i < event.results.length; ++i) {
-              if (event.results[i].isFinal) {
-                finalTranscript += event.results[i][0].transcript + ' ';
-              } else {
-                interimTranscript += event.results[i][0].transcript;
-              }
-            }
-            const fullSpeech = (finalTranscript + interimTranscript).trim();
-            if (input && fullSpeech) {
-              input.value = (initialVal + fullSpeech).trim();
-              handleHeroInputLive(input.value);
-            }
-          };
-
-          heroVoiceRecognition.onerror = (err) => {
-            console.warn('Hero voice recognition warning:', err);
-            stopHeroVoiceNote();
-          };
-
-          heroVoiceRecognition.onend = () => {
-            stopHeroVoiceNote();
-          };
-
-          heroVoiceRecognition.start();
+          heroVoiceStream = await navigator.mediaDevices.getUserMedia({ audio: true });
         } catch (err) {
-          console.error('Failed to start speech recognition:', err);
-          stopHeroVoiceNote();
+          console.error("Microphone access denied:", err);
+          showToast("⚠️ Mic permission required. Please allow microphone in browser.");
+          return;
         }
+
+        isHeroVoiceRecording = true;
+        heroVoiceAudioChunks = [];
+        heroVoiceSeconds = 0;
+        heroVoiceSpeechText = "";
+
+        // Start MediaRecorder (universal audio capture in Brave, Chrome, Safari, Edge, Firefox, Android)
+        try {
+          let mime = "audio/webm";
+          if (typeof MediaRecorder !== "undefined") {
+            if (MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) {
+              mime = "audio/webm;codecs=opus";
+            } else if (MediaRecorder.isTypeSupported("audio/mp4")) {
+              mime = "audio/mp4";
+            } else if (MediaRecorder.isTypeSupported("audio/ogg")) {
+              mime = "audio/ogg";
+            }
+            heroVoiceMediaRecorder = new MediaRecorder(heroVoiceStream, { mimeType: mime });
+            heroVoiceMediaRecorder.ondataavailable = (e) => {
+              if (e.data && e.data.size > 0) heroVoiceAudioChunks.push(e.data);
+            };
+            heroVoiceMediaRecorder.start(200);
+          }
+        } catch (recErr) {
+          console.warn("MediaRecorder notice:", recErr);
+        }
+
+        // Update UI to recording state
+        if (btn) {
+          btn.className = "w-8 h-8 rounded-full bg-red-500 text-white shadow-md shadow-red-500/30 flex items-center justify-center transition-all cursor-pointer animate-pulse";
+        }
+        if (micIcon) {
+          micIcon.textContent = "stop";
+          micIcon.className = "material-symbols-outlined text-[19px] text-white";
+        }
+        if (indicator) {
+          indicator.classList.remove("hidden");
+          indicator.classList.add("flex");
+        }
+        if (timerLabel) timerLabel.textContent = "00:00";
+        if (input && !input.value.trim()) {
+          input.placeholder = "Bolna shuru karo, sun raha hoon... (Tap mic to stop)";
+        }
+
+        // Timer interval
+        clearInterval(heroVoiceTimerInterval);
+        heroVoiceTimerInterval = setInterval(() => {
+          heroVoiceSeconds++;
+          const mins = String(Math.floor(heroVoiceSeconds / 60)).padStart(2, "0");
+          const secs = String(heroVoiceSeconds % 60).padStart(2, "0");
+          if (timerLabel) timerLabel.textContent = `${mins}:${secs}`;
+          if (heroVoiceSeconds >= 90) {
+            stopHeroVoiceNote();
+          }
+        }, 1000);
+
+        // Parallel Web Speech API for live transcription preview (Chrome / Edge)
+        const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SpeechRec) {
+          try {
+            heroVoiceRecognition = new SpeechRec();
+            heroVoiceRecognition.continuous = true;
+            heroVoiceRecognition.interimResults = true;
+            heroVoiceRecognition.lang = "en-IN";
+
+            let baseVal = input ? input.value : "";
+            if (baseVal && !baseVal.endsWith(" ")) baseVal += " ";
+
+            heroVoiceRecognition.onresult = (event) => {
+              let interimTranscript = "";
+              let finalTranscript = "";
+              for (let i = 0; i < event.results.length; ++i) {
+                if (event.results[i].isFinal) {
+                  finalTranscript += event.results[i][0].transcript + " ";
+                } else {
+                  interimTranscript += event.results[i][0].transcript;
+                }
+              }
+              const fullSpeech = (finalTranscript + interimTranscript).trim();
+              if (fullSpeech) {
+                heroVoiceSpeechText = fullSpeech;
+                if (input) {
+                  input.value = (baseVal + fullSpeech).trim();
+                  handleHeroInputLive(input.value);
+                  updateHeroSubmitButton();
+                }
+              }
+            };
+
+            heroVoiceRecognition.onerror = (e) => {
+              console.warn("SpeechRecognition notice:", e.error);
+            };
+
+            heroVoiceRecognition.onend = () => {
+              // Auto-restart if user has not stopped recording yet
+              if (isHeroVoiceRecording && heroVoiceRecognition) {
+                try { heroVoiceRecognition.start(); } catch (e) { }
+              }
+            };
+
+            heroVoiceRecognition.start();
+          } catch (e) {
+            console.warn("SpeechRecognition skipped:", e);
+          }
+        }
+
+        showToast("🎙️ Sun raha hoon... Ek tap se shuru hua, bolne ke baad dobara tap karke band karein");
       }
 
-      function stopHeroVoiceNote() {
+      async function stopHeroVoiceNote() {
+        if (!isHeroVoiceRecording) return;
+        isHeroVoiceRecording = false;
+
+        clearInterval(heroVoiceTimerInterval);
+
+        const btn = document.getElementById("heroVoiceNoteBtn");
+        const micIcon = document.getElementById("heroVoiceMicIcon");
+        const indicator = document.getElementById("heroRecordingIndicator");
+        const input = document.getElementById("overviewHeroInput");
+
+        // Update UI to processing state
+        if (btn) {
+          btn.className = "w-8 h-8 rounded-full bg-amber-500/20 text-amber-400 border border-amber-500/40 flex items-center justify-center transition-all cursor-pointer";
+        }
+        if (micIcon) {
+          micIcon.textContent = "progress_activity";
+          micIcon.className = "material-symbols-outlined text-[19px] animate-spin text-amber-400";
+        }
+        if (indicator) {
+          indicator.innerHTML = '<span class="flex items-center gap-2 text-amber-400"><span class="material-symbols-outlined text-[15px] animate-spin">progress_activity</span> <span>Transcribing voice note...</span></span>';
+        }
+
+        // 1. Stop SpeechRecognition
         if (heroVoiceRecognition) {
           try { heroVoiceRecognition.stop(); } catch (e) { }
           heroVoiceRecognition = null;
         }
-        isHeroVoiceRecording = false;
-        const btn = document.getElementById('heroVoiceNoteBtn');
-        const btnText = document.getElementById('heroVoiceBtnText');
-        const micIcon = document.getElementById('heroVoiceMicIcon');
+
+        // 2. Stop MediaRecorder & collect audio
+        let recordedBlob = null;
+        if (heroVoiceMediaRecorder) {
+          try {
+            if (heroVoiceMediaRecorder.state === "recording") {
+              heroVoiceMediaRecorder.requestData();
+            }
+          } catch (e) { }
+
+          await new Promise((resolve) => {
+            const timeout = setTimeout(() => resolve(), 800);
+            heroVoiceMediaRecorder.onstop = () => {
+              clearTimeout(timeout);
+              resolve();
+            };
+            try {
+              if (heroVoiceMediaRecorder.state !== "inactive") {
+                heroVoiceMediaRecorder.stop();
+              } else {
+                clearTimeout(timeout);
+                resolve();
+              }
+            } catch (e) {
+              clearTimeout(timeout);
+              resolve();
+            }
+          });
+
+          if (heroVoiceAudioChunks.length > 0) {
+            recordedBlob = new Blob(heroVoiceAudioChunks, { type: heroVoiceMediaRecorder.mimeType || "audio/webm" });
+          }
+        }
+
+        // 3. Release mic stream hardware
+        if (heroVoiceStream) {
+          try {
+            heroVoiceStream.getTracks().forEach(t => t.stop());
+          } catch (e) { }
+          heroVoiceStream = null;
+        }
+
+        // 4. Transcription resolution
+        let finalText = heroVoiceSpeechText ? heroVoiceSpeechText.trim() : (input ? input.value.trim() : "");
+
+        if (!finalText && recordedBlob && recordedBlob.size > 1000) {
+          try {
+            const audioBase64 = await blobToBase64(recordedBlob);
+            try {
+              const ctrl = new AbortController();
+              const timeoutId = setTimeout(() => ctrl.abort(), 6000);
+              const res = await fetch("/api/voice-transcribe", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                signal: ctrl.signal,
+                body: JSON.stringify({
+                  audioBase64: audioBase64,
+                  mimeType: recordedBlob.type || "audio/webm",
+                  language: "hi"
+                })
+              });
+              clearTimeout(timeoutId);
+              if (res.ok) {
+                const data = await res.json();
+                if (data && data.text) finalText = data.text.trim();
+              }
+            } catch (beErr) {
+              console.warn("Backend /api/voice-transcribe notice:", beErr);
+            }
+
+            if (!finalText) {
+              const userGroqKey = localStorage.getItem("smart-planner-groq-key") || "";
+              if (userGroqKey && userGroqKey.trim()) {
+                const cleanB64 = audioBase64.includes(",") ? audioBase64.split(",")[1] : audioBase64;
+                const byteChars = atob(cleanB64);
+                const byteNumbers = new Array(byteChars.length);
+                for (let i = 0; i < byteChars.length; i++) {
+                  byteNumbers[i] = byteChars.charCodeAt(i);
+                }
+                const byteArray = new Uint8Array(byteNumbers);
+                const fileBlob = new Blob([byteArray], { type: recordedBlob.type || "audio/webm" });
+                const formData = new FormData();
+                formData.append("file", fileBlob, "voice_note.webm");
+                formData.append("model", "whisper-large-v3");
+                formData.append("response_format", "json");
+                formData.append("prompt", "Tasks, meetings, expenses, khana in Hindi Hinglish");
+
+                const gRes = await fetch("https://api.groq.com/openai/v1/audio/transcriptions", {
+                  method: "POST",
+                  headers: { "Authorization": `Bearer ${userGroqKey.trim()}` },
+                  body: formData
+                });
+                if (gRes.ok) {
+                  const gData = await gRes.json();
+                  if (gData && gData.text) finalText = gData.text.trim();
+                }
+              }
+            }
+          } catch (whisperErr) {
+            console.error("Whisper transcription error:", whisperErr);
+          }
+        }
+
+        // 5. Update input textarea with final transcribed text
+        if (input) {
+          if (finalText) {
+            input.value = finalText;
+            handleHeroInputLive(finalText);
+          }
+          input.placeholder = "Likho, bolo (🎤) ya screenshot paste karo...";
+        }
+
+        // 6. Restore normal UI state
         if (btn) {
-          btn.className = 'w-8 h-8 rounded-full hover:bg-white/[0.06] text-[var(--df-text-muted)] hover:text-[var(--df-text)] flex items-center justify-center transition-all cursor-pointer';
+          btn.className = "w-8 h-8 rounded-full hover:bg-white/[0.06] text-[var(--df-text-muted)] hover:text-[var(--df-text)] flex items-center justify-center transition-all cursor-pointer";
         }
-        if (btnText) btnText.textContent = '';
         if (micIcon) {
-          micIcon.textContent = 'mic';
-          micIcon.className = 'material-symbols-outlined text-[19px]';
+          micIcon.textContent = "mic";
+          micIcon.className = "material-symbols-outlined text-[19px]";
         }
-        const input = document.getElementById('overviewHeroInput');
-        if (input) updateHeroSubmitButton();
+        if (indicator) {
+          indicator.classList.add("hidden");
+          indicator.classList.remove("flex");
+          indicator.innerHTML = '<div class="flex items-center gap-2"><span class="relative flex h-2.5 w-2.5"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span><span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500"></span></span><span class="font-semibold text-red-400">Sun raha hoon... <span id="heroVoiceTimer" class="font-mono font-bold text-red-300">00:00</span></span></div><button type="button" onclick="toggleHeroVoiceNote()" class="text-[11px] font-semibold bg-red-500/20 hover:bg-red-500/30 text-red-300 px-2 py-0.5 rounded-md cursor-pointer transition-colors">Tap to stop ⏹️</button>';
+        }
+
+        updateHeroSubmitButton();
+
+        if (finalText) {
+          showToast(`🎙️ Voice transcribed: "${finalText.slice(0, 45)}${finalText.length > 45 ? "..." : ""}"`);
+        } else {
+          showToast("⚠️ Koi aawaz record nahi hui. Kripya thoda tez bolein.");
+        }
       }
 
       // Submit using Smart AI (/api/parse -> Groq -> Upgraded Heuristic) and render exact parse breakdown
@@ -9084,7 +9311,7 @@
         showToast('Google Drive disconnected. 7-day retention active.');
       }
 
-      function connectGoogleDriveOAuth() {
+      async function connectGoogleDriveOAuth() {
         const clientId = localStorage.getItem('smart-planner-google-client-id') || '';
         if (!clientId || typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
           toggleManualDriveSynced();
@@ -13407,7 +13634,7 @@ Return ONLY valid JSON matching:
       const DEFAULT_SUPABASE_URL = 'https://vvhltdsqthyfpyvczirm.supabase.co';
       const DEFAULT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ2aGx0ZHNxdGh5ZnB5dmN6aXJtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIzODE4NjcsImV4cCI6MjEwNzk1Nzg2N30.Hr2dEHsYe8x3gMezu5YdtS_CRz-Aczb8Kr2WWngtf34';
 
-      function initSupabase() {
+      async function initSupabase() {
         if (window.supabase) {
           try {
             supabaseClient = window.supabase.createClient(DEFAULT_SUPABASE_URL, DEFAULT_SUPABASE_KEY);
