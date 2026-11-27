@@ -5388,12 +5388,26 @@
           });
         });
 
+        const normRow = (s) => (s || '').toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
         parsedJournal.forEach(j => {
+          const nAct = normRow(j.activity);
+          // If this schedule block matches a task already shown in rows, merge "Tasks & Schedule" instead of repeating!
+          const matchingTaskRow = rows.find(r => r.tab === 'tasks' && (normRow(r.title) === nAct || normRow(r.title).includes(nAct) || nAct.includes(normRow(r.title))));
+          if (matchingTaskRow) {
+            if (!matchingTaskRow.meta.includes('Schedule')) {
+              matchingTaskRow.meta = matchingTaskRow.meta.replace('Tasks', 'Tasks & Schedule');
+            }
+            return;
+          }
+          // Skip duplicate schedule rows at the same time
+          if (rows.some(r => r.tab === 'schedule' && normRow(r.title) === nAct && r.time === j.startTime)) return;
+          const timeLabel = j.startTime ? ` · ${typeof formatTime12h === 'function' ? formatTime12h(j.startTime) : j.startTime}` : '';
           rows.push({
             dot: 'bg-indigo-400',
             title: j.activity,
-            meta: `Journal${doneNow > 0 ? ` · ${doneNow} done` : ''}`,
-            tab: 'journal'
+            time: j.startTime || '',
+            meta: `Schedule${timeLabel}${doneNow > 0 ? ` · ${doneNow} done` : ''}`,
+            tab: 'schedule'
           });
         });
 
@@ -9587,12 +9601,22 @@ Return ONLY valid JSON matching:
         if (data.journal?.length) {
           if (!appData.journal) appData.journal = [];
           const inferredDate = (typeof extractDateFromText === 'function' ? extractDateFromText(rawInputText) : null) || new Date().toISOString().split('T')[0];
+          const normAct = (s) => (s || '').toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
           data.journal.forEach(j => {
             const jDate = j.date || inferredDate;
+            const jAct = j.activity || 'Activity';
+            const jTime = j.startTime || '10:00';
+            const nNew = normAct(jAct);
+            const dup = appData.journal.some(existing => {
+              const eDate = existing.date || inferredDate;
+              const nOld = normAct(existing.activity);
+              return eDate === jDate && existing.startTime === jTime && (nOld === nNew || (nNew.length > 3 && (nOld.includes(nNew) || nNew.includes(nOld))));
+            });
+            if (dup) return;
             appData.journal.unshift({
               id: 'j_' + Math.random().toString(36).substr(2, 9),
-              activity: j.activity || 'Activity',
-              startTime: j.startTime || '10:00',
+              activity: jAct,
+              startTime: jTime,
               endTime: j.endTime || '11:00',
               duration: j.durationMinutes || j.duration || 60,
               category: j.category || 'Work & Deep Focus',
@@ -9995,7 +10019,13 @@ Return ONLY valid JSON matching:
             const [th, tm] = extractedTime.split(':').map(Number);
             const endMins = (th * 60 + (tm || 0) + 60) % 1440;
             const endTimeStr = minutesToTime(endMins);
-            const existsInJournal = appData.journal.some(j => j.activity.toLowerCase() === cleanTitle.toLowerCase() && j.startTime === extractedTime && j.date === extractedDate);
+            const normJ = (s) => (s || '').toLowerCase().replace(/[^\w\s]/g, '').replace(/\s+/g, ' ').trim();
+            const existsInJournal = appData.journal.some(j => {
+              const jDate = j.date || today;
+              const nOld = normJ(j.activity);
+              const nNew = normJ(cleanTitle);
+              return jDate === extractedDate && j.startTime === extractedTime && (nOld === nNew || (nNew.length > 3 && (nOld.includes(nNew) || nNew.includes(nOld))));
+            });
             if (!existsInJournal) {
               appData.journal.unshift({
                 id: 'j_' + Date.now().toString(36) + Math.random().toString(36).substr(2, 5),
