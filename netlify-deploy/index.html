@@ -5510,7 +5510,11 @@
           });
         });
 
+        const seenMealRows = new Set();
         parsedMeals.forEach(m => {
+          const normM = (m.dish || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+          if (normM && seenMealRows.has(normM)) return;
+          if (normM) seenMealRows.add(normM);
           rows.push({
             dot: 'bg-emerald-400',
             title: m.dish,
@@ -9680,8 +9684,9 @@ Return ONLY valid JSON matching:
               date: expDate,
               source: 'Auto-Extracted'
             });
-            // Auto-sync food purchases to Nutrition / Khana
-            if (typeof autoSyncFoodExpenseToNutrition === 'function') {
+            // Auto-sync food purchases to Nutrition / Khana ONLY if data.meals didn't already extract meals
+            const hasExplicitMeals = ((data.meals || (data.nutrition && data.nutrition.meals)) || []).length > 0;
+            if (!hasExplicitMeals && typeof autoSyncFoodExpenseToNutrition === 'function') {
               if (expCat === 'Food & Dining' || isFoodClauseOrItem(expItem) || isFoodClauseOrItem(rawInputText)) {
                 autoSyncFoodExpenseToNutrition(expItem || rawInputText, expDate, expAmt);
               }
@@ -9707,8 +9712,12 @@ Return ONLY valid JSON matching:
           let addedProtein = 0;
           let addedCals = 0;
 
+          const seenBatchMeals = new Set();
           incomingMeals.forEach(m => {
             const dishTitle = m.dish || m.food || 'Meal';
+            const normDish = dishTitle.toLowerCase().replace(/[^a-z0-9]/g, '');
+            if (normDish && seenBatchMeals.has(normDish)) return;
+            if (normDish) seenBatchMeals.add(normDish);
             const portion = Number(m.portion) || 1;
             const est = (m.protein && m.calories) ? m : estimateDishNutrition(dishTitle, portion);
 
