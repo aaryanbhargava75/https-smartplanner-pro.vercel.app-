@@ -6325,7 +6325,7 @@
 
         const journalBadge = document.getElementById('journalCountBadge');
         if (journalBadge) {
-          const count = (appData.diaryEntries || []).length + (appData.journal || []).length;
+          const count = (appData.diaryEntries || []).length;
           journalBadge.textContent = count > 0 ? String(count) : '';
         }
 
