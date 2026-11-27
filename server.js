@@ -324,20 +324,6 @@ app.get('/api/data', (req, res) => {
       } catch (e) {}
     }
 
-    // 4. Default dataset: Aaryan gets Aaryan's verified dataset
-    if (cleanUser.includes('aaryan') || cleanUser === 'guest' || !rawUser) {
-      if (fs.existsSync(DATA_FILE)) {
-        try {
-          const content = fs.readFileSync(DATA_FILE, 'utf-8');
-          const data = JSON.parse(content);
-          USER_CACHE[cleanUser] = data;
-          return res.json(data);
-        } catch (e) {}
-      }
-      USER_CACHE[cleanUser] = defaultPlannerData || {};
-      return res.json(defaultPlannerData || {});
-    }
-
     // 5. Any OTHER user gets a clean, private, isolated workspace (NOT Aaryan's personal tasks!)
     const cleanUserData = {
       currencySymbol: '₹',
