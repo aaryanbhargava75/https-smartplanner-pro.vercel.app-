@@ -5207,7 +5207,7 @@
       function isFoodIntakeClause(clause) {
         const lower = (clause || '').toLowerCase();
         if (!lower || isFutureTaskClause(lower)) return false;
-        const hasDish = /\b(shwarma|shawarma|momos?|momo|maggi|maggie|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein\s*shake|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|noodles|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|khana|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn\s*chicken|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|chole\s*bhature|bhature|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|chowmein|pasta|macaroni|chips|lays|kurkure|namkeen|bhujia|biscuit|biscuits|cookie|cookies|chikki|ice\s*cream|kulfi|mithai|gulab\s*jamun|rasgulla|jalebi|sweet|sweets|coke|diet\s*coke|coke\s*zero|pepsi\s*black|thumbs\s*up|thums\s*up|pepsi|sprite|fanta|dew|drink|soda|juice|chai|tea|coffee|cold\s*drink)\b/i.test(lower);
+        const hasDish = /\b(shwarma|shawarma|momos?|momo|maggi|maggie|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein\s*shake|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|noodles|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|khana|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn(?:\s*chicken)?|daal|chalwa|poori|puri|makhana|halwa|kheer|peanuts|moongfali|almonds|badam|kaju|cashew|akhrot|walnut|dates|khajoor|bhindi|aloo|gobhi|matar|sabji|tinde|lauki|kebab|tikka|tandoori|protein\s*bar|granola|cornflakes|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|chole\s*bhature|bhature|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|chowmein|pasta|macaroni|chips|lays|kurkure|namkeen|bhujia|biscuit|biscuits|cookie|cookies|chikki|ice\s*cream|kulfi|mithai|gulab\s*jamun|rasgulla|jalebi|sweet|sweets|coke|diet\s*coke|coke\s*zero|pepsi\s*black|thumbs\s*up|thums\s*up|pepsi|sprite|fanta|dew|drink|soda|juice|chai|tea|coffee|cold\s*drink)\b/i.test(lower);
         if (!hasDish) return false;
         const hasEatVerb = /\b(khae|khaye|khaya|khayi|khai|khaai|khalie|khali|piya|piye|pi|pee|liya|lee|had|ate|eaten|eats|drank|drink|consumed|peice|piece|pieces|pcs|plate|half\s*plate|full\s*plate|bowl|glass|cup|scoop|gram|grams|slice|portion|lunch|dinner|breakfast|snack)\b/i.test(lower);
         const hasQtyOrPortion = /^\s*(?:meine\s+|maine\s+|mene\s+)?(?:ek\s+|\d+(?:\.\d+)?\s+|thode?\s*se|thoda?\s*sa?|thodi\s*si?|kuch\s+|half\s+|full\s+|small\s+|medium\s+|large\s+)/i.test(lower);
@@ -10174,8 +10174,13 @@ Return ONLY valid JSON matching:
         let journalAdded = 0;
         let tasksAdded = 0;
         let tasksDone = 0;
+        const hasMealHeaderInDump = /(?:^|\n)\s*(?:today'?s?\s*meals?|todays\s*meals?|my\s*meals?|meals?|aaj\s*ka\s*khana|breakfast|lunch|dinner|snacks?)\s*[:\-]/i.test(text);
 
         clauses.forEach(clause => {
+          if (hasMealHeaderInDump) {
+            clause = clause.replace(/^\s*(?:today'?s?\s*meals?|todays\s*meals?|my\s*meals?|meals?|aaj\s*ka\s*khana|breakfast|lunch|dinner|snacks?)\s*[:\-]\s*/i, '').trim();
+            if (!clause) return;
+          }
           const lower = clause.toLowerCase();
 
           // -------------------------------------------------------------
@@ -10237,13 +10242,16 @@ Return ONLY valid JSON matching:
           // -------------------------------------------------------------
           // B1. NUTRITION & FOOD CONSUMPTION PARSER (Shawarma, Momos, Maggi, Cheela, Protein)
           // -------------------------------------------------------------
-          if (isFoodIntakeClause(clause)) {
+          if (isFoodIntakeClause(clause) || (hasMealHeaderInDump && !isFutureTaskClause(lower) && !/\b(meeting|call|timer|pomodoro|rs\.?|₹|rupaye|rupees|spent|paid)\b/i.test(lower))) {
             if (!appData.nutrition) {
               appData.nutrition = { proteinGoal: 120, caloriesGoal: 2200, waterGoalMl: 3000, waterLoggedMl: 0, sleepHours: 7.5, meals: [] };
             }
             if (!Array.isArray(appData.nutrition.meals)) appData.nutrition.meals = [];
 
-            let cleanFood = clause.replace(/\b(meine|maine|mene|ke\s*khae|khae|khaye|khaya|khayi|khai|khaai|khalie|khali|piya|piye|pi|pee|liya|lee|had|ate|eaten|eats|drank|drink|consumed|bhai|yaar|aaj|today)\b/gi, '').trim();
+            let cleanFood = clause
+              .replace(/^\s*(?:today'?s?\s*meals?|todays\s*meals?|my\s*meals?|meals?|aaj\s*ka\s*khana|breakfast|lunch|dinner|snacks?)\s*[:\-]\s*/i, '')
+              .replace(/\b(meine|maine|mene|ke\s*khae|khae|khaye|khaya|khayi|khai|khaai|khalie|khali|piya|piye|pi|pee|liya|lee|had|ate|eaten|eats|drank|drink|consumed|bhai|yaar|aaj|today)\b/gi, '')
+              .trim();
             let count = 1;
             if (/half\s*plate/i.test(lower)) {
               count = 1;
@@ -12932,6 +12940,7 @@ Return ONLY valid JSON matching:
         { keys: ['pizza slice', 'pza slice', 'slice pizza', 'pizza', 'pza'], cals: 260, p: 10, c: 30, f: 11, fiber: 2.0, ca: 140, fe: 1.8, vitC: 2 },
         { keys: ['burger', 'chicken burger', 'veg burger', 'mcaloo tikki', 'crispy burger'], cals: 350, p: 14, c: 38, f: 16, fiber: 2.5, ca: 80, fe: 2.0, vitC: 3 },
         { keys: ['maggi', 'maggie', '2 minute noodles', 'instant noodles', 'noodles', 'chowmein', 'hakka noodles'], cals: 310, p: 7, c: 44, f: 12, fiber: 2.0, ca: 20, fe: 1.8, vitC: 0 },
+        { keys: ['popcorn', 'butter popcorn', 'cheese popcorn', 'caramel popcorn'], cals: 190, p: 3.5, c: 22, f: 9.5, fiber: 4.0, ca: 5, fe: 0.9, vitC: 0 },
         { keys: ['chips', 'lays', 'kurkure', 'bingo', 'doritos', 'namkeen', 'bhujia'], cals: 270, p: 3, c: 28, f: 16, fiber: 1.5, ca: 15, fe: 0.8, vitC: 5 },
         { keys: ['biscuit', 'biscuits', 'parle g', 'good day', 'oreo', 'cookie', 'cookies'], cals: 140, p: 2, c: 24, f: 4, fiber: 0.8, ca: 20, fe: 0.6, vitC: 0 },
         { keys: ['chole bhature', 'bhature', 'bhatura'], cals: 680, p: 16, c: 75, f: 34, fiber: 7.0, ca: 90, fe: 4.0, vitC: 5 },
@@ -12986,9 +12995,12 @@ Return ONLY valid JSON matching:
         { keys: ['naan', 'butter naan'], cals: 260, p: 7, c: 42, f: 7.5, fiber: 1.8, ca: 45, fe: 1.5, vitC: 0 },
 
         // Dals & Pulses
-        { keys: ['dal tadka', 'yellow dal', 'arhar dal', 'toor dal', 'moong dal', 'dal'], cals: 150, p: 8, c: 20, f: 4.5, fiber: 4.5, ca: 35, fe: 2.0, vitC: 2 },
+        { keys: ['dal chawal', 'daal chawal', 'daal chalwa', 'dal chalwa', 'dal rice', 'daal rice'], cals: 340, p: 11.5, c: 58, f: 5.5, fiber: 5.5, ca: 45, fe: 2.6, vitC: 2 },
+        { keys: ['dal tadka', 'yellow dal', 'arhar dal', 'toor dal', 'moong dal', 'dal', 'daal'], cals: 150, p: 8, c: 20, f: 4.5, fiber: 4.5, ca: 35, fe: 2.0, vitC: 2 },
         { keys: ['dal makhani'], cals: 260, p: 9, c: 24, f: 14, fiber: 5.0, ca: 65, fe: 2.5, vitC: 1 },
         { keys: ['rajma', 'rajma curry'], cals: 210, p: 11, c: 30, f: 5, fiber: 6.5, ca: 60, fe: 3.2, vitC: 3 },
+        { keys: ['chole poori', 'chole puri', 'chhola poori', 'chhola puri'], cals: 540, p: 13, c: 64, f: 25, fiber: 6.5, ca: 75, fe: 3.5, vitC: 4 },
+        { keys: ['poori', 'puri', 'aloo poori'], cals: 140, p: 2.5, c: 18, f: 6.5, fiber: 1.0, ca: 10, fe: 0.6, vitC: 0 },
         { keys: ['chole', 'chana masala'], cals: 220, p: 10, c: 32, f: 6, fiber: 6.0, ca: 65, fe: 3.0, vitC: 4 },
         { keys: ['sprouts salad', 'sprouts', 'moong sprouts'], cals: 130, p: 10, c: 20, f: 1.2, fiber: 5.5, ca: 45, fe: 2.5, vitC: 14 },
         { keys: ['soya chunks', 'soya curry'], cals: 190, p: 26, c: 14, f: 2.5, fiber: 6.0, ca: 120, fe: 4.5, vitC: 1 },
@@ -13166,7 +13178,7 @@ Return ONLY valid JSON matching:
       function isFoodClauseOrItem(str) {
         if (!str || typeof str !== 'string') return false;
         const lower = str.toLowerCase().trim();
-        const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|coke\s*zero|pepsi\s*black|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn\s*chicken|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|pasta|macaroni|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
+        const foodKeywords = /\b(thumbs\s*up|thums\s*up|coke|diet\s*coke|coke\s*zero|pepsi\s*black|pepsi|sprite|fanta|limca|mountain\s*dew|cold\s*drink|soft\s*drink|soda|shawarma|shwarma|momos?|momo|maggi|maggie|noodles|chowmein|cheel[ae]|chill[ae]|besan|chicken|paneer|tofu|eggs?|anda|omelette|bhurji|roti|parath[ae]|paranthe|dal|rice|chawal|khichdi|biryani|pulao|whey|protein|creatine|doodh|milk|curd|dahi|lassi|chaas|fruits?|banana|kela|apple|seb|papaya|mango|salad|burger|pizza|pza|sandwich|toast|bread|sprouts|soya|oats|oatmeal|muesli|chole|bhature|bhatura|rajma|kadhi|samosa|kachori|pakor[ae]|poha|upma|idli|dosa|fish|mutton|shake|smoothie|wrap|roll|chips|lays|kurkure|namkeen|biscuit|biscuits|parle|cookie|cookies|tea|chai|coffee|beer|whiskey|rum|vodka|daru|alcohol|fries|french\s*fries|peri\s*peri|wedges|potato\s*wedges|nuggets|popcorn(?:\s*chicken)?|daal|chalwa|poori|puri|makhana|halwa|kheer|peanuts|moongfali|almonds|badam|kaju|cashew|akhrot|walnut|dates|khajoor|bhindi|aloo|gobhi|matar|sabji|tinde|lauki|kebab|tikka|tandoori|protein\s*bar|granola|cornflakes|garlic\s*bread|chilli\s*paneer|manchurian|spring\s*rolls?|patty|patties|puff|chaat|golgappe|pani\s*puri|bhel|sev\s*puri|pav\s*bhaji|vada\s*pav|kulche|tikki|aloo\s*tikki|pasta|macaroni|ice\s*cream|kulfi|mithai|sweet|lunch|dinner|breakfast|snack|khana|sabzi)\b/i;
         return foodKeywords.test(lower);
       }
       window.isFoodClauseOrItem = isFoodClauseOrItem;
