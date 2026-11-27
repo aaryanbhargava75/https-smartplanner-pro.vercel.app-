@@ -472,7 +472,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all bg-[#1c2018] text-white font-medium">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#a4d03b]">edit_square</span>
-            <span>Dump Thoughts</span>
+            <span data-i18n="nav_dump">Dump Thoughts</span>
           </div>
         </button>
 
@@ -480,7 +480,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#7ab857]">check_circle</span>
-            <span>Tasks</span>
+            <span data-i18n="nav_tasks">Tasks</span>
           </div>
           <span id="tasksCountBadge" class="text-xs text-[#a6aca0] font-medium tabular-nums">0</span>
         </button>
@@ -489,7 +489,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#5c9bd6]">calendar_today</span>
-            <span>Schedule</span>
+            <span data-i18n="nav_schedule">Schedule</span>
           </div>
           <span id="scheduleNavBadge" class="text-xs text-[#a6aca0] font-medium tabular-nums"></span>
         </button>
@@ -498,7 +498,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#d6a34c]">account_balance_wallet</span>
-            <span>Paisa</span>
+            <span data-i18n="nav_paisa">Paisa</span>
           </div>
         </button>
 
@@ -506,7 +506,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#66b877]">restaurant</span>
-            <span>Khana</span>
+            <span data-i18n="nav_khana">Khana</span>
           </div>
         </button>
 
@@ -514,7 +514,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#d4699c]">edit_note</span>
-            <span>Journal</span>
+            <span data-i18n="nav_journal">Journal</span>
           </div>
           <span id="journalCountBadge" class="text-xs text-[#a6aca0] font-medium tabular-nums"></span>
         </button>
@@ -524,7 +524,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all text-[#b4bab0] hover:bg-[#161913] hover:text-white font-normal">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#e59a38]">shield</span>
-            <span>Habit Shield</span>
+            <span data-i18n="nav_habits">Habit Shield</span>
           </div>
           <span id="shieldNavBadge" class="text-xs text-[#a6aca0] font-medium tabular-nums"></span>
         </button>
@@ -533,12 +533,26 @@
 
       <!-- Pichhle Dumps History (Exact Match with Screenshot) -->
       <div class="mt-2 pt-3 border-t border-[var(--df-sidebar-border)] px-2 flex flex-col gap-1.5">
-        <span class="text-xs font-medium text-[#989f92] px-1">Pichhle dumps</span>
+        <span class="text-xs font-medium text-[#989f92] px-1"><span data-i18n="recent_dumps">Pichhle dumps</span></span>
         <div id="sidebarRecentDumpsList" class="flex flex-col gap-0.5 text-xs">
           <!-- Populated dynamically with recent user dumps -->
         </div>
       </div>
 
+    </div>
+
+    <!-- Minimalist Subtle Language Selector -->
+    <div class="px-3 pb-2 flex items-center justify-between text-[11px] text-[#5e6558] select-none shrink-0">
+      <span class="inline-flex items-center gap-1 opacity-75">
+        <span class="material-symbols-outlined text-[13px]">translate</span>
+      </span>
+      <div class="flex items-center gap-1">
+        <button type="button" data-lang-btn="hinglish" onclick="setAppLanguage('hinglish')" class="px-1.5 py-0.5 rounded hover:text-[#d4d8cf] transition-colors cursor-pointer">Hinglish</button>
+        <span class="opacity-30">·</span>
+        <button type="button" data-lang-btn="en" onclick="setAppLanguage('en')" class="px-1.5 py-0.5 rounded hover:text-[#d4d8cf] transition-colors cursor-pointer">EN</button>
+        <span class="opacity-30">·</span>
+        <button type="button" data-lang-btn="hi" onclick="setAppLanguage('hi')" class="px-1.5 py-0.5 rounded hover:text-[#d4d8cf] transition-colors cursor-pointer">हिं</button>
+      </div>
     </div>
 
     <!-- Clean Minimal Footer -->
@@ -552,7 +566,7 @@
         <div class="flex flex-col min-w-0">
           <span id="sidebarUserName" class="text-xs font-medium text-[#d4d8cf] truncate leading-tight">Aarav
             Khanna</span>
-          <span class="text-[11px] text-[#989f92] truncate leading-tight">Sab isi device pe saved hai</span>
+          <span class="text-[11px] text-[#989f92] truncate leading-tight"><span data-i18n="saved_local">Sab isi device pe saved hai</span></span>
         </div>
       </div>
       <button onclick="openSettingsModal()"
@@ -663,7 +677,7 @@
               <button onclick="openSettingsModal()"
                 class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-[var(--df-pill-bg)] text-[var(--df-text)] transition-colors flex items-center gap-2 cursor-pointer">
                 <span class="material-symbols-outlined text-[15px]">settings</span>
-                <span>Settings</span>
+                <span data-i18n="settings_title">Settings</span>
               </button>
               <button onclick="signOutUser()"
                 class="w-full text-left px-2.5 py-1.5 rounded-lg hover:bg-rose-500/10 text-rose-400 transition-colors flex items-center gap-2 cursor-pointer">
@@ -700,7 +714,7 @@
             class="w-full bg-[var(--df-input-bg)] border border-[var(--df-border)] focus-within:border-[#749334] rounded-2xl p-4 flex flex-col gap-2 text-left transition-all shadow-sm">
 
             <textarea id="overviewHeroInput" rows="3" onkeydown="handleHeroInputKeydown(event)"
-              oninput="handleHeroInputLive(this.value)" placeholder="Likho, bolo (🎤) ya screenshot paste karo..."
+              oninput="handleHeroInputLive(this.value)" data-i18n-placeholder="hero_placeholder" placeholder="Likho, bolo (🎤) ya screenshot paste karo..."
               class="w-full bg-transparent border-0 outline-none text-sm sm:text-[15px] text-[var(--df-text)] placeholder:text-[var(--df-text-muted)]/75 resize-none font-normal leading-relaxed"></textarea>
 
             <!-- Real-Time Live Intent Pill -->
@@ -776,7 +790,7 @@
 
           <!-- Subtle 1-Line Caption -->
           <p class="text-[11px] text-[var(--df-text-muted)]/60 mt-5 select-none">
-            Tasks, kharche, schedule aur journal — sab apne aap sort ho jaata hai.
+            <span data-i18n="hero_subtitle">Tasks, kharche, schedule aur journal — sab apne aap sort ho jaata hai.</span>
           </p>
 
           <!-- Parsed Results Confirmation Card (Appears cleanly after submit) -->
@@ -1080,13 +1094,13 @@
         <!-- Header Row -->
         <div class="flex flex-col gap-0.5">
           <h2 class="text-2xl sm:text-[28px] font-semibold text-[var(--df-text)] tracking-tight">Journal</h2>
-          <p class="text-sm text-[var(--df-text-muted)]">Sirf tumhare liye. Jo mann mein hai, likh do.</p>
+          <p class="text-sm text-[var(--df-text-muted)]" data-i18n="journal_sub">Sirf tumhare liye. Jo mann mein hai, likh do.</p>
         </div>
 
         <!-- Minimalist Mood Composer Box (Exact Match with Screenshot 6) -->
         <div
           class="bg-[var(--df-card)] rounded-2xl p-4 sm:p-5 border border-[var(--df-border)] focus-within:border-[#749334] transition-all flex flex-col gap-3">
-          <textarea id="journalEntryBody" rows="4" placeholder="Aaj kya hua..."
+          <textarea id="journalEntryBody" rows="4" data-i18n-placeholder="journal_ph" placeholder="Aaj kya hua..."
             class="w-full bg-transparent text-[var(--df-text)] placeholder:text-[var(--df-text-muted)]/75 py-1 outline-none resize-none text-sm sm:text-[15px] leading-relaxed font-sans"></textarea>
 
           <!-- Composer Bottom Bar: Mood Emojis on Left, Save Button on Right -->
@@ -1127,7 +1141,7 @@
         <!-- Inline Quick-Add Bar (Naya task... + 4 priority dots + circle +) -->
         <form id="inlineQuickTaskForm" onsubmit="submitInlineQuickTask(event)"
           class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-[var(--df-card)] border border-[var(--df-border)] focus-within:border-[#a4d03b]/60 transition-colors">
-          <input type="text" id="inlineQuickTaskTitle" placeholder="Naya task..." autocomplete="off"
+          <input type="text" id="inlineQuickTaskTitle" data-i18n-placeholder="tasks_new_ph" placeholder="Naya task..." autocomplete="off"
             class="flex-1 bg-transparent text-sm sm:text-base text-[var(--df-text)] placeholder:text-[var(--df-text-muted)] outline-none min-w-0" />
           <div class="flex items-center gap-1 shrink-0" id="inlinePriorityPicker">
             <button type="button" onclick="selectInlineQuickPriority('urgent')" data-prio="urgent"
@@ -1163,7 +1177,7 @@
           <div class="relative flex-1 sm:max-w-sm">
             <span
               class="material-symbols-outlined absolute left-3.5 top-1/2 -translate-y-1/2 text-[17px] text-[var(--df-text-muted)]">search</span>
-            <input type="text" id="taskSearchInput" oninput="handleTaskSearch(this.value)" placeholder="Task dhoondo..."
+            <input type="text" id="taskSearchInput" oninput="handleTaskSearch(this.value)" data-i18n-placeholder="tasks_search_ph" placeholder="Task dhoondo..."
               class="w-full pl-10 pr-8 py-2 rounded-full bg-[var(--df-card)] border border-[var(--df-border)] text-xs text-[var(--df-text)] placeholder:text-[var(--df-text-muted)] outline-none focus:border-[#a4d03b]/60 transition-colors" />
             <button id="taskSearchClearBtn" onclick="clearTaskSearch()"
               class="hidden absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--df-text-muted)] hover:text-[var(--df-text)] cursor-pointer">
@@ -1575,7 +1589,7 @@
         <!-- Single-Row Minimal Rounded Quick-Entry Bar (Screenshot 3 Match) -->
         <form id="addExpenseForm" onsubmit="handleManualExpense(event)"
           class="bg-[var(--df-card)] rounded-2xl px-4 py-2.5 border border-[var(--df-border)] focus-within:border-[#749334] transition-all flex flex-wrap sm:flex-nowrap items-center gap-2.5">
-          <input type="text" id="expenseItemInput" required placeholder="Kis cheez ka?"
+          <input type="text" id="expenseItemInput" required data-i18n-placeholder="paisa_ph" placeholder="Kis cheez ka?"
             class="flex-1 min-w-[140px] bg-transparent text-sm text-[var(--df-text)] placeholder:text-[var(--df-text-muted)]/70 outline-none" />
           <div class="flex items-center gap-2 ml-auto">
             <div class="flex items-center gap-1 border-l border-[var(--df-border)] pl-3">
@@ -1954,7 +1968,7 @@
             <button onclick="markAllHabitsCleanToday()"
               class="px-3 py-1.5 rounded-full text-[#a4d03b] bg-[#a4d03b]/10 hover:bg-[#a4d03b]/20 border border-[#a4d03b]/30 text-xs font-medium transition-colors flex items-center gap-1.5 cursor-pointer">
               <span class="material-symbols-outlined text-[15px]">done_all</span>
-              <span>Sab Clean Today</span>
+              <span data-i18n="habits_all_clean">Sab Clean Today</span>
             </button>
           </div>
         </div>
@@ -3184,7 +3198,7 @@
         <!-- Gmail / Account Row -->
         <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
           <div class="flex flex-col min-w-0">
-            <span class="text-[11px] text-[#757c6e]">Account</span>
+            <span class="text-[11px] text-[#757c6e]" data-i18n="settings_account">Account</span>
             <span id="settingsUserStatus" class="text-xs font-medium text-[#f0f2ec] truncate">Guest Mode</span>
           </div>
           <div class="flex items-center gap-1.5 shrink-0">
@@ -3199,7 +3213,7 @@
         <button onclick="exportToExcel()"
           class="w-full py-2.5 px-4 rounded-xl bg-[#a4d03b] hover:bg-[#b5e04c] text-[#0f120b] font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer">
           <span class="material-symbols-outlined text-[17px]">download</span>
-          <span>Download Excel (.csv)</span>
+          <span data-i18n="btn_excel">Download Excel (.csv)</span>
         </button>
       </div>
 
@@ -3220,8 +3234,8 @@
         <div class="w-10 h-10 rounded-full bg-[#a4d03b] text-[#0f120b] flex items-center justify-center font-bold text-lg">
           D
         </div>
-        <h2 class="text-base font-semibold text-[#f0f2ec]">Welcome to Dayframe</h2>
-        <p class="text-xs text-[#757c6e]">How would you like to continue?</p>
+        <h2 class="text-base font-semibold text-[#f0f2ec]" data-i18n="welcome_title">Welcome to Dayframe</h2>
+        <p class="text-xs text-[#757c6e]" data-i18n="welcome_sub">How would you like to continue?</p>
       </div>
 
       <div class="flex flex-col gap-2.5">
@@ -3233,12 +3247,12 @@
             <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
             <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
           </svg>
-          <span>Continue with Gmail</span>
+          <span data-i18n="btn_gmail">Continue with Gmail</span>
         </button>
 
         <button type="button" onclick="continueAsGuest()"
           class="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-[#e6e9e0] border border-white/[0.08] font-medium text-xs flex items-center justify-center transition-colors cursor-pointer">
-          Continue as Guest
+          <span data-i18n="btn_guest">Continue as Guest</span>
         </button>
       </div>
     </div>
@@ -4513,10 +4527,136 @@
       }
 
       // Load Data from Supabase Cloud, Backend, or Isolated LocalStorage
+      
+      // =========================================================================
+      // MINIMAL 3-LANGUAGE ENGINE (Hinglish / English / Hindi)
+      // =========================================================================
+      const DAYFRAME_I18N = {
+        hinglish: {
+          nav_dump: 'Dump Thoughts',
+          nav_tasks: 'Tasks',
+          nav_schedule: 'Schedule',
+          nav_paisa: 'Paisa',
+          nav_khana: 'Khana',
+          nav_journal: 'Journal',
+          nav_habits: 'Habit Shield',
+          recent_dumps: 'Pichhle dumps',
+          saved_local: 'Sab isi device pe saved hai',
+          hero_title: 'Dump your thoughts',
+          hero_placeholder: 'Likho, bolo (🎤) ya screenshot paste karo...',
+          hero_subtitle: 'Tasks, kharche, schedule aur journal — sab apne aap sort ho jaata hai.',
+          welcome_title: 'Welcome to Dayframe',
+          welcome_sub: 'How would you like to continue?',
+          btn_gmail: 'Continue with Gmail',
+          btn_guest: 'Continue as Guest',
+          settings_title: 'Settings',
+          settings_account: 'Account',
+          btn_excel: 'Download Excel (.csv)',
+          tasks_new_ph: 'Naya task...',
+          tasks_search_ph: 'Task dhoondo...',
+          journal_sub: 'Sirf tumhare liye. Jo mann mein hai, likh do.',
+          journal_ph: 'Aaj kya hua...',
+          habits_sub: 'Not-To-Do calendar · tick mark roz clean rakhne ke liye dabao',
+          habits_all_clean: 'Sab Clean Today',
+          khana_add: '+ Khud add karo',
+          paisa_ph: 'Kis cheez ka?'
+        },
+        en: {
+          nav_dump: 'Dump Thoughts',
+          nav_tasks: 'Tasks',
+          nav_schedule: 'Schedule',
+          nav_paisa: 'Finances',
+          nav_khana: 'Nutrition',
+          nav_journal: 'Journal',
+          nav_habits: 'Habit Shield',
+          recent_dumps: 'Recent dumps',
+          saved_local: 'Saved on this device',
+          hero_title: 'Dump your thoughts',
+          hero_placeholder: 'Type, speak (🎤) or paste a screenshot...',
+          hero_subtitle: 'Tasks, expenses, schedule & journal — everything sorts itself.',
+          welcome_title: 'Welcome to Dayframe',
+          welcome_sub: 'How would you like to continue?',
+          btn_gmail: 'Continue with Gmail',
+          btn_guest: 'Continue as Guest',
+          settings_title: 'Settings',
+          settings_account: 'Account',
+          btn_excel: 'Download Excel (.csv)',
+          tasks_new_ph: 'New task...',
+          tasks_search_ph: 'Search tasks...',
+          journal_sub: 'Just for you. Write whatever is on your mind.',
+          journal_ph: 'What happened today...',
+          habits_sub: 'Not-To-Do calendar · tap checkmarks daily to stay clean',
+          habits_all_clean: 'All Clean Today',
+          khana_add: '+ Add manually',
+          paisa_ph: 'What was it for?'
+        },
+        hi: {
+          nav_dump: 'विचार लिखें',
+          nav_tasks: 'कार्य',
+          nav_schedule: 'शेड्यूल',
+          nav_paisa: 'पैसा',
+          nav_khana: 'खाना',
+          nav_journal: 'जर्नल',
+          nav_habits: 'आदत कवच',
+          recent_dumps: 'पिछले नोट्स',
+          saved_local: 'सब इसी डिवाइस पर सेव है',
+          hero_title: 'अपने विचार लिखें',
+          hero_placeholder: 'लिखें, बोलें (🎤) या स्क्रीनशॉट पेस्ट करें...',
+          hero_subtitle: 'कार्य, खर्चे, शेड्यूल और जर्नल — सब अपने आप सेट हो जाता है।',
+          welcome_title: 'Dayframe में स्वागत है',
+          welcome_sub: 'आप कैसे आगे बढ़ना चाहेंगे?',
+          btn_gmail: 'Gmail से लॉगिन करें',
+          btn_guest: 'गेस्ट के रूप में जारी रखें',
+          settings_title: 'सेटिंग्स',
+          settings_account: 'अकाउंट',
+          btn_excel: 'Excel डाउनलोड करें (.csv)',
+          tasks_new_ph: 'नया कार्य...',
+          tasks_search_ph: 'कार्य खोजें...',
+          journal_sub: 'सिर्फ़ आपके लिए। जो मन में है, लिख दें।',
+          journal_ph: 'आज क्या हुआ...',
+          habits_sub: 'रोज़ साफ़ रहने के लिए टिक मार्क दबाएँ',
+          habits_all_clean: 'आज सब साफ़',
+          khana_add: '+ खुद जोड़ें',
+          paisa_ph: 'किस चीज़ का?'
+        }
+      };
+
+      function getAppLanguage() {
+        const saved = localStorage.getItem('smart-planner-lang');
+        return (saved && DAYFRAME_I18N[saved]) ? saved : 'hinglish';
+      }
+
+      function applyAppLanguage() {
+        const lang = getAppLanguage();
+        const dict = DAYFRAME_I18N[lang] || DAYFRAME_I18N.hinglish;
+        document.querySelectorAll('[data-i18n]').forEach(el => {
+          const k = el.getAttribute('data-i18n');
+          if (dict[k]) el.textContent = dict[k];
+        });
+        document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+          const k = el.getAttribute('data-i18n-placeholder');
+          if (dict[k]) el.placeholder = dict[k];
+        });
+        document.querySelectorAll('[data-lang-btn]').forEach(btn => {
+          const isAct = btn.getAttribute('data-lang-btn') === lang;
+          btn.className = isAct
+            ? 'px-1.5 py-0.5 rounded text-[#c8cfc0] bg-white/[0.06] font-medium transition-colors cursor-pointer'
+            : 'px-1.5 py-0.5 rounded text-[#5e6558] hover:text-[#a6aca0] transition-colors cursor-pointer';
+        });
+      }
+
+      function setAppLanguage(lang) {
+        if (!DAYFRAME_I18N[lang]) return;
+        localStorage.setItem('smart-planner-lang', lang);
+        applyAppLanguage();
+      }
+      window.setAppLanguage = setAppLanguage;
+
       async function loadInitialData() {
         purgeLegacyLeakedData();
         await initAuth();
         updateThemeUI();
+        applyAppLanguage();
 
         const userEmail = (currentUser && currentUser.email) ? currentUser.email.trim().toLowerCase() : '';
         const userKey = getUserStorageKey();
@@ -5531,7 +5671,18 @@
         if (t) {
           t.status = (t.status === 'done') ? 'todo' : 'done';
           saveData();
-          renderAll();
+          // Auto-clean legacy 'Welcome to Dayframe' spam & exact duplicate schedule blocks
+        if (Array.isArray(appData.journal)) {
+          const seenSched = new Set();
+          appData.journal = appData.journal.filter(j => {
+            if (!j || /Milestone Cleared: Welcome to Dayframe|Tap checkbox to mark complete/i.test(j.activity || '')) return false;
+            const key = (j.date || '') + '|' + (j.startTime || '') + '|' + (j.activity || '').toLowerCase().trim();
+            if (seenSched.has(key)) return false;
+            seenSched.add(key);
+            return true;
+          });
+        }
+        renderAll();
           renderOverviewRecentTasks();
           showToast(t.status === 'done' ? `✓ Completed: ${t.title}` : `Marked To-Do: ${t.title}`);
         }
