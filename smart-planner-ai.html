@@ -472,7 +472,7 @@
           class="nav-item flex items-center justify-between px-3 py-2 rounded-xl text-sm transition-all bg-[#1c2018] text-white font-medium">
           <div class="flex items-center gap-2.5">
             <span class="material-symbols-outlined text-[18px] text-[#a4d03b]">edit_square</span>
-            <span>Naya dump</span>
+            <span>Dump Thoughts</span>
           </div>
         </button>
 
@@ -689,10 +689,10 @@
         <div
           class="flex-1 flex flex-col items-center justify-center text-center px-2 py-8 sm:py-16 w-full max-w-xl mx-auto">
 
-          <!-- Dynamic Greeting Headline matching "Kya chal raha hai dimaag mein?" -->
+          <!-- Dynamic Greeting Headline matching "Dump your thoughts" -->
           <h1 id="overviewHeroHeadline"
             class="text-2xl sm:text-[32px] font-semibold tracking-tight text-[var(--df-text)] mb-6">
-            Kya chal raha hai dimaag mein?
+            Dump your thoughts
           </h1>
 
           <!-- Sleek Olive-Bordered Prompt Input Box -->
@@ -3168,128 +3168,82 @@
   <!-- MODAL: SETTINGS & DATA MANAGEMENT (PREMIUM GLASSMORPHISM) -->
   <!-- ========================================================================= -->
   <div id="settingsModal"
-    class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    class="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div
-      class="bg-[var(--df-card)] border border-[var(--df-border)] rounded-3xl p-6 sm:p-7 max-w-lg w-full shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-200">
+      class="bg-[#131610] border border-white/[0.08] rounded-2xl max-w-sm w-full p-5 shadow-2xl flex flex-col gap-4">
 
-      <!-- Header -->
-      <div class="flex items-center justify-between pb-3 border-b border-[var(--df-border)]">
-        <div class="flex items-center gap-3">
-          <div
-            class="w-10 h-10 rounded-2xl bg-[#d2f84a]/15 text-[#2e6f40] dark:text-[#d2f84a] flex items-center justify-center font-bold">
-            <span class="material-symbols-outlined text-[22px]">settings</span>
-          </div>
-          <div>
-            <h3 class="text-base font-extrabold text-[var(--df-text)]">Settings & Data Management</h3>
-            <p class="text-[11px] text-[var(--df-text-muted)]">Preferences, cloud sync & spreadsheet exports</p>
-          </div>
-        </div>
+      <div class="flex items-center justify-between">
+        <span class="text-sm font-semibold text-[#f0f2ec]">Settings</span>
         <button onclick="closeSettingsModal()"
-          class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] p-1.5 rounded-xl hover:bg-[var(--df-card-inner)] transition-colors cursor-pointer">
-          <span class="material-symbols-outlined text-[20px]">close</span>
+          class="text-[#6e7568] hover:text-[#f0f2ec] p-1 rounded-lg hover:bg-white/[0.05] transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">close</span>
         </button>
       </div>
 
-      <div class="flex flex-col gap-3.5 text-xs">
-
-        <!-- Account Status Card -->
-        <div
-          class="p-3.5 rounded-2xl bg-[var(--df-card-inner)] border border-[var(--df-border)] flex items-center justify-between gap-3 shadow-xs">
-          <div class="flex items-center gap-3 min-w-0">
-            <div
-              class="w-9 h-9 rounded-xl bg-[var(--df-card)] border border-[var(--df-border)] flex items-center justify-center text-[var(--df-text)] flex-shrink-0">
-              <span
-                class="material-symbols-outlined text-[18px] text-[#2e6f40] dark:text-[#d2f84a]">account_circle</span>
-            </div>
-            <div class="flex flex-col min-w-0">
-              <span class="text-[10px] uppercase font-bold text-[var(--df-text-muted)] tracking-wider">Account
-                Workspace</span>
-              <span id="settingsUserStatus" class="text-xs font-bold text-[var(--df-text)] truncate">Guest / Demo
-                Mode</span>
-            </div>
+      <div class="flex flex-col gap-2.5 text-xs">
+        <!-- Gmail / Account Row -->
+        <div class="p-3 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3">
+          <div class="flex flex-col min-w-0">
+            <span class="text-[11px] text-[#757c6e]">Account</span>
+            <span id="settingsUserStatus" class="text-xs font-medium text-[#f0f2ec] truncate">Guest Mode</span>
           </div>
-          <button id="settingsLoginBtn" onclick="closeSettingsModal(); openLoginModal();"
-            class="px-3 py-1.5 rounded-xl bg-[var(--df-card)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-semibold text-xs border border-[var(--df-border)] transition-all active:scale-95 cursor-pointer flex-shrink-0">
-            Switch Account
-          </button>
-        </div>
-
-        <!-- 📊 EXCEL SPREADSHEET EXPORT (PRIMARY HIGHLIGHT) -->
-        <div
-          class="p-4 rounded-2xl bg-gradient-to-br from-emerald-500/10 via-emerald-600/5 to-transparent border border-emerald-500/30 flex flex-col gap-2.5 shadow-xs">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-2 font-bold text-emerald-600 dark:text-emerald-400 text-xs">
-              <span class="material-symbols-outlined text-[18px]">table_chart</span>
-              <span>Excel Spreadsheet Export</span>
-            </div>
-            <span
-              class="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-300 px-2.5 py-0.5 rounded-full bg-emerald-500/20">.CSV
-              / Excel</span>
-          </div>
-          <p class="text-[11px] text-[var(--df-text-muted)] leading-relaxed">
-            Download your full schedule, task list, expenses, and milestones in an Excel-ready spreadsheet format. Opens
-            instantly in Microsoft Excel, Google Sheets, or Apple Numbers.
-          </p>
-          <button onclick="exportToExcel()"
-            class="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:shadow-lg active:scale-95 cursor-pointer">
-            <span class="material-symbols-outlined text-[18px]">download</span>
-            <span>Download Excel Spreadsheet (.csv)</span>
-          </button>
-        </div>
-
-        <!-- Maintenance & System Actions -->
-        <div class="flex flex-col gap-2 pt-1">
-          <span class="text-[10px] uppercase font-bold text-[var(--df-text-muted)] tracking-wider px-1">Maintenance &
-            Utilities</span>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <button onclick="cleanDuplicateTasks()"
-              class="py-2.5 px-3 rounded-xl bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-medium text-xs border border-[var(--df-border)] transition-colors flex items-center justify-center gap-2 cursor-pointer">
-              <span class="material-symbols-outlined text-[16px] text-amber-500">cleaning_services</span>
-              <span>Clean Duplicates</span>
-            </button>
-
-            <button onclick="runLiveSecurityAudit()"
-              class="py-2.5 px-3 rounded-xl bg-[var(--df-card-inner)] hover:bg-[var(--df-border)] text-[var(--df-text)] font-medium text-xs border border-[var(--df-border)] transition-colors flex items-center justify-center gap-2 cursor-pointer">
-              <span
-                class="material-symbols-outlined text-[16px] text-[#2e6f40] dark:text-[#d2f84a]">verified_user</span>
-              <span>Security Audit</span>
+          <div class="flex items-center gap-1.5 shrink-0">
+            <button id="settingsLoginBtn" onclick="closeSettingsModal(); openLoginModal();"
+              class="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-[#f0f2ec] font-medium text-xs transition-colors cursor-pointer">
+              Login Gmail
             </button>
           </div>
-
-          <!-- Raw Backup Options -->
-          <div class="flex items-center justify-between gap-2 pt-1 px-1 text-[11px]">
-            <span class="text-[var(--df-text-muted)]">Developer JSON:</span>
-            <div class="flex items-center gap-2">
-              <button onclick="exportDataBackup()"
-                class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] underline cursor-pointer">Export
-                JSON</button>
-              <span class="text-[var(--df-text-muted)]">•</span>
-              <label class="text-[var(--df-text-muted)] hover:text-[var(--df-text)] underline cursor-pointer">
-                <span>Import JSON</span>
-                <input type="file" id="importBackupInput" accept=".json" class="hidden"
-                  onchange="importDataBackup(event)" />
-              </label>
-            </div>
-          </div>
         </div>
 
-        <!-- Danger Zone -->
-        <div class="pt-2 border-t border-[var(--df-border)] flex items-center justify-between">
-          <span class="text-[11px] text-[var(--df-text-muted)]">Reset everything?</span>
-          <button onclick="resetAllLocalData()"
-            class="px-3 py-1.5 rounded-xl text-rose-500 hover:text-rose-600 hover:bg-rose-500/10 font-bold text-xs transition-colors flex items-center gap-1.5 cursor-pointer">
-            <span class="material-symbols-outlined text-[15px]">delete_sweep</span>
-            <span>Reset Local Cache</span>
-          </button>
-        </div>
-
+        <!-- Download Excel Button -->
+        <button onclick="exportToExcel()"
+          class="w-full py-2.5 px-4 rounded-xl bg-[#a4d03b] hover:bg-[#b5e04c] text-[#0f120b] font-semibold text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer">
+          <span class="material-symbols-outlined text-[17px]">download</span>
+          <span>Download Excel (.csv)</span>
+        </button>
       </div>
+
     </div>
   </div>
 
   <!-- ========================================================================= -->
   <!-- MODAL: USER AUTH GATE (SIGN IN & SIGN UP) -->
+  
+  <!-- =================================================================
+       STARTUP WELCOME GATE (GMAIL VS GUEST)
+       ================================================================= -->
+  <div id="welcomeGateModal"
+    class="fixed inset-0 z-[60] bg-[#0b0d09]/95 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div
+      class="bg-[#131610] border border-white/[0.08] rounded-2xl max-w-xs w-full p-6 shadow-2xl flex flex-col gap-5 text-center">
+      <div class="flex flex-col items-center gap-2">
+        <div class="w-10 h-10 rounded-full bg-[#a4d03b] text-[#0f120b] flex items-center justify-center font-bold text-lg">
+          D
+        </div>
+        <h2 class="text-base font-semibold text-[#f0f2ec]">Welcome to Dayframe</h2>
+        <p class="text-xs text-[#757c6e]">How would you like to continue?</p>
+      </div>
+
+      <div class="flex flex-col gap-2.5">
+        <button type="button" onclick="chooseStartupGmail()"
+          class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-100 text-neutral-900 font-semibold text-xs flex items-center justify-center gap-2.5 transition-colors cursor-pointer">
+          <svg class="w-4 h-4 shrink-0" viewBox="0 0 24 24">
+            <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17z" />
+            <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.25v3.15C3.26 21.36 7.33 24 12 24z" />
+            <path fill="#FBBC05" d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.25C.45 8.18 0 10.03 0 12s.45 3.82 1.25 5.42l4.03-3.15z" />
+            <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.33 0 3.26 2.64 1.25 6.58l4.03 3.15c.95-2.83 3.6-4.98 6.72-4.98z" />
+          </svg>
+          <span>Continue with Gmail</span>
+        </button>
+
+        <button type="button" onclick="continueAsGuest()"
+          class="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/[0.09] text-[#e6e9e0] border border-white/[0.08] font-medium text-xs flex items-center justify-center transition-colors cursor-pointer">
+          Continue as Guest
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- ========================================================================= -->
   <div id="loginModal"
     class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
@@ -4856,25 +4810,41 @@
       // =========================================================================
       let currentUser = null;
 
+      function openWelcomeGate() {
+        const gate = document.getElementById('welcomeGateModal');
+        if (gate) gate.classList.remove('hidden');
+      }
+      function closeWelcomeGate() {
+        const gate = document.getElementById('welcomeGateModal');
+        if (gate) gate.classList.add('hidden');
+      }
+      function chooseStartupGmail() {
+        closeWelcomeGate();
+        if (typeof openLoginModal === 'function') openLoginModal();
+      }
+      function continueAsGuest() {
+        currentUser = { isGuest: true, name: 'Guest', email: '' };
+        localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
+        closeWelcomeGate();
+        updateAuthUI();
+        updateEngineStatus();
+        if (typeof loadInitialData === 'function') {
+          loadInitialData();
+        }
+      }
+
       async function initAuth() {
         try {
           const saved = localStorage.getItem('smart-planner-auth-user');
           if (saved) {
             currentUser = JSON.parse(saved);
           } else {
-            currentUser = {
-              email: 'aaryanbhargava75@gmail.com',
-              name: 'Aaryan',
-              picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=aaryanbhargava75@gmail.com'
-            };
-            localStorage.setItem('smart-planner-auth-user', JSON.stringify(currentUser));
+            currentUser = null;
+            openWelcomeGate();
           }
         } catch (e) {
-          currentUser = {
-            email: 'aaryanbhargava75@gmail.com',
-            name: 'Aaryan',
-            picture: 'https://api.dicebear.com/7.x/bottts/svg?seed=aaryanbhargava75@gmail.com'
-          };
+          currentUser = null;
+          openWelcomeGate();
         }
         updateAuthUI();
         updateEngineStatus();
@@ -4902,7 +4872,15 @@
         const settingsUserStatus = document.getElementById('settingsUserStatus');
         const settingsLoginBtn = document.getElementById('settingsLoginBtn');
 
-        if (currentUser && currentUser.email) {
+        if (currentUser && currentUser.isGuest) {
+          if (signInBtn) signInBtn.classList.add('hidden');
+          if (userMenu) userMenu.classList.remove('hidden');
+          if (avatarImg) avatarImg.src = 'https://api.dicebear.com/7.x/bottts/svg?seed=guest';
+          if (nameLabel) nameLabel.textContent = 'Guest';
+          if (emailLabel) emailLabel.textContent = 'Saved on this device';
+          if (settingsUserStatus) settingsUserStatus.textContent = 'Guest Mode (This Device)';
+          if (settingsLoginBtn) settingsLoginBtn.textContent = 'Login Gmail';
+        } else if (currentUser && currentUser.email) {
           if (signInBtn) signInBtn.classList.add('hidden');
           if (userMenu) userMenu.classList.remove('hidden');
           if (avatarImg) {
@@ -4940,7 +4918,7 @@
       }
 
       function getUserStorageKey() {
-        if (currentUser && currentUser.email) {
+        if (currentUser && !currentUser.isGuest && currentUser.email) {
           return `smart-planner-user-${currentUser.email.toLowerCase().trim()}`;
         }
         return 'smart-planner-user-guest';
@@ -5795,171 +5773,99 @@
         const parsedShields = (diff && diff.shields) || [];
         const doneNow = (diff && diff.tasksCompletedNow) || 0;
 
-        const totalItems = parsedTasks.length + parsedJournal.length + parsedMeals.length + parsedExpenses.length + parsedShields.length + doneNow;
-
         if (diff && diff.timerStarted) {
           container.innerHTML = `
-          <div class="p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/30 border border-amber-500/30 text-amber-800 dark:text-amber-300 text-xs flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[18px] text-amber-500">timer</span>
-              <span><b>Focus Timer Started!</b> Not added to pending tasks.</span>
+          <div class="px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3 text-sm">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-amber-400 shrink-0"></span>
+              <span class="font-medium text-[#f0f2ec] truncate">Focus Timer Started</span>
             </div>
-            <button onclick="dismissOverviewParsedResults()" class="text-xs hover:underline cursor-pointer">✕</button>
-          </div>
-        `;
+            <button onclick="dismissOverviewParsedResults()" class="text-xs text-[#5e6558] hover:text-[#cfd4c8] cursor-pointer">✕</button>
+          </div>`;
           return;
         }
 
-        if (totalItems === 0) {
+        const rows = [];
+
+        parsedTasks.forEach(t => {
+          const prio = t.priority ? t.priority.charAt(0).toUpperCase() + t.priority.slice(1) : 'Medium';
+          const timeStr = t.time ? ` · ${typeof formatTime12h === 'function' ? formatTime12h(t.time) : t.time}` : '';
+          rows.push({
+            dot: t.priority === 'urgent' ? 'bg-red-400' : 'bg-[#a4d03b]',
+            title: t.title,
+            meta: `Tasks · ${prio}${timeStr}`,
+            tab: 'tasks'
+          });
+        });
+
+        parsedMeals.forEach(m => {
+          rows.push({
+            dot: 'bg-emerald-400',
+            title: m.dish,
+            meta: `Khana · +${m.protein}g protein · ${m.calories} kcal`,
+            tab: 'nutrition'
+          });
+        });
+
+        parsedExpenses.forEach(e => {
+          rows.push({
+            dot: 'bg-amber-400',
+            title: e.item,
+            meta: `Paisa · -${formatCurrency(e.amount)}`,
+            tab: 'finances'
+          });
+        });
+
+        parsedJournal.forEach(j => {
+          rows.push({
+            dot: 'bg-indigo-400',
+            title: j.activity,
+            meta: `Journal${doneNow > 0 ? ` · ${doneNow} done` : ''}`,
+            tab: 'journal'
+          });
+        });
+
+        parsedShields.forEach(s => {
+          rows.push({
+            dot: 'bg-rose-400',
+            title: s.rule || 'Habit Shield',
+            meta: 'Habit Shield',
+            tab: 'screentime'
+          });
+        });
+
+        if (rows.length === 0) {
           container.innerHTML = `
-          <div class="p-4 rounded-2xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-500/30 text-emerald-800 dark:text-emerald-300 text-xs flex items-center justify-between">
-            <div class="flex items-center gap-2">
-              <span class="material-symbols-outlined text-[18px] text-emerald-500">check_circle</span>
-              <span>Processed note: <b>${originalText}</b></span>
+          <div class="px-3.5 py-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-between gap-3 text-sm">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#a4d03b] shrink-0"></span>
+              <span class="font-medium text-[#f0f2ec] truncate">${originalText}</span>
+              <span class="text-xs text-[#757c6e] shrink-0">Saved</span>
             </div>
-            <button onclick="dismissOverviewParsedResults()" class="text-xs hover:underline cursor-pointer">✕</button>
-          </div>
-        `;
+            <button onclick="dismissOverviewParsedResults()" class="text-xs text-[#5e6558] hover:text-[#cfd4c8] cursor-pointer">✕</button>
+          </div>`;
           return;
         }
 
-        const blocks = [];
-
-        // 1. Pending Future Tasks Block
-        if (parsedTasks.length > 0) {
-          const priorityColors = {
-            urgent: { bg: 'bg-red-500/10 text-red-600 dark:text-red-400 border-red-500/30', label: 'Urgent & Critical', dot: 'bg-red-500' },
-            high: { bg: 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30', label: 'High Priority', dot: 'bg-amber-500' },
-            medium: { bg: 'bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/30', label: 'Medium Priority', dot: 'bg-blue-500' },
-            low: { bg: 'bg-zinc-500/10 text-zinc-600 dark:text-zinc-400 border-zinc-500/30', label: 'Low / Casual', dot: 'bg-zinc-400' }
-          };
-
-          const cardsHtml = parsedTasks.map(t => {
-            const pMeta = priorityColors[t.priority] || priorityColors.medium;
-            const timeBadge = t.time ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20"><span class="material-symbols-outlined text-[13px]">schedule</span> ${typeof formatTime12h === 'function' ? formatTime12h(t.time) : t.time}</span>` : '';
-            const dateBadge = t.date ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-gray-100 dark:bg-zinc-800 text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-zinc-700"><span class="material-symbols-outlined text-[13px]">calendar_today</span> ${t.date}</span>` : '';
-            const meetBadge = t.meetingLink ? `<a href="${t.meetingLink}" target="_blank" class="inline-flex items-center gap-1 text-[11px] font-bold px-2 py-0.5 rounded-md bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/25 transition-colors"><span class="material-symbols-outlined text-[13px]">videocam</span> Join Meet</a>` : '';
-            const reminderBadge = t.reminder ? `<span class="inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-md bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20"><span class="material-symbols-outlined text-[13px]">notifications_active</span> Alarm Set</span>` : '';
-
-            return `
-            <div class="p-3.5 rounded-2xl bg-white dark:bg-[#18181b] border border-emerald-500/40 dark:border-emerald-500/30 shadow-sm flex flex-col gap-2">
-              <div class="flex items-start justify-between gap-3">
-                <div class="flex items-center gap-2.5 min-w-0">
-                  <span class="w-2.5 h-2.5 rounded-full ${pMeta.dot} shrink-0"></span>
-                  <span class="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 truncate">${t.title}</span>
-                </div>
-                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border ${pMeta.bg} shrink-0">${pMeta.label}</span>
-              </div>
-              <div class="flex flex-wrap items-center gap-1.5 pt-1">
-                <span class="text-[11px] font-medium text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded bg-gray-100 dark:bg-zinc-800">${t.category || 'General'}</span>
-                ${timeBadge}${dateBadge}${reminderBadge}${meetBadge}
-              </div>
+        const rowsHtml = rows.map((r, idx) => `
+          <div class="py-2 flex items-center justify-between gap-3 text-sm">
+            <div class="flex items-center gap-2.5 min-w-0">
+              <span class="w-1.5 h-1.5 rounded-full ${r.dot} shrink-0"></span>
+              <span class="font-medium text-[#f0f2ec] truncate">${r.title}</span>
+              <span class="text-xs text-[#757c6e] shrink-0">${r.meta}</span>
             </div>
-          `;
-          }).join('');
-
-          blocks.push(`
-          <div class="p-4 sm:p-5 rounded-3xl bg-emerald-50/70 dark:bg-emerald-950/25 border border-emerald-500/40 dark:border-emerald-500/30 shadow-md flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <div class="w-5 h-5 rounded-full bg-emerald-500 text-white flex items-center justify-center text-xs font-bold shadow-xs">✓</div>
-                <span class="text-xs sm:text-sm font-extrabold text-emerald-800 dark:text-emerald-300">
-                  ${parsedTasks.length} Task(s) Added to My Tasks
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <button onclick="switchTab('tasks')" class="text-xs font-bold text-emerald-700 dark:text-emerald-400 hover:underline flex items-center gap-0.5 cursor-pointer">
-                  <span>Open in My tasks</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-                </button>
-                <button onclick="dismissOverviewParsedResults()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">✕</button>
-              </div>
-            </div>
-            <div class="flex flex-col gap-2">${cardsHtml}</div>
-          </div>
-        `);
-        }
-
-        // 2. Journal / Past & Ongoing Activity Logs Block (DISTINCT from Pending Tasks!)
-        const taskTitleSet = new Set(parsedTasks.map(t => (t.title || '').toLowerCase().trim()));
-        const standaloneJournal = parsedJournal.filter(j => !taskTitleSet.has((j.activity || '').toLowerCase().trim()));
-        if (standaloneJournal.length > 0 || doneNow > 0) {
-          const jCards = standaloneJournal.map(j => `
-          <div class="p-3.5 rounded-2xl bg-white dark:bg-[#18181b] border border-indigo-500/30 shadow-sm flex flex-col gap-1.5">
-            <div class="flex items-start justify-between gap-3">
-              <div class="flex items-center gap-2 min-w-0">
-                <span class="text-base shrink-0">${j.mood ? j.mood.split(' ')[0] : '📓'}</span>
-                <span class="font-bold text-sm sm:text-base text-gray-900 dark:text-gray-100 truncate">${j.activity}</span>
-              </div>
-              <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full border bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border-indigo-500/30 shrink-0">Activity Log (Not a Task)</span>
-            </div>
-            <div class="flex flex-wrap items-center gap-1.5 text-[11px] text-gray-500 dark:text-gray-400">
-              <span class="px-2 py-0.5 rounded bg-gray-100 dark:bg-zinc-800">${j.category || 'Work & Deep Focus'}</span>
-              ${j.startTime ? `<span class="px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-600 dark:text-indigo-300">🕒 ${j.startTime} · ${j.duration || j.durationMinutes || 30}m</span>` : ''}
-              ${doneNow > 0 ? `<span class="px-2 py-0.5 rounded bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-semibold">✓ ${doneNow} matching task marked Done</span>` : ''}
+            <div class="flex items-center gap-3 shrink-0 text-xs">
+              <button onclick="switchTab('${r.tab}')" class="${idx === 0 ? 'text-[#a4d03b]' : 'text-[#8a9183] hover:text-[#e6e9e0]'} hover:underline cursor-pointer">Open →</button>
+              ${idx === 0 ? '<button onclick="dismissOverviewParsedResults()" class="text-[#5e6558] hover:text-[#cfd4c8] cursor-pointer">✕</button>' : ''}
             </div>
           </div>
         `).join('');
 
-          blocks.push(`
-          <div class="p-4 sm:p-5 rounded-3xl bg-indigo-50/70 dark:bg-indigo-950/25 border border-indigo-500/40 dark:border-indigo-500/30 shadow-md flex flex-col gap-3">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-2">
-                <span class="material-symbols-outlined text-[18px] text-indigo-500">menu_book</span>
-                <span class="text-xs sm:text-sm font-extrabold text-indigo-900 dark:text-indigo-300">
-                  Logged to Daily Activity Journal (Not added as Pending Task)
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <button onclick="switchTab('journal')" class="text-xs font-bold text-indigo-700 dark:text-indigo-400 hover:underline flex items-center gap-0.5 cursor-pointer">
-                  <span>View Journal</span><span class="material-symbols-outlined text-[14px]">arrow_forward</span>
-                </button>
-                <button onclick="dismissOverviewParsedResults()" class="text-xs text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 cursor-pointer">✕</button>
-              </div>
-            </div>
-            <div class="flex flex-col gap-2">${jCards}</div>
+        container.innerHTML = `
+          <div class="px-3.5 py-1 rounded-xl bg-white/[0.03] border border-white/[0.06] divide-y divide-white/[0.05]">
+            ${rowsHtml}
           </div>
-        `);
-        }
-
-        // 3. Nutrition Meals Block
-        if (parsedMeals.length > 0) {
-          const mCards = parsedMeals.map(m => `
-          <div class="p-3 rounded-2xl bg-white dark:bg-[#18181b] border border-teal-500/30 flex items-center justify-between gap-2">
-            <span class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">🥗 ${m.dish}</span>
-            <span class="text-xs font-bold text-teal-600 dark:text-teal-400 shrink-0">+${m.protein}g Protein · ${m.calories} kcal</span>
-          </div>
-        `).join('');
-          blocks.push(`
-          <div class="p-4 rounded-3xl bg-teal-50/70 dark:bg-teal-950/25 border border-teal-500/40 shadow-md flex flex-col gap-2">
-            <div class="flex items-center justify-between text-xs font-extrabold text-teal-800 dark:text-teal-300">
-              <span>🍗 Logged to Nutrition &amp; Health (Not a Task)</span>
-              <button onclick="switchTab('nutrition')" class="hover:underline cursor-pointer">View Nutrition →</button>
-            </div>
-            ${mCards}
-          </div>
-        `);
-        }
-
-        // 4. Expenses Block
-        if (parsedExpenses.length > 0) {
-          const eCards = parsedExpenses.map(e => `
-          <div class="p-3 rounded-2xl bg-white dark:bg-[#18181b] border border-amber-500/30 flex items-center justify-between gap-2">
-            <span class="font-bold text-sm text-gray-900 dark:text-gray-100 truncate">💸 ${e.item}</span>
-            <span class="text-xs font-bold text-amber-600 dark:text-amber-400 shrink-0">${formatCurrency(e.amount)}</span>
-          </div>
-        `).join('');
-          blocks.push(`
-          <div class="p-4 rounded-3xl bg-amber-50/70 dark:bg-amber-950/25 border border-amber-500/40 shadow-md flex flex-col gap-2">
-            <div class="flex items-center justify-between text-xs font-extrabold text-amber-800 dark:text-amber-300">
-              <span>💸 Logged to Finances</span>
-              <button onclick="switchTab('finances')" class="hover:underline cursor-pointer">View Finances →</button>
-            </div>
-            ${eCards}
-          </div>
-        `);
-        }
-
-        container.innerHTML = `<div class="flex flex-col gap-3">${blocks.join('')}</div>`;
+        `;
       }
 
       function dismissOverviewParsedResults() {
@@ -6063,7 +5969,7 @@
         const greetingEl = document.getElementById('overviewGreetingHeading');
         if (greetingEl) greetingEl.textContent = `${greeting}, ${userName}`;
         const heroHead = document.getElementById('overviewHeroHeadline');
-        if (heroHead) heroHead.textContent = 'Kya chal raha hai dimaag mein?';
+        if (heroHead) heroHead.textContent = 'Dump your thoughts';
         if (typeof renderSidebarRecentDumps === 'function') renderSidebarRecentDumps();
 
         // Update sidebar username & avatar
